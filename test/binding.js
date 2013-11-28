@@ -5,6 +5,7 @@ setInterval(function() {
 
 ;
 (function expression() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
         <h2>Expression</h2>
@@ -26,6 +27,7 @@ setInterval(function() {
 
 ;
 (function attribute() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
         <h2>Attribute</h2>
@@ -129,6 +131,7 @@ setInterval(function() {
 
 ;
 (function each() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
         <h2>#each, #unless</h2>

@@ -14,7 +14,14 @@
 </head>
 <body>
 <div class="container">
-  <h1>Watch.js</h1>
+  <h1>src/watch.js</h1>
+  <p>属性监听工具。</p>
+  <blockquote>
+    <ol>
+      <li>请打开控制台，观察节点的变化。</li>
+    </ol>
+  </blockquote>
+
   <script type="text/javascript">
     function doit(data){
       Watch.watch(data, ['get', 'set', 'add', 'delete', 'change'], function(event, data){
@@ -29,10 +36,6 @@
   </script>
 
   <h2>Simple Object</h2>
-  <div class="simple-object">
-    <pre></pre>
-    <button type="button" class="btn btn-default">Run</button>
-  </div>
   <script type="text/javascript">
     var data1 = { prop1: 'foo' }
     console.group('Simple Object', JSON.stringify(data1))

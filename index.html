@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hyde Test</title>
+  <link  href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Hyde</h1>
+    <p>轻量级的数据双向绑定库。</p>
+    
+    <h2>API</h2>
+    <p>
+      <code>Hyde.bind(data, tpl, callback)</code>
+    </p>
+    <pre><code>var tpl = '{{title}}'
+var data = {
+  title: 'foo'
+}
+Hyde.bind(data, tpl, function(content){
+  $('div.container').append(content)
+})
+</code></pre>
+
+    <h2>Demo</h2>
+    <ol>
+      <li><a href="test/watch.html">test/watch.html</a></li>
+      <li><a href="test/binding.html">test/binding.html</a></li>
+    </ol>
+  </div>
+  <link rel="stylesheet" href="http://yandex.st/highlightjs/7.5/styles/default.min.css">
+  <script src="http://yandex.st/highlightjs/7.5/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

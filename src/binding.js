@@ -490,12 +490,17 @@ if (typeof module === 'object' && module.exports) {
         return content
     }
 
+    function unbind(data) {
+        return data.$data
+    }
+
     // expose
     function Bind() {}
     Bind.binding = []
     Bind.AST = AST
     Bind.scan = scan
     Bind.bind = bind
+    Bind.unbind = unbind
 
     return Bind
 

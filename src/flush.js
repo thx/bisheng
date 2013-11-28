@@ -144,7 +144,6 @@
     }
 
     function scrollIntoView(event, data) {
-        return
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
             switch (item.nodeType) {

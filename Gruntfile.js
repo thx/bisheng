@@ -29,6 +29,16 @@ module.exports = function(grunt) {
             },
             all: ['test/nodeuinit/*.js']
         },
+        connect: { // :server:keepalive
+            server: {
+                options: {
+                    port: 5000,
+                    base: '.',
+                    host: '0.0.0.0',
+                    keepalive: true
+                }
+            }
+        },
         watch: {
             dev: {
                 files: ['<%= jshint.files %>'],
@@ -40,6 +50,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint')
     grunt.loadNpmTasks('grunt-contrib-nodeunit')
     grunt.loadNpmTasks('grunt-contrib-watch')
+    grunt.loadNpmTasks('grunt-contrib-connect')
 
     grunt.registerTask('default', ['jshint', 'nodeunit', 'watch'])
 };
