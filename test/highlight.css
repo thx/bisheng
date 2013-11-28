@@ -1,0 +1,6 @@
+.transition {
+    transition: background-color 0.5s, width 0.5s, height 0.5s;
+}
+.highlight {
+    background-color: yellow;
+}

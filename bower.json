@@ -1,0 +1,27 @@
+{
+  "name": "hyde",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nuysoft/hyde",
+  "authors": [
+    "nuysoft <nuysoft@gmail.com>"
+  ],
+  "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
+  "main": "dist/hyde.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "handlebars": "~1.1.2",
+    "jquery": "~2.0.3"
+  },
+  "devDependencies": {
+    "mockjs": "*",
+    "underscore": "~1.5.2",
+    "bootstrap": "~3.0.2"
+  }
+}

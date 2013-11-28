@@ -1,0 +1,34 @@
+{
+  "name": "Hyde",
+  "title": "Hyde",
+  "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
+  "version": "0.0.1",
+  "homepage": "",
+  "keywords": [
+    "data-bingding"
+  ],
+  "author": "nuysoft@gmail.com",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-nodeunit": "~0.2.2",
+    "jquery": "~1.8.3",
+    "handlebars": "~1.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nuysoft/Hyde.git"
+  },
+  "main": "./dist/hyde.js",
+  "scripts": {
+    "test": "grunt travis --verbose"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/nuysoft/Hyde/blob/master/README.md"
+    }
+  ]
+}
