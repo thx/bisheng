@@ -1,4 +1,10 @@
 /*
+    属性监听工具。
+    Watch the changes of any object or attribute.
+
+    Works with: IE 9+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, Node.JS
+
+
     [melanke/Watch.JS](https://github.com/melanke/Watch.JS)
     [JavaScript: Object.observe](http://weblog.bocoup.com/javascript-object-observe/)
     [jdarling/Object.observe](https://github.com/jdarling/Object.observe)
@@ -21,12 +27,12 @@
 
 /* global define */
 /* global window */
-/* global $:true */
+/* global $: true */
 /* global KISSY */
 
 // CommonJS
 if (typeof module === 'object' && module.exports) {
-    var $ = require('jquery')
+    // var $ = require('jquery')
 }
 
 (function(factory) {
@@ -203,13 +209,8 @@ if (typeof module === 'object' && module.exports) {
                 }
 
                 // 定义可能新增的属性
-                if (typeof value === 'object') defineProperties(value, path, root)
-
-                // 触发 set 和 change 事件
-                if (!define.defining.length) {
-                    trigger('set', root, path, newValue, oldValue)
-                    newValue !== oldValue &&
-                        trigger('change', root, path, newValue, oldValue)
+                if (typeof value === 'object') {
+                    defineProperties(value, path, root)
                 }
 
                 // 同步原始数据
@@ -222,6 +223,21 @@ if (typeof module === 'object' && module.exports) {
                 else if (typeof value === 'object') context[path[index]] = Util.extend({}, value)
                 else if (context) context[path[index]] = value
                 define.defining.pop() // 恢复事件
+
+                // 触发 set 和 change 事件
+                if (!define.defining.length) {
+                    trigger('set', root, path, newValue, oldValue)
+                    newValue !== oldValue && // newValue.valueOf() !== oldValue.valueOf() &&
+                    trigger('change', root, path, newValue, oldValue)
+                }
+
+                // 触发 value 中属性对应的事件
+                if (typeof value === 'object') {
+                    for (var key in value) {
+                        trigger('change', root, path.concat(key), value[key], oldValue === undefined ? oldValue : oldValue[key])
+                    }
+                }
+
             },
             get: function() {
                 // 触发 get 事件
@@ -235,7 +251,11 @@ if (typeof module === 'object' && module.exports) {
                     if (re !== undefined) return re
                 }
 
-                return value
+                if (!define.defining.length) {
+                    return new Object(value)
+                }
+                return (value !== undefined && value !== null) ? value.valueOf() : value
+
             }
         }
     }
@@ -251,6 +271,7 @@ if (typeof module === 'object' && module.exports) {
 
         // 只在根节点上绑定保留属性
         if (path.length === 1) defineReservedProperties(data)
+        else defineReservedProperties(data, ['$path'])
         data.$path = path
 
         if (data instanceof Array) {
@@ -298,11 +319,18 @@ if (typeof module === 'object' && module.exports) {
 
     /*
         定义保留属性为：不可枚举
+        $id         节点唯一标识，预留
+        $guid       节点唯一标识，预留
+        $data       存放原始数据
+        $watchers   存放监听函数
+        $blocks     存放 Block 节点
+        $helpers    存放 Helper 名称
+        $path       当前节点的路径
     */
     function defineReservedProperties(data, props) {
         if (typeof data !== 'object' && typeof data !== 'function') return
 
-        (props || [Util.expando, '$id', '$guid', '$data', '$watchers', '$blocks', '$path'])
+        (props || [Util.expando, '$id', '$guid', '$data', '$watchers', '$blocks', '$helpers', '$path'])
             .forEach(function(prop, index) {
                 Object.defineProperty(data, prop, {
                     configurable: true,
@@ -340,6 +368,15 @@ if (typeof module === 'object' && module.exports) {
                     var diff = Util.diff(array, prev, path)
                     if (diff.added.length) defineProperties(array, path, root)
 
+                    define.defining.pop() // 恢复事件
+
+                    // 同步原始数据
+                    var context = root.$data
+                    for (var index = 1; index < path.length - 1; index++) {
+                        context = context[path[index]]
+                    }
+                    define.defining.push(true) // 暂停事件
+                    context[path[index]] = Util.extend([], array)
                     define.defining.pop() // 恢复事件
 
                     /*
@@ -523,6 +560,10 @@ if (typeof module === 'object' && module.exports) {
         event.type === 'change' && console.log(
             'CHANGE [ ' + data.path.join('.') + ' ]',
             JSON.stringify(data.value), '<=', JSON.stringify(data.oldValue)
+        )
+        event.type === 'add' && console.log(
+            'add    [ ' + data.path.join('.') + ' ]',
+            JSON.stringify(data.value)
         )
 
         define.defining.pop()

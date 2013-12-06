@@ -17,17 +17,20 @@
 "use strict";
 
 /* global define */
-/* global window */
-/* global document */
-/* global $ */
+/* global window: true */
+/* global $: true */
 /* global KISSY */
 /* global Handlebars: true */
 /* global Watch: true */
 
 // CommonJS
 if (typeof module === 'object' && module.exports) {
-    var Watch = require('./watch')
-    var Handlebars = require('handlebars')
+    window = require('jsdom').jsdom().createWindow()
+    // document = window.document
+
+    // var $ = require('jquery')
+    // var Watch = require('./watch')
+    // var Handlebars = require('handlebars')
 }
 
 (function(factory) {
@@ -66,34 +69,38 @@ if (typeof module === 'object' && module.exports) {
     if (!Watch || !Watch.define) return
 
     var slice = [].slice
-    var phTpl = '<script value="{{{.}}}"></script>'
-    var reph = /(<script value="(.*?)"><\/script>)(.*?)(\1)/ig
-    var restyle = /([^;]*?): ([^;]*)/ig
     var guid = 1;
 
+    function lastest() {
+        if (arguments.length) lastest.path = arguments[0]
+        else {
+            return lastest.path
+        }
+    }
 
     function createPathHTML(attrs) {
         // attrs.guid = attrs.guid || guid++
+        var escape = Handlebars.Utils.escapeExpression
 
-        var pathHTML = '<script'
+        var pathHTML = escape('<script')
         for (var key in attrs) {
-            pathHTML += ' ' + key + '="' + attrs[key] + '"'
+            if (attrs[key] === undefined) continue
+            pathHTML += ' ' + key + escape('="') + attrs[key] + escape('"')
         }
-        pathHTML += '></script>'
+        pathHTML += escape('></script>')
 
         return pathHTML
-    }
-
-    function createPathNode(attrs) {
-        // attrs.guid = attrs.guid || guid++
-        return $('<script>').attr(attrs)[0]
     }
 
     Watch.define.hook = {
         set: function() {},
         get: function(root, path, value) {
+            lastest(path)
+            return
+
+            var phTpl = '<script path="{{.}}"></script>'
             if (!Bind.binding.length) return
-            if (typeof value !== 'object' && !~('' + value).indexOf('<script value="')) {
+            if (typeof value !== 'object' && !~('' + value).indexOf('<script path="')) {
                 var ph = Handlebars.compile(phTpl)(path.join('.'))
                 return ph + value + ph
             }
@@ -103,61 +110,83 @@ if (typeof module === 'object' && module.exports) {
     var AST = {
         /*
             * AST.handle(node, blocks)
+            * AST.handle(node, blocks, helpers)
                 公开方法
-            * AST.handle(node, context, index, blocks)
+            * AST.handle(node, context, index, blocks, helpers)
                 用于内部递归修改 AST
         */
-        handle: function handle(node, context, index, blocks) {
+        handle: function handle(node, context, index, blocks, helpers) {
             if (arguments.length === 2) {
                 blocks = context
                 context = undefined
+                helpers = {}
+            }
+            if (arguments.length === 3) {
+                blocks = context
+                helpers = index
+                context = index = undefined
             }
 
-            if (AST[node.type]) AST[node.type](node, context, index, blocks)
+            if (AST[node.type]) AST[node.type](node, context, index, blocks, helpers)
 
             return node
         },
 
-        program: function program(node, context, index, blocks) {
+        program: function program(node, context, index, blocks, helpers) {
             for (var i = 0; i < node.statements.length; i++) {
-                AST.handle(node.statements[i], node.statements, i, blocks)
+                AST.handle(node.statements[i], node.statements, i, blocks, helpers)
             }
         },
-        // 为 Expression 插入占位符
-        mustache_bak: function(node, context, index, blocks) {
-            var prop = node.id.string
 
-            if (!node.guid) node.guid = guid
+        // 为 Expression 插入占位符
+        mustache: function(node, context, index, blocks, helpers) {
             if (node.binded) return
 
-            context.splice(index, 0, {
-                constructor: Handlebars.AST.ContentNode,
-                type: 'content',
-                string: createPathHTML({
-                    guid: guid,
-                    slot: 'start',
-                    type: 'expression',
-                    path: prop
+            var prop = []
+            if (node.isHelper) {
+                node.params.forEach(function(param) {
+                    if (param.type === 'ID') {
+                        prop.push(param.string)
+                    }
                 })
-            })
-            context.splice(index + 2, 0, {
-                constructor: Handlebars.AST.ContentNode,
-                type: 'content',
-                string: createPathHTML({
-                    guid: guid,
-                    slot: 'end',
-                    type: 'expression',
-                    path: prop
-                })
-            })
+            } else {
+                prop.push(node.id.string)
+            }
+            prop = prop.join(' ')
 
-            guid++
+            var attrs = {
+                guid: guid,
+                slot: '',
+                type: '',
+                path: '{{$lastest ' + prop + '}}',
+                isHelper: !! node.isHelper
+            }
+            var placeholder
+            var statements
+
+            attrs.slot = 'start'
+            placeholder = createPathHTML(attrs)
+            statements = Handlebars.parse(placeholder).statements
+            statements[1].binded = true
+            context.splice.apply(context, [index, 0].concat(statements))
+
+            attrs.slot = 'end'
+            placeholder = createPathHTML(attrs)
+            statements = Handlebars.parse(placeholder).statements
+            statements[1].binded = true
+            context.splice.apply(context, [index + 4, 0].concat(statements))
+
+            helpers[guid++] = {
+                constructor: Handlebars.AST.ProgramNode,
+                type: 'program',
+                statements: [node]
+            }
 
             node.binded = true
-
         },
+
         // 为 Block 插入占位符
-        block: function block(node, context, index, blocks) {
+        block: function block(node, context, index, blocks, helpers) {
             if (node.binded) return
 
             var helper, prop
@@ -169,29 +198,30 @@ if (typeof module === 'object' && module.exports) {
                 prop = node.mustache.params[0].string
             }
 
-            if (!node.guid) node.guid = guid
+            var attrs = {
+                guid: guid,
+                slot: '',
+                type: 'block',
+                path: '{{$lastest ' + prop + '}}',
+                helper: helper
+            }
+            var placeholder
+            var statements
+
+
 
             // mustache 定义 DOM 位置
-            context.splice(index, 0, {
-                type: 'content',
-                string: createPathHTML({
-                    guid: guid,
-                    slot: 'start',
-                    type: 'block',
-                    path: prop,
-                    helper: helper
-                })
-            })
-            context.splice(index + 2, 0, {
-                type: 'content',
-                string: createPathHTML({
-                    guid: guid,
-                    slot: 'end',
-                    type: 'block',
-                    path: prop,
-                    helper: helper
-                })
-            })
+            attrs.slot = 'start'
+            placeholder = createPathHTML(attrs)
+            statements = Handlebars.parse(placeholder).statements
+            statements[1].binded = true
+            context.splice.apply(context, [index, 0].concat(statements))
+
+            attrs.slot = 'end'
+            placeholder = createPathHTML(attrs)
+            statements = Handlebars.parse(placeholder).statements
+            statements[1].binded = true
+            context.splice.apply(context, [index + 4, 0].concat(statements))
 
             blocks[guid++] = {
                 constructor: Handlebars.AST.ProgramNode,
@@ -199,21 +229,21 @@ if (typeof module === 'object' && module.exports) {
                 statements: [node]
             }
 
-            // program 定义数据路径（废弃，转而通过 helper 插入）
+            // program 定义数据路径（废弃？转而通过 helper 插入？）
 
-            node.program && node.program.statements.unshift.apply(
+            /*node.program && node.program.statements.unshift.apply(
                 node.program.statements,
                 Handlebars.parse('<!--{{$path}}-->').statements
             )
             node.inverse && node.inverse.statements.unshift.apply(
                 node.inverse.statements,
                 Handlebars.parse('<!--{{$path}}-->').statements
-            )
+            )*/
 
 
             node.binded = true
 
-            AST.handle(node.program || node.inverse, context, index, blocks)
+            AST.handle(node.program || node.inverse, context, index, blocks, helpers)
         }
     };
 
@@ -221,7 +251,7 @@ if (typeof module === 'object' && module.exports) {
      
      */
 
-    ['blockHelperMissing', 'each', 'with'].forEach(function(name, index) {
+    /*['blockHelperMissing', 'each', 'with'].forEach(function(name, index) {
         Handlebars.helpers['_' + name] = Handlebars.helpers[name]
         Handlebars.helpers[name] = function(context, options) {
             var ret = Handlebars.helpers['_' + name](context, options)
@@ -237,17 +267,19 @@ if (typeof module === 'object' && module.exports) {
             var $path = '<!--' + conditional.$path.join('.') + '-->'
             return $path + ret
         }
-    });
+    });*/
 
-    // Handlebars.registerHelper('$path', function(items, options) {
-    //     return this.$path.join('.')
-    // })
+    Handlebars.registerHelper('$lastest', function(items, options) {
+        // 只为访问一遍 items，已记录路径
+        return lastest() && lastest().join('.') || ''
+    })
 
     /*
         扫描器
     */
 
     function scan(node, data) {
+        // return
         // data > dom, expression
         scanNode(node)
         // data > dom, block
@@ -258,12 +290,12 @@ if (typeof module === 'object' && module.exports) {
 
     // 
     function scanNode(node) {
-        scanAttributes(node)
         switch (node.nodeType) {
             case 1: // Element
             case 9: // Document
             case 11: // DocumentFragment
-                scanChilddNode(node)
+                scanAttributes(node)
+                scanChildNode(node)
                 break
             case 3: // Text
                 replaceTexNode(node)
@@ -272,55 +304,27 @@ if (typeof module === 'object' && module.exports) {
     }
 
     /*
-        <path value="" type="text"></path>
+        <script path="" type="text"></script>
     */
     function replaceTexNode(node) {
-        var content = node.textContent || node.innerText,
-            nodes = [],
-            startIndex = 0,
-            endIndex = 0,
-            ma;
-
-        reph.exec('')
-        while ((ma = reph.exec(content))) {
-            endIndex = reph.lastIndex - ma[0].length
-            nodes.push(document.createTextNode(content.slice(startIndex, endIndex)))
-            nodes.push(
-                createPathNode({
-                    // guid: guid, // TextNode 不需要 guid
-                    slot: 'start',
-                    type: 'text',
-                    path: ma[2]
-                })
-            )
-            nodes.push(document.createTextNode(ma[3]))
-            nodes.push(
-                createPathNode({
-                    // guid: guid++,
-                    slot: 'end',
-                    type: 'text',
-                    path: ma[2]
-                })
-            )
-            startIndex = reph.lastIndex
-        }
-        if (startIndex > 0) {
-            endIndex = content.length
-            nodes.push(document.createTextNode(content.slice(startIndex, endIndex)))
-        }
-
-        if (nodes.length) {
-            nodes.forEach(function(item, index) {
-                node.parentNode.insertBefore(item, node)
-            })
-            node.parentNode.removeChild(node)
-        }
+        var content = node.textContent || node.innerText
+        $('<div>' + content + '</div>').contents()
+            .each(function(index, elem) {
+                if (elem.nodeName === 'SCRIPT' && elem.getAttribute('path')) {
+                    if (!elem.getAttribute('type')) elem.setAttribute('type', 'text')
+                }
+            }).replaceAll(node)
     }
 
+
+
     /*
-        <path value="" type="attribute" name="" ></path>
+        <script path="" type="attribute" name="" ></script>
     */
     function scanAttributes(node) {
+        var reph = /(<script(?:.*?)><\/script>)/ig
+        var restyle = /([^;]*?): ([^;]*)/ig
+
         var attributes = []
         slice.call(node.attributes || [], 0).forEach(function(attributeNode, index) {
             var nodeName = attributeNode.nodeName,
@@ -333,14 +337,12 @@ if (typeof module === 'object' && module.exports) {
                     reph.exec('')
                     while ((ma = reph.exec(stylema[2]))) {
                         attributes.push(
-                            createPathNode({
-                                // guid: guid++, // attributeNode 不需要 guid
-                                slot: 'start',
+                            $('<div>' + ma[1] + '</div>').contents()
+                            .attr({
                                 type: 'attribute',
-                                name: nodeName,
-                                css: stylema[1].trim(),
-                                path: ma[2]
-                            })
+                                name: attributeNode.nodeName.toLowerCase(),
+                                css: stylema[1].trim()
+                            })[0]
                         )
                     }
                 }
@@ -349,29 +351,30 @@ if (typeof module === 'object' && module.exports) {
                 reph.exec('')
                 while ((ma = reph.exec(nodeValue))) {
                     attributes.push(
-                        createPathNode({
-                            // guid: guid++,
-                            slot: 'start',
+                        $('<div>' + ma[1] + '</div>').contents()
+                        .attr({
                             type: 'attribute',
-                            name: attributeNode.nodeName,
-                            path: ma[2]
-                        })
+                            name: attributeNode.nodeName.toLowerCase(),
+                        })[0]
                     )
                 }
             }
 
             if (attributes.length) {
-                nodeValue = nodeValue.replace(reph, '$3')
+                nodeValue = nodeValue.replace(reph, '')
                 attributeNode.nodeValue = nodeValue
 
-                attributes.forEach(function(item, index) {
-                    node.parentNode.insertBefore(item, node)
+                $(attributes).each(function(index, elem) {
+                    var slot = $(elem).attr('slot')
+                    if (slot === 'start') $(node).before(elem)
+                    if (slot === 'end') $(node).after(elem)
                 })
+
             }
         })
     }
 
-    function scanChilddNode(node) {
+    function scanChildNode(node) {
         var childNodes = slice.call(node.childNodes, 0)
         childNodes.forEach(function(childNode, index, childNodes) {
             scanNode(childNode)
@@ -398,49 +401,11 @@ if (typeof module === 'object' && module.exports) {
         })
     }
 
-    /*
-     */
-    function updateDate(data, path, target) {
-        for (var index = 1; index < path.length - 2; index++) {
-            data = data[path[index]]
-        }
-
-        var value
-        switch (target.nodeName.toLowerCase()) {
-            case 'input':
-                switch (target.type) {
-                    case 'text':
-                        value = $(target).val()
-                        break;
-                    case 'radio': // TODO
-                        // value = $(target).prop('checked') ? $(target).val() : undefined
-                        value = $(target).val()
-                        break
-                    case 'checkbox': // TODO
-                        // value = $(target).prop('checked') ? $(target).val() || $(target).attr('data-prev-value') : ''
-                        value = $(target).val()
-                        break
-                    default:
-                        value = $(target).val()
-                }
-                break
-            case 'select':
-                value = $(target).val()
-                break
-            case 'textarea':
-                value = $(target).val()
-                break
-            default:
-                value = $(target).val()
-        }
-
-        data[path[path.length - 1]] = value
-    }
-
     function scanFormElements(node, data) {
-        var selector = 'script[type="attribute"][name="value"]'
-        var scripts = slice.call(node.querySelectorAll(selector) || [], 0)
-        scripts.forEach(function(script, index) {
+        slice.call(
+            node.querySelectorAll('script[slot="start"][type="attribute"][name="value"]') || [],
+            0
+        ).forEach(function(script, index) {
             var path = $(script).attr('path').split('.'),
                 target = script;
 
@@ -448,15 +413,102 @@ if (typeof module === 'object' && module.exports) {
                 if (target.nodeName !== 'SCRIPT') break
             }
 
-            $(target).on('change keyup', function(event) {
-                updateDate(data, path, event.target)
+            $(target).on('change', function(event) {
+                updateValue(data, path, event.target)
+            })
+        })
+
+        slice.call(
+            node.querySelectorAll('script[slot="start"][type="attribute"][name="checked"]') || [],
+            0
+        ).forEach(function(script) {
+            var path = $(script).attr('path').split('.'),
+                target = script;
+
+            while ((target = target.nextSibling)) {
+                if (target.nodeName !== 'SCRIPT') break
+            }
+
+            var value = data
+            Watch.define.defining.push(true) // 暂停事件
+            for (var index = 1; index < path.length; index++) {
+                value = value[path[index]]
+            }
+            Watch.define.defining.pop() // 恢复事件
+            // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
+            if (value.valueOf() === false || value.valueOf() === 'false') $(target).prop('checked', false)
+
+            $(target).on('change', function(event) {
+                console.log(event.type);
+                updateChecked(data, path, event.target)
             })
         })
     }
 
+    /*
+     */
+    function updateValue(data, path, target) {
+        for (var index = 1; index < path.length - 2; index++) {
+            data = data[path[index]]
+        }
+
+        var $target = $(target),
+            value
+        switch (target.nodeName.toLowerCase()) {
+            case 'input':
+                switch (target.type) {
+                    case 'text':
+                        value = $target.val()
+                        break;
+                    case 'radio': // TODO
+                    case 'checkbox': // TODO
+                        return
+                    default:
+                        value = $target.val()
+                }
+                break
+            case 'select':
+                value = $target.val()
+                break
+            case 'textarea':
+                value = $target.val()
+                break
+            default:
+                value = $target.val()
+        }
+
+        data[path[path.length - 1]] = value
+    }
+
+    function updateChecked(data, path, target) {
+        for (var index = 1; index < path.length - 2; index++) {
+            data = data[path[index]]
+        }
+
+        var $target = $(target),
+            value
+        switch (target.nodeName.toLowerCase()) {
+            case 'input':
+                switch (target.type) {
+                    case 'radio': // TODO
+                    case 'checkbox': // TODO
+                        value = $target.prop('checked')
+
+                        var name = $target.attr('name')
+                        if (name && value) data[name] = $target.val()
+                }
+                break
+            default:
+        }
+
+        data[path[path.length - 1]] = value
+    }
+
+    /*
+     
+     */
     function bind(data, tpl, callback) {
         Watch.define.defining.push(true) // 暂停监听事件
-        Bind.binding.push(true) // 允许插入 Expression 占位符
 
         // 定义数据
         Watch.watch(data)
@@ -464,7 +516,7 @@ if (typeof module === 'object' && module.exports) {
         // 修改 AST，插入 Block 占位符
         var ast = Handlebars.parse(tpl)
         // console.log(JSON.stringify(ast, null, 4));
-        AST.handle(ast, undefined, undefined, data.$blocks = {})
+        AST.handle(ast, undefined, undefined, data.$blocks = {}, data.$helpers = {})
         // console.log(JSON.stringify(ast, null, 4));
 
         // 渲染 HTML
@@ -472,12 +524,12 @@ if (typeof module === 'object' && module.exports) {
         var html = compiled(data)
         // console.log(html)
 
-        Bind.binding.pop() // 恢复监听事件
-        Watch.define.defining.pop() // 禁止插入 Expression 占位符
+        Watch.define.defining.pop() // 恢复监听事件
 
         // 扫描占位符，定位 Expression 和 Block
-        var content = $(html)
-        if (content.length) scan(content[0].parentNode, data)
+        var content = $('<div>' + html + '</div>')
+        if (content.length) scan(content[0], data)
+        content = content.contents()
 
         /*
             TODO 返回什么呢
@@ -496,7 +548,6 @@ if (typeof module === 'object' && module.exports) {
 
     // expose
     function Bind() {}
-    Bind.binding = []
     Bind.AST = AST
     Bind.scan = scan
     Bind.bind = bind

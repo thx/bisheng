@@ -1,6 +1,24 @@
 .transition {
-    transition: background-color 0.5s, width 0.5s, height 0.5s;
+    transition: background-color 0.5s ease, width 0.5s ease, height 0.5s ease;
 }
+
 .highlight {
     background-color: yellow;
+}
+
+.pre {
+    white-space: pre-wrap;
+    font-family: monospace, serif;
+    font-size: 1em;
+}
+
+.panel-body:before,
+.panel-body:after {
+    display: table;
+    content: "";
+}
+
+.panel-body {
+	height: 200px;
+	overflow: auto; 
 }

@@ -17,11 +17,12 @@
   ],
   "dependencies": {
     "handlebars": "~1.1.2",
-    "jquery": "~2.0.3"
+    "jquery": "~1.9.0"
   },
   "devDependencies": {
     "mockjs": "*",
     "underscore": "~1.5.2",
-    "bootstrap": "~3.0.2"
+    "bootstrap": "~3.0.2",
+    "jquery": "~1.9.0"
   }
 }

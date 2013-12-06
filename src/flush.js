@@ -1,10 +1,56 @@
 "use strict";
-/* global document */
-/* global $ */
-/* global Handlebars */
-/* global Watch */
+
+/* global define */
+/* global window: true */
+/* global document: true */
+/* global location */
+/* global $: true */
+/* global KISSY */
+/* global Handlebars: true */
+/* global Watch: true */
 /* global Bind */
-(function() {
+
+// CommonJS
+if (typeof module === 'object' && module.exports) {
+    window = require('jsdom').jsdom().createWindow()
+    document = window.document
+
+    // var $ = require('jquery')
+    // var Watch = require('./watch')
+    // var Handlebars = require('handlebars')
+}
+
+(function(factory) {
+    if (typeof module === 'object' && module.exports) {
+        // CommonJS
+        module.exports = factory()
+
+
+    } else if (typeof define === "function" && define.amd) {
+        // AMD modules
+        define(factory)
+
+    } else if (typeof define === "function" && define.cmd) {
+        // CMD modules
+        define(factory)
+
+    } else if (typeof KISSY != 'undefined') {
+        // For KISSY
+        ['flush'].forEach(function(name, index) {
+            KISSY.add(name, function(S) {
+                return factory()
+            }, {
+                requires: []
+            })
+        })
+
+    } else {
+        // Browser globals
+        window.Flush = factory()
+    }
+
+}(function() {
+
     var slice = [].slice;
     var define = Watch.define;
 
@@ -18,17 +64,8 @@
 
             handle(event, data, defined)
 
-            // 路径 > guid > Block
-            /*if (data.value instanceof Array) {
-                // 更新数组对应的 Block
-                updateBlock(event, data, defined)
-            } else {
-                // 更新属性对应的 Expression
-                updateExpression(event, data, defined)
-            }*/
-
             if (event.type === 'change') {
-                scrollIntoView(event, data)
+                if (location.href.indexOf('scrollIntoView') > -1) scrollIntoView(event, data)
                 highlight(event, data)
             }
 
@@ -52,43 +89,86 @@
         })
     }
 
+    // 更新属性对应的 Expression
     handle.text = function text(path, event, data, defined) {
-        var currentTarget
-        event.target.push(currentTarget = expressionTarget(path))
-        currentTarget.nodeValue = data.value
-    }
+        var guid = path.getAttribute('guid')
+        var helper = path.getAttribute('helper')
+        var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
+        var content
 
-    handle.attribute = function attribute(path, event, data, defined) {
-        var currentTarget, name;
-        event.target.push(currentTarget = expressionTarget(path))
-        name = path.getAttribute('name')
-        switch (name) {
-            case 'class':
-                $(currentTarget).removeClass(data.oldValue).addClass(data.value)
-                break
-            case 'style':
-                $(currentTarget).css(path.getAttribute('css'), data.value)
-                break
-            case 'value':
-                if ($(currentTarget).val() !== data.value) $(currentTarget).val(data.value)
-                $(currentTarget).attr('data-prev-value', data.oldValue)
-                break
-            default:
-                $(currentTarget).attr(name, data.value)
+        var target = [],
+            cur = path,
+            to = endPath
+        while ((cur = cur.nextSibling) && cur !== to) {
+            target.push(cur)
+        }
+
+        if (target.length === 1 && target[0].nodeType === 3) {
+            // TextNode
+            event.target.push(target[0])
+            target[0].nodeValue = data.value
+
+            event.target.push(target[0])
+
+        } else {
+            // Element
+            if (helper === 'true') {
+                content = Handlebars.compile(defined.$helpers[guid])(data.context)
+            } else {
+                content = data.value
+            }
+
+            $('<div>' + content + '</div>').contents()
+                .insertAfter(path)
+                .each(function(index, elem) {
+                    event.target.push(elem)
+                })
+            $(target).remove()
         }
     }
 
+    // 更新属性对应的 Expression
+    handle.attribute = function attribute(path, event, data, defined) {
+        var currentTarget, name, $target;
+        event.target.push(currentTarget = expressionTarget(path))
+        $target = $(currentTarget)
+
+        name = path.getAttribute('name')
+        switch (name) {
+            case 'class':
+                $target.removeClass(data.oldValue).addClass(data.value)
+                break
+            case 'style':
+                $target.css(path.getAttribute('css'), data.value)
+                break
+            case 'value':
+                if ($target.val() !== data.value) $target.val(data.value)
+                break
+            case 'checked':
+                $target.prop(name, data.value)
+
+                name = $target.attr('name')
+                if (name && $target.prop('checked')) {
+                    setTimeout(function() {
+                        data.context[name] = $target.val()
+                    }, 0)
+                }
+                break
+            default:
+                $target.attr(name, data.value)
+        }
+    }
+
+    // 更新数组对应的 Block，路径 > guid > Block
     handle.block = function block(path, event, data, defined) {
         var guid = path.getAttribute('guid')
         var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
         var ast = defined.$blocks[guid]
-
-        Bind.binding.push(true)
         var content = Handlebars.compile(ast)(data.context)
-        Bind.binding.pop()
 
-        content = $(content)
-        if (content.length) Bind.scan(content[0].parentNode, defined)
+        content = $('<div>' + content + '</div>')
+        Bind.scan(content[0], defined)
+        content = content.contents()
 
         var target = [],
             cur = path,
@@ -143,7 +223,12 @@
         // Bind.scan(path.parentNode, defined)
     }
 
+    /*
+        如果 URL 中含有参数 scrollIntoView，则自动滚动至发生变化的元素。
+        用于调试、演示，或者在项目中提醒用户。
+    */
     function scrollIntoView(event, data) {
+        return
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
             switch (item.nodeType) {
@@ -181,4 +266,12 @@
             }
         })
     }
-})()
+
+    // expose
+    function Flush() {}
+    Flush.flush = define.flush
+    Flush.handle = handle
+
+    return Flush
+
+}));
