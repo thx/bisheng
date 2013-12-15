@@ -1,14 +1,11 @@
 "use strict";
 
-/* global define */
 /* global window: true */
 /* global document: true */
-/* global location */
 /* global $: true */
-/* global KISSY */
 /* global Handlebars: true */
-/* global Watch: true */
-/* global Bind */
+/* global expose */
+/* global scan */
 
 // CommonJS
 if (typeof module === 'object' && module.exports) {
@@ -16,62 +13,16 @@ if (typeof module === 'object' && module.exports) {
     document = window.document
 
     // var $ = require('jquery')
-    // var Watch = require('./watch')
     // var Handlebars = require('handlebars')
 }
 
 (function(factory) {
-    if (typeof module === 'object' && module.exports) {
-        // CommonJS
-        module.exports = factory()
 
-
-    } else if (typeof define === "function" && define.amd) {
-        // AMD modules
-        define(factory)
-
-    } else if (typeof define === "function" && define.cmd) {
-        // CMD modules
-        define(factory)
-
-    } else if (typeof KISSY != 'undefined') {
-        // For KISSY
-        ['flush'].forEach(function(name, index) {
-            KISSY.add(name, function(S) {
-                return factory()
-            }, {
-                requires: []
-            })
-        })
-
-    } else {
-        // Browser globals
+    expose(factory, function() {
         window.Flush = factory()
-    }
+    })
 
 }(function() {
-
-    var slice = [].slice;
-    var define = Watch.define;
-
-    define.flush = function flush(defined) {
-        Watch.watch(defined, ['change'], function(event, data) {
-            Watch.define.defining.push(true)
-
-            event.target = [] // 用于收集 Expression 对应的 Element
-
-            if (typeof data.value === 'function') data.value.call(data.context)
-
-            handle(event, data, defined)
-
-            if (event.type === 'change') {
-                if (location.href.indexOf('scrollIntoView') > -1) scrollIntoView(event, data)
-                highlight(event, data)
-            }
-
-            Watch.define.defining.pop()
-        })
-    }
 
     function expressionTarget(node) {
         while ((node = node.nextSibling)) {
@@ -79,21 +30,21 @@ if (typeof module === 'object' && module.exports) {
         }
     }
 
-    function handle(event, data, defined) {
-        var selector = 'script[slot="start"][path="' + data.path.join('.') + '"]'
-        var paths = slice.call(document.querySelectorAll(selector) || [], 0)
+    function handle(event, change, defined) {
+        var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
+        var paths = $(selector)
         var type
-        paths.forEach(function(path, index) {
+        paths.each(function(index, path) {
             type = path.getAttribute('type')
-            if (handle[type]) handle[type](path, event, data, defined)
+            if (handle[type]) handle[type](path, event, change, defined)
         })
     }
 
     // 更新属性对应的 Expression
-    handle.text = function text(path, event, data, defined) {
+    handle.text = function text(path, event, change, defined) {
         var guid = path.getAttribute('guid')
         var helper = path.getAttribute('helper')
-        var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
+        var endPath = $('script[slot="end"][guid="' + guid + '"]')[0]
         var content
 
         var target = [],
@@ -106,16 +57,14 @@ if (typeof module === 'object' && module.exports) {
         if (target.length === 1 && target[0].nodeType === 3) {
             // TextNode
             event.target.push(target[0])
-            target[0].nodeValue = data.value
-
-            event.target.push(target[0])
+            target[0].nodeValue = change.value
 
         } else {
             // Element
             if (helper === 'true') {
-                content = Handlebars.compile(defined.$helpers[guid])(data.context)
+                content = Handlebars.compile(defined.$helpers[guid])(change.context)
             } else {
-                content = data.value
+                content = change.value
             }
 
             $('<div>' + content + '</div>').contents()
@@ -128,7 +77,7 @@ if (typeof module === 'object' && module.exports) {
     }
 
     // 更新属性对应的 Expression
-    handle.attribute = function attribute(path, event, data, defined) {
+    handle.attribute = function attribute(path, event, change, defined) {
         var currentTarget, name, $target;
         event.target.push(currentTarget = expressionTarget(path))
         $target = $(currentTarget)
@@ -136,38 +85,38 @@ if (typeof module === 'object' && module.exports) {
         name = path.getAttribute('name')
         switch (name) {
             case 'class':
-                $target.removeClass(data.oldValue).addClass(data.value)
+                $target.removeClass(change.oldValue).addClass(change.value)
                 break
             case 'style':
-                $target.css(path.getAttribute('css'), data.value)
+                $target.css(path.getAttribute('css'), change.value)
                 break
             case 'value':
-                if ($target.val() !== data.value) $target.val(data.value)
+                if ($target.val() !== change.value) $target.val(change.value)
                 break
             case 'checked':
-                $target.prop(name, data.value)
+                $target.prop(name, change.value)
 
                 name = $target.attr('name')
                 if (name && $target.prop('checked')) {
                     setTimeout(function() {
-                        data.context[name] = $target.val()
+                        change.context[name] = $target.val()
                     }, 0)
                 }
                 break
             default:
-                $target.attr(name, data.value)
+                $target.attr(name, change.value)
         }
     }
 
     // 更新数组对应的 Block，路径 > guid > Block
-    handle.block = function block(path, event, data, defined) {
+    handle.block = function block(path, event, change, defined) {
         var guid = path.getAttribute('guid')
         var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
         var ast = defined.$blocks[guid]
-        var content = Handlebars.compile(ast)(data.context)
+        var content = Handlebars.compile(ast)(change.context)
 
         content = $('<div>' + content + '</div>')
-        Bind.scan(content[0], defined)
+        scan(content[0], defined)
         content = content.contents()
 
         var target = [],
@@ -227,7 +176,7 @@ if (typeof module === 'object' && module.exports) {
         如果 URL 中含有参数 scrollIntoView，则自动滚动至发生变化的元素。
         用于调试、演示，或者在项目中提醒用户。
     */
-    function scrollIntoView(event, data) {
+    function scrollIntoView(event, change) {
         return
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
@@ -242,7 +191,7 @@ if (typeof module === 'object' && module.exports) {
         })
     }
 
-    function highlight(event, data) {
+    function highlight(event, change) {
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
             switch (item.nodeType) {
@@ -268,10 +217,10 @@ if (typeof module === 'object' && module.exports) {
     }
 
     // expose
-    function Flush() {}
-    Flush.flush = define.flush
-    Flush.handle = handle
-
-    return Flush
+    return {
+        handle: handle,
+        scrollIntoView: scrollIntoView,
+        highlight: highlight
+    }
 
 }));

@@ -29,10 +29,10 @@ module.exports = function(grunt) {
             },
             all: ['test/nodeuinit/watch.js']
         },
-        connect: { // :server:keepalive
+        connect: { // grunt connect:server:keepalive
             server: {
                 options: {
-                    keepalive: true,
+                    // keepalive: true,
                     port: 5000,
                     base: '.',
                     hostname: '0.0.0.0'
@@ -41,8 +41,8 @@ module.exports = function(grunt) {
         },
         watch: {
             dev: {
-                files: ['<%= jshint.files %>'],
-                tasks: ['jshint', 'nodeunit', 'markdown']
+                files: ['<%= jshint.files %>', 'doc/*'],
+                tasks: ['jshint', 'markdown'] // 'nodeunit',
             }
         },
         markdown: {
@@ -65,6 +65,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect')
     grunt.loadNpmTasks('grunt-markdown')
 
-    grunt.registerTask('default', ['jshint', 'nodeunit', 'markdown', 'connect', 'watch'])
+    grunt.registerTask('default', ['jshint', 'markdown', 'connect', 'watch']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown'])
 };

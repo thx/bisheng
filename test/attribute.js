@@ -1,4 +1,5 @@
 (function expression() {
+    // return
     var tpl = '<span title="{{title}}">属性 <code>title</code> 在变</span>'
     var data = Mock.tpl(tpl, {
         title: '@TITLE'
@@ -13,6 +14,7 @@
 })();
 
 (function expression() {
+    // return
     var tpl = '<span class="before {{title}} after">属性 <code>class</code> 的一部分在变</span>'
     var data = Mock.tpl(tpl, {
         title: '@TITLE'
@@ -27,6 +29,7 @@
 })();
 
 (function expression() {
+    // return
     var tpl = '<span style="width: {{width}}px; height: auto">属性 <code>style</code> 的一部分在变</span>'
     var data = Mock.tpl(tpl, {
         width: '@INTEGER(200,500)'

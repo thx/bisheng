@@ -1,4 +1,4 @@
-var Watch = require('../../src/watch');
+var Loop = require('../../src/loop');
 var Mock = require('../../bower_components/mockjs/dist/mock.js');
 
 require('./console.group')

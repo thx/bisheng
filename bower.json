@@ -23,6 +23,7 @@
     "mockjs": "*",
     "underscore": "~1.5.2",
     "bootstrap": "~3.0.2",
-    "jquery": "~1.9.0"
+    "jquery": "~1.9.0",
+    "json2": "*"
   }
 }

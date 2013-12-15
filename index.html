@@ -7,24 +7,31 @@
 </head>
 <body>
   <div class="container"><h1 id="hyde">Hyde</h1>
+<hr>
 <p>轻量级的数据双向绑定库。</p>
 <h2 id="api">API</h2>
 <p><code>Hyde.bind(data, tpl, callback)</code></p>
+<blockquote>
+<p>真的只有一个接口。</p>
+</blockquote>
 <p>使用示例如下说：</p>
-<pre><code>var tpl = &#39;{{title}}&#39;
+<pre><code>// HTML 模板
+var tpl = &#39;{{title}}&#39;
+// 数据对象
 var data = {
   title: &#39;foo&#39;
 }
+// 执行双向绑定，然后将绑定后的 DOM 元素插入文档中
 Hyde.bind(data, tpl, function(content){
   $(&#39;div.container&#39;).append(content)
 })</code></pre>
 <h2 id="demo">Demo</h2>
 <ul>
-<li><a href="test/watch.html">test/watch.html</a></li>
+<li><a href="test/loop.html">test/loop.html</a></li>
 <li><a href="test/expression.html?scrollIntoView">test/expression.html</a></li>
+<li><a href="test/attribute.html?scrollIntoView">test/attribute.html</a></li>
 <li><a href="test/block.html?scrollIntoView">test/block.html</a></li>
 <li><a href="test/form.html?scrollIntoView">test/form.html</a></li>
-<li><a href="test/attribute.html?scrollIntoView">test/attribute.html</a></li>
 </ul>
 </div>
 

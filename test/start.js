@@ -10,23 +10,26 @@ setInterval(function() {
 var structure = $(
     Mock.heredoc(function() {
         /*!
-<div class="row">
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">Result:</div>
-            <div class="panel-body result"></div>
+<div>
+    <h2 class="name"></h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Result:</div>
+                <div class="panel-body result"></div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">Template:</div>
-            <div class="panel-body pre tpl"></div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Template:</div>
+                <div class="panel-body pre tpl"></div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">Data:</div>
-            <div class="panel-body pre data"></div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Data:</div>
+                <div class="panel-body pre data"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -34,37 +37,40 @@ var structure = $(
     })
 );
 
+if (!window.JSON) {
+    window.JSON = {
+        stringify: function(json) {
+            return json
+        }
+    }
+}
+
 /* jshint unused: false */
-function doit(data, tpl) {
+function doit(data, tpl, name) {
     var target = structure.clone();
-    bind(data, tpl, function(content) {
-        target
+    Hyde.bind(data, tpl, function(content) {
+        // 可能有多个 'div.container'，记录下来，以便当数据变化时更新对应的页面区域
+        target = target
+            .find('h2.name').empty().append(name).end()
             .find('div.result').empty().append(content).end()
             .find('div.tpl').empty().text(tpl).end()
-            .find('div.data').empty().html(JSON.stringify(data.$data, null, 4)).end()
+            .find('div.data').empty().html(JSON.stringify(data, null, 4)).end()
             .appendTo('div.container')
     })
 
-    Watch.watch(data, ['change'], function(event, _) {
-        Watch.log(event, _)
-
-        /*
-            如果 URL 中含有参数 scrollIntoView，则自动滚动至发生变化的元素。
-            用于调试、演示，或者在项目中提醒用户。
-        */
-        if (location.href.indexOf('scrollIntoView') > -1) scrollIntoView(event, _)
-
-        // 更新 div.data
-        target
-            .find('div.data').empty().html(JSON.stringify(data.$data, null, 4)).end()
+    Loop.watch(data, function(changes) {
+        $.each(changes, function(_, change) {
+            // 更新 div.data
+            target
+                .find('div.data').empty().html(JSON.stringify(data, null, 4)).end()
+        })
     })
 
-    function scrollIntoView(event, _) {
+    Flush.scrollIntoView = function scrollIntoView(event) {
         if (event.target.nodeType) event.target = [event.target]
-        Watch.define.defining.push(true)
         event.target.forEach && event.target.forEach(function(item, index) {
             var panel = $(item).parents('.panel')
-            if(!panel.length) return
+            if (!panel.length) return
             var top = panel.offset().top
             var height = panel.height()
             var min = $(window).scrollTop()
@@ -81,6 +87,5 @@ function doit(data, tpl) {
             }, 'fast')
 
         })
-        Watch.define.defining.pop()
     }
 }

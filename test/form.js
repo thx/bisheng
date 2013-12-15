@@ -109,6 +109,7 @@
 })();
 
 (function radio() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*!
 <div class="radio">

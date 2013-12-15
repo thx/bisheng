@@ -11,4 +11,8 @@ BI-Directional / Two-Way Data-Binding with JavaScript
     npm install
     bower install
 
-### 
+### Start
+
+    grunt 
+
+打开 <http://localhost:5000/>。
