@@ -17,7 +17,7 @@
     var data = {
       title: 'foo'
     }
-    // 执行双向绑定，然后将绑定后的 DOM 元素插入文档中
+    // 执行双向绑定，然后在回调函数中将绑定后的 DOM 元素插入文档中
     Hyde.bind(data, tpl, function(content){
       $('div.container').append(content)
     })
