@@ -1,7 +1,9 @@
 hyde
 ====
 
-BI-Directional / Two-Way Data-Binding with JavaScript
+BI-Directional / Two-Way Data-Binding with JavaScript.
+
+轻量级的数据双向绑定库。
 
 ## Usage
 
@@ -11,7 +13,20 @@ BI-Directional / Two-Way Data-Binding with JavaScript
     npm install
     bower install
 
-### Start
+### Hyde.bind(data, tpl, callback)
+
+    // HTML 模板
+    var tpl = '{{title}}'
+    // 数据对象
+    var data = {
+      title: 'foo'
+    }
+    // 执行双向绑定，然后将绑定后的 DOM 元素插入文档中
+    Hyde.bind(data, tpl, function(content){
+      $('div.container').append(content)
+    })
+
+## Start
 
     grunt 
 
