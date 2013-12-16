@@ -167,7 +167,10 @@
             value = newValue[name]
 
             if (!(name in oldValue)) continue
-            if (value === undefined && value !== oldValue[name] ||
+            if (value === undefined && oldValue[name] === undefined) continue
+
+            if (value === undefined ||
+                oldValue[name] === undefined ||
                 value.constructor !== (oldValue[name]).constructor) {
                 result.push({
                     type: TYPES.UPDATE,

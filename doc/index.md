@@ -24,8 +24,8 @@
 
 ## Demo
 
-* [test/loop.html](test/loop.html)
-* [test/expression.html](test/expression.html?scrollIntoView)
-* [test/attribute.html](test/attribute.html?scrollIntoView)
-* [test/block.html](test/block.html?scrollIntoView)
-* [test/form.html](test/form.html?scrollIntoView)
+* [demo/loop.html](demo/loop.html)
+* [demo/expression.html](demo/expression.html?scrollIntoView)
+* [demo/attribute.html](demo/attribute.html?scrollIntoView)
+* [demo/block.html](demo/block.html?scrollIntoView)
+* [demo/form.html](demo/form.html?scrollIntoView)

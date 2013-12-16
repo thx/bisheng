@@ -1,3 +1,9 @@
+"use strict";
+
+/* global window */
+/* global expose */
+/* global Handlebars */
+
 (function(factory) {
 
 	expose(factory, function() {
@@ -46,14 +52,14 @@
 				context = index = undefined
 			}
 
-			if (AST[node.type]) AST[node.type](node, context, index, blocks, helpers)
+			if (this[node.type]) this[node.type](node, context, index, blocks, helpers)
 
 			return node
 		},
 
 		program: function program(node, context, index, blocks, helpers) {
 			for (var i = 0; i < node.statements.length; i++) {
-				AST.handle(node.statements[i], node.statements, i, blocks, helpers)
+				this.handle(node.statements[i], node.statements, i, blocks, helpers)
 			}
 		},
 
@@ -84,13 +90,13 @@
 			var statements
 
 			attrs.slot = 'start'
-			placeholder = AST.createPathHTML(attrs)
+			placeholder = this.createPathHTML(attrs)
 			statements = Handlebars.parse(placeholder).statements
 			statements[1].binded = true
 			context.splice.apply(context, [index, 0].concat(statements))
 
 			attrs.slot = 'end'
-			placeholder = AST.createPathHTML(attrs)
+			placeholder = this.createPathHTML(attrs)
 			statements = Handlebars.parse(placeholder).statements
 			statements[1].binded = true
 			context.splice.apply(context, [index + 4, 0].concat(statements))
@@ -131,13 +137,13 @@
 
 			// mustache 定义 DOM 位置
 			attrs.slot = 'start'
-			placeholder = AST.createPathHTML(attrs)
+			placeholder = this.createPathHTML(attrs)
 			statements = Handlebars.parse(placeholder).statements
 			statements[1].binded = true
 			context.splice.apply(context, [index, 0].concat(statements))
 
 			attrs.slot = 'end'
-			placeholder = AST.createPathHTML(attrs)
+			placeholder = this.createPathHTML(attrs)
 			statements = Handlebars.parse(placeholder).statements
 			statements[1].binded = true
 			context.splice.apply(context, [index + 4, 0].concat(statements))
@@ -162,7 +168,7 @@
 
 			node.binded = true
 
-			AST.handle(node.program || node.inverse, context, index, blocks, helpers)
+			this.handle(node.program || node.inverse, context, index, blocks, helpers)
 		}
 	}
 
