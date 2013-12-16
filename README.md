@@ -1,4 +1,4 @@
-hyde
+Hyde.js
 ====
 
 BI-Directional / Two-Way Data-Binding with JavaScript.
