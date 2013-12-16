@@ -5,6 +5,34 @@ Hyde.js
 
 轻量级的数据双向绑定库。
 
+## 目录
+<!-- TODO -->
+
+    hyde
+    ├── dist
+    │   └── hyde.js
+    ├── doc
+    │   ├── index.md
+    │   └── template.html
+    ├── src
+    │   ├── ast.js
+    │   ├── expose.js
+    │   ├── flush.js
+    │   ├── hyde.js
+    │   ├── loop.js
+    │   └── scan.js
+    └── test
+        ├── attribute.html
+        ├── attribute.js
+        ├── block.html
+        ├── block.js
+        ├── expression.html
+        ├── expression.js
+        ├── form.html
+        ├── form.js
+        ├── loop.html
+        └── loop.js
+
 ## 用法
 
 ### 安装包和依赖关系

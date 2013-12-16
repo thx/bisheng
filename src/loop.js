@@ -1,13 +1,27 @@
 /*
-    √expose
-    get: event get
-    set: event set, change
-    lastest
-    array
+
+    属性监听工具。
+    Watch the changes of any object or attribute.
     
-    Reserved: shadow path
-    自动装箱 autoboxing，拆箱 unboxing
-    $data $watchers $blocks $helpers $path
+    Works with: IE 6+, FF 4+, SF 5+, WebKit, CH 7+, OP 12+, Node.JS
+
+    参考资料：
+    * [melanke/Watch.JS](https://github.com/melanke/Watch.JS)
+    * [JavaScript: Object.observe](http://weblog.bocoup.com/javascript-object-observe/)
+    * [jdarling/Object.observe](https://github.com/jdarling/Object.observe)
+    * [The future of data-binding is Object.observe()](http://addyosmani.com/blog/the-future-of-data-binding-is-object-observe/)
+    * <https://github.com/Polymer/observe-js>
+    * <https://github.com/jdarling/Object.observe>
+    
+    TODO
+        √expose
+        Xget: event get
+        Xset: event set, change
+        Xlastest
+        √array
+        √Reserved: shadow path
+        √自动装箱 autoboxing，√拆箱 unboxing
+        X$data X$watchers √$blocks √$helpers √$path
 */
 
 "use strict";
@@ -39,12 +53,67 @@
         UPDATE: 'update'
     };
 
+    /*
+        ### Loop.watch(data, fn(changes))
+
+        为所有属性添加监听函数。
+        <!--Attach default handler function to all properties.-->
+
+        * Loop.watch(data, fn(changes))
+
+        **参数的含义和默认值**如下所示：
+
+        * 参数 data：必选。待监听的对象或数组。
+        * 参数 fn：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：
+            
+                [{
+                    type: 'add',
+                    path: [guid,,],
+                    value: newValue
+                },{
+                    type: 'delete',
+                    path: [guid,,],
+                    value: newValue
+                }, {
+                    type: 'update',
+                    path: [guid,,],
+                    value: value,
+                    oldValue: oldValue
+                }]
+
+        **使用示例**如下所示：
+
+            var data = { foo: 'foo' }
+            Loop.watch(data, function(changes){
+                console.log(JSON.stringify(changes, null, 4))
+            })
+            data.foo = 'bar'
+
+            // =>
+            [
+                {
+                    "type": "update",
+                    "path": [
+                        6,
+                        "foo"
+                    ],
+                    "value": "bar",
+                    "oldValue": "foo",
+                    "root": {
+                        "foo": "bar"
+                    },
+                    "context": {
+                        "foo": "bar"
+                    }
+                }
+            ]
+    */
     function watch(data, fn) {
         var id = guid++;
         var shadow = clone(data, true, [id]);
 
         function task() {
-            var result = diff(data, shadow, [id])
+            var result = diff(data, shadow, [id], true)
             if (result && result.length) {
                 fn(result, data, shadow)
                 shadow = clone(data, true, [id])
@@ -55,6 +124,45 @@
         return shadow
     }
 
+    /*
+        ### Loop.clone(obj, autoboxing)
+
+        深度复制对象或数组。
+
+        * Loop.clone(obj, autoboxing)
+
+        **参数的含义和默认值**如下所示：
+
+        * 参数 obj：必选。待复制的对象或数组。
+        * 参数 autoboxing：可选。布尔值，指示是否把基本类型（Primitive Values）自动装箱，使得可以在其上扩展属性。装箱过程通过 `new Object(value)` 实现。该参数的默认值为 false，即默认不会自动装箱。
+
+        **使用示例**如下所示：
+
+            var data = {
+                foo: 'foo'
+            }
+            var unboxing = Loop.clone(data)
+            var autoboxing = Loop.clone(data, true)
+
+            console.log(JSON.stringify(unboxing, null, 4))
+            // =>
+            {
+                "foo": "foo"
+            }
+
+            console.dir(autoboxing)
+            // =>
+            {
+                "$path": "",
+                "foo": String {
+                    0: "f",
+                    1: "o",
+                    2: "o",
+                    $path: "foo",
+                    length: 3
+                }
+            }
+    */
     function clone(obj, autoboxing, path) { // path: Internal Use Only
         var target = obj.constructor(),
             name, value;
@@ -65,7 +173,7 @@
             return obj
         }
 
-        target.$path = path.join('.')
+        if (autoboxing) target.$path = path.join('.')
 
         for (name in obj) {
             value = obj[name]
@@ -86,17 +194,92 @@
         return target
     }
 
-    function diff(newValue, oldValue, path) {
+    /*
+        ### Loop.diff(newObject, oldObject)
+
+        比较两个对象或数组的差异。
+
+        * Loop.diff(newObject, oldObject)
+
+        **参数的含义和默认值**如下所示：
+
+        * 参数 newObject：必选。待比较的对象或数组。
+        * 参数 oldObject：必选。待比较的对象或数组。
+
+        所谓的**差异包括**：
+
+        1. newObject 比 oldObject 多出的属性。
+        2. newObject 比 oldObject 少了的属性。
+        3. newObject 比 oldObject 变化了的属性。
+
+        **返回值的格式**为：
+
+            [
+                {
+                    type: 'add',
+                    path: [guid,,],
+                    value: newValue
+                },{
+                    type: 'delete',
+                    path: [guid,,],
+                    value: newValue
+                }, {
+                    type: 'update',
+                    path: [guid,,],
+                    value: value,
+                    oldValue: oldValue
+                }
+            ]
+
+        **使用示例**如下所示：
+
+            var newObject = {
+                add: 'added property',
+                update: 'bar'
+            }
+            var oldObject = {
+                update: 'foo',
+                deleted: 'deleted property'
+            }
+            var changes = Loop.diff(newObject, oldObject)
+            console.log(JSON.stringify(changes, null, 4))
+            // =>
+            [
+                {
+                    "type": "add",
+                    "path": [
+                        "add"
+                    ],
+                    "value": "added property"
+                },
+                {
+                    "type": "delete",
+                    "path": [
+                        "deleted"
+                    ],
+                    "value": "deleted property"
+                },
+                {
+                    "type": "update",
+                    "path": [
+                        "update"
+                    ],
+                    "value": "bar",
+                    "oldValue": "foo"
+                }
+            ]
+     */
+    function diff(newObject, oldObject, path, fix) {
         var result = result || [];
         path = path || []
 
-        if (typeof newValue !== "object" || typeof oldValue !== "object") {
+        if (typeof newObject !== "object" || typeof oldObject !== "object") {
             if (result.length) return result
         }
 
-        added(newValue, oldValue, path, result)
-        removed(newValue, oldValue, path, result)
-        updated(newValue, oldValue, path, result)
+        added(newObject, oldObject, path, result)
+        removed(newObject, oldObject, path, result)
+        updated(newObject, oldObject, path, result)
 
         /*
             root    完整的数据对象
@@ -110,10 +293,12 @@
             return context
         }
 
-        for (var index = 0, change; index < result.length; index++) {
-            change = result[index]
-            change.root = newValue
-            change.context = getContext(newValue, change.path)
+        if (fix) {
+            for (var index = 0, change; index < result.length; index++) {
+                change = result[index]
+                change.root = newObject
+                change.context = getContext(newObject, change.path)
+            }
         }
 
         if (result.length) return result
@@ -202,12 +387,10 @@
 
     // expose
     return {
+        TYPES: TYPES,
         watch: watch,
         clone: clone,
-        diff: diff,
-        added: added,
-        removed: removed,
-        updated: updated
+        diff: diff
     }
 
 }));

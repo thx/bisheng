@@ -6,3 +6,4 @@ bower_components
 build
 *.TODO
 PLAN.md
+npm-debug.log

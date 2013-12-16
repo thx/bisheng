@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hyde.js Test</title>
+  <link  href="./bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container"><h2 id="loop">Loop</h2>
+<p>属性监听工具。</p>
+<h3 id="loop-watch-data-fn-changes-">Loop.watch(data, fn(changes))</h3>
+<p>为所有属性添加监听函数。
+<!--Attach default handler function to all properties.--></p>
+<ul>
+<li>Loop.watch(data, fn(changes))</li>
+</ul>
+<p><strong>参数的含义和默认值</strong>如下所示：</p>
+<ul>
+<li>参数 data：必选。待监听的对象或数组。</li>
+<li><p>参数 fn：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：</p>
+<pre><code>  [
+      {
+          type: &#39;add&#39;,
+          path: [guid,,],
+          value: newValue
+      },{
+          type: &#39;delete&#39;,
+          path: [guid,,],
+          value: newValue
+      }, {
+          type: &#39;update&#39;,
+          path: [guid,,],
+          value: value,
+          oldValue: oldValue
+      }
+  ]</code></pre>
+</li>
+</ul>
+<p><strong>使用示例</strong>如下所示：</p>
+<pre><code>var data = { foo: &#39;foo&#39; }
+Loop.watch(data, function(changes){
+    console.log(JSON.stringify(changes, null, 4))
+})
+data.foo = &#39;bar&#39;
+
+// =&gt;
+[
+    {
+        &quot;type&quot;: &quot;update&quot;,
+        &quot;path&quot;: [
+            6,
+            &quot;foo&quot;
+        ],
+        &quot;value&quot;: &quot;bar&quot;,
+        &quot;oldValue&quot;: &quot;foo&quot;,
+        &quot;root&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        },
+        &quot;context&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        }
+    }
+]</code></pre>
+<h3 id="loop-clone-obj-autoboxing-">Loop.clone(obj, autoboxing)</h3>
+<p>深度复制对象或数组。</p>
+<ul>
+<li>Loop.clone(obj, autoboxing)</li>
+</ul>
+<p><strong>参数的含义和默认值</strong>如下所示：</p>
+<ul>
+<li>参数 obj：必选。待复制的对象或数组。</li>
+<li>参数 autoboxing：可选。布尔值，指示是否把基本类型（Primitive Values）自动装箱，使得可以在其上扩展属性。装箱过程通过 <code>new Object(value)</code> 实现。该参数的默认值为 false，即默认不会自动装箱。</li>
+</ul>
+<p><strong>使用示例</strong>如下所示：</p>
+<pre><code>var data = {
+    foo: &#39;foo&#39;
+}
+var unboxing = Loop.clone(data)
+var autoboxing = Loop.clone(data, true)
+
+console.log(JSON.stringify(unboxing, null, 4))
+// =&gt;
+{
+    &quot;foo&quot;: &quot;foo&quot;
+}
+
+console.dir(autoboxing)
+// =&gt;
+{
+    &quot;$path&quot;: &quot;&quot;,
+    &quot;foo&quot;: String {
+        0: &quot;f&quot;,
+        1: &quot;o&quot;,
+        2: &quot;o&quot;,
+        $path: &quot;foo&quot;,
+        length: 3
+    }
+}</code></pre>
+<h3 id="loop-diff-newobject-oldobject-">Loop.diff(newObject, oldObject)</h3>
+<p>比较两个对象或数组的差异。</p>
+<ul>
+<li>Loop.diff(newObject, oldObject)</li>
+</ul>
+<p><strong>参数的含义和默认值</strong>如下所示：</p>
+<ul>
+<li>参数 newObject：必选。待比较的对象或数组。</li>
+<li>参数 oldObject：必选。待比较的对象或数组。</li>
+</ul>
+<p>所谓的<strong>差异包括</strong>：</p>
+<ol>
+<li>newObject 比 oldObject 多出的属性。</li>
+<li>newObject 比 oldObject 少了的属性。</li>
+<li>newObject 比 oldObject 变化了的属性。</li>
+</ol>
+<p><strong>返回值的格式</strong>为：</p>
+<pre><code>[
+    {
+        type: &#39;add&#39;,
+        path: [guid,,],
+        value: newValue
+    },{
+        type: &#39;delete&#39;,
+        path: [guid,,],
+        value: newValue
+    }, {
+        type: &#39;update&#39;,
+        path: [guid,,],
+        value: value,
+        oldValue: oldValue
+    }
+]</code></pre>
+<p><strong>使用示例</strong>如下所示：</p>
+<pre><code>var newObject = {
+    add: &#39;added property&#39;,
+    update: &#39;bar&#39;
+}
+var oldObject = {
+    update: &#39;foo&#39;,
+    deleted: &#39;deleted property&#39;
+}
+var changes = Loop.diff(newObject, oldObject)
+console.log(JSON.stringify(changes, null, 4))
+// =&gt;
+[
+    {
+        &quot;type&quot;: &quot;add&quot;,
+        &quot;path&quot;: [
+            &quot;add&quot;
+        ],
+        &quot;value&quot;: &quot;added property&quot;
+    },
+    {
+        &quot;type&quot;: &quot;delete&quot;,
+        &quot;path&quot;: [
+            &quot;deleted&quot;
+        ],
+        &quot;value&quot;: &quot;deleted property&quot;
+    },
+    {
+        &quot;type&quot;: &quot;update&quot;,
+        &quot;path&quot;: [
+            &quot;update&quot;
+        ],
+        &quot;value&quot;: &quot;bar&quot;,
+        &quot;oldValue&quot;: &quot;foo&quot;
+    }
+]</code></pre>
+</div>
+
+  <link rel="stylesheet" href="./bower_components/highlightjs/styles/default.css">
+  <script src="./bower_components/highlightjs/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
