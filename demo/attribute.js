@@ -1,5 +1,5 @@
-(function expression() {
-    // return
+(function attribute() {
+    return
     var tpl = Mock.heredoc(function() {
         /*
 <span title="{{title}}">
@@ -19,8 +19,8 @@
     )
 })();
 
-(function expression() {
-    // return
+(function attribute() {
+    return
     var tpl = Mock.heredoc(function() {
         /*
 <span class="before {{title}} after">
@@ -40,8 +40,8 @@
     )
 })();
 
-(function expression() {
-    // return
+(function attribute() {
+    return
     var tpl = Mock.heredoc(function() {
         /*
 <span style="width: {{width}}px; height: auto">
@@ -57,6 +57,27 @@
     tasks.push(
         function() {
             data.width = Random.integer(60, 100) + '%'
+        }
+    )
+})();
+
+(function attribute() {
+    // return
+    var tpl = Mock.heredoc(function() {
+        /*
+<a href="/mock/{{guid}}">
+    属性 href 再变
+</a>
+         */
+    })
+    var data = Mock.tpl(tpl, {
+        guid: '@GUID'
+    })
+    doit(data, tpl)
+
+    tasks.push(
+        function() {
+            data.guid = Random.guid()
         }
     )
 })();

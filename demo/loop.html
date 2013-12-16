@@ -20,6 +20,14 @@
 <body>
   <div class="container">
     <h1>Loop</h1><hr>
+    <blockquote>
+      <p>说明</p>
+      <ol>
+        <li>每隔 <code>1s</code> 自动改变一次 <code>Data</code> 面板中的数据，由 <code>demo/loop.js</code> 中的定时器（<code>setInterval()</code>）驱动。</li>
+        <li>数据改变后，会触发监听函数，把变化信息作为参数传入。</li>
+        <li>监听函数会把变化信息输出到 <code>Diff</code> 面板中。</li>
+      </ol>
+    </blockquote>
   </div>
   <script src="./loop.js"></script>
 </body>
