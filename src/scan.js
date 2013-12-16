@@ -5,7 +5,7 @@
     })
 
 }(function() {
-    
+
     function scan(node, data) {
         // return
         // data > dom, expression
@@ -80,7 +80,7 @@
                                 .attr({
                                     type: 'attribute',
                                     name: attributeNode.nodeName.toLowerCase(),
-                                    css: stylema[1].trim()
+                                    css: $.trim(stylema[1])
                                 })[0]
                             )
                         }
