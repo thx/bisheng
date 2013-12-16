@@ -104,7 +104,12 @@ if (typeof module === 'object' && module.exports) {
                 }
                 break
             default:
-                $target.attr(name, change.value)
+                // 只更新变化的部分（其实不准确 TODO）
+                $target.attr(name, function(index, attr) {
+                    return change.oldValue === undefined ? change.value :
+                        attr !== change.oldValue.valueOf() ? attr.replace(change.oldValue, change.value) :
+                        change.value
+                })
         }
     }
 
