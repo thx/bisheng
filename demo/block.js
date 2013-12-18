@@ -1,14 +1,8 @@
 $('div.container').append('<h2>Basic Blocks</h2>')
 
 ;
-(function helper() {
+(function block() {
     // return
-    Handlebars.registerHelper('link', function(text, url) {
-        return new Handlebars.SafeString(
-            "<a href='" + url + "'>" + text + "</a>"
-        );
-    });
-
     var tpl = Mock.heredoc(function() {
         /*
 <div class="entry">
@@ -27,6 +21,10 @@ $('div.container').append('<h2>Basic Blocks</h2>')
             data.title = Random.title(1)
         },
         function() {
+            delete data.noop
+        },
+        function() {
+            data.noop = {}
             data.noop.body = Random.sentence(3, 5)
         },
         function() {
@@ -37,7 +35,7 @@ $('div.container').append('<h2>Basic Blocks</h2>')
     )
 })();
 
-(function helper() {
+(function block() {
     // return
     var tpl = Mock.heredoc(function() {
         /*
@@ -62,7 +60,7 @@ $('div.container').append('<h2>Basic Blocks</h2>')
             data.body = Random.sentence(3, 5)
         },
         function() {
-            data.noop = Random.boolean()
+            data.noop = !data.noop
         }
     )
 })();
@@ -77,8 +75,8 @@ $('div.container').append('<h2>The with helper</h2>')
 <div class="entry">
   <h1>{{title}}</h1>
   {{#with story}}
-    <div class="intro">{{{intro}}}</div>
-    <div class="body">{{{body}}}</div>
+    <div class="intro">intro: {{{intro}}}</div>
+    <div class="body">body: {{{body}}}</div>
   {{/with}}
 </div>
         */
@@ -111,17 +109,10 @@ $('div.container').append('<h2>The with helper</h2>')
 $('div.container').append('<h2>Simple Iterators</h2>')
 
 ;
-(function helper() { // TODO 优化数组的更新
+(function each() { // TODO 优化数组的更新
     // return
     var tpl = Mock.heredoc(function() {
         /*
-<div class="entry">
-  <h1>{{title}}</h1>
-  {{#with story}}
-    <div class="intro">{{{intro}}}</div>
-    <div class="body">{{{body}}}</div>
-  {{/with}}
-</div>
 <div class="comments">
   {{#each comments}}
     <div class="comment">
@@ -136,14 +127,9 @@ $('div.container').append('<h2>Simple Iterators</h2>')
         */
     })
     var data = Mock.tpl(tpl, {
-        title: '@TITLE(1)',
-        story: {
-            intro: '@SENTENCE(3,5)',
-            body: '@SENTENCE(5,7)'
-        },
         'comments|3': [{
-            subject: '@SENTENCE(3,5)',
-            body: '@SENTENCE(5,7)'
+            subject: '@TITLE(1)',
+            body: '@SENTENCE(5)'
         }]
     })
     doit(data, tpl)
@@ -151,8 +137,12 @@ $('div.container').append('<h2>Simple Iterators</h2>')
         function() {
             if (data.comments.length < 6) {
                 data.comments.push({
-                    subject: Random.sentence(3, 5),
-                    body: Random.sentence(5, 7)
+                    subject: Random.title(1),
+                    body: Random.sentence(5)
+                })
+                data.comments.push({
+                    subject: Random.title(1),
+                    body: Random.sentence(5)
                 })
             }
         },
