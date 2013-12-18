@@ -1,5 +1,5 @@
-(function attribute() {
-    return
+(function attribute_title() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
 <span title="{{title}}">
@@ -19,8 +19,8 @@
     )
 })();
 
-(function attribute() {
-    return
+(function attribute_class() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
 <span class="before {{title}} after">
@@ -40,8 +40,8 @@
     )
 })();
 
-(function attribute() {
-    return
+(function attribute_style() {
+    // return
     var tpl = Mock.heredoc(function() {
         /*
 <span style="width: {{width}}px; height: auto">
@@ -61,8 +61,8 @@
     )
 })();
 
-(function attribute() {
-    // return
+(function attribute_part() {
+    return
     var tpl = Mock.heredoc(function() {
         /*
 <a href="/mock/{{guid}}">
@@ -78,6 +78,28 @@
     tasks.push(
         function() {
             data.guid = Random.guid()
+        }
+    )
+})();
+
+(function attribute_block() {
+    // return
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="{{#unless length}}hide{{/unless}}">
+    我一路种下了蘑菇、只为让你知道回家的路。 --- 迅捷斥候
+</div>
+<span>{{length}}</span>
+         */
+    })
+    var data = Mock.tpl(tpl, {
+        length: '@BOOLEAN'
+    })
+    doit(data, tpl)
+
+    tasks.push(
+        function() {
+            data.length = Random.boolean()
         }
     )
 })();
