@@ -20,6 +20,8 @@
 }(function() {
 
     return {
+        version: '0.1.0',
+
         /*
             Hyde.bind(data, tpl, callback)
         */
