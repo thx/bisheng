@@ -40,12 +40,15 @@
 
     var guid = 1;
 
-    var tasks = []
-    setInterval(function() {
+    var tasks = [];
+
+    function letMeSee() {
         for (var i = 0; i < tasks.length; i++) {
             tasks[i]()
         }
-    }, 50);
+        setTimeout(letMeSee, 50)
+    }
+    setTimeout(letMeSee, 50)
 
     var TYPES = {
         ADD: 'add',
@@ -286,18 +289,21 @@
             context 变化的上下文，这里进行遍历计算以简化 Flush.js 对数据上下文的访问
         */
         function getContext(root, path) {
-            var context = root
-            for (var index = 1; index < path.length - 1; index++) {
-                context = context[path[index]]
+            return function() {
+                var context = root
+                for (var index = 1; index < path.length - 1; index++) {
+                    context = context[path[index]]
+                }
+                return context
             }
-            return context
         }
 
         if (fix) {
             for (var index = 0, change; index < result.length; index++) {
                 change = result[index]
                 change.root = newObject
-                change.context = getContext(newObject, change.path)
+                change.context = getContext(newObject, change.path)()
+                change.getContext = getContext
             }
         }
 
@@ -361,7 +367,7 @@
                     type: TYPES.UPDATE,
                     path: path.concat(name),
                     value: value,
-                    oldValue: oldValue[name]
+                    oldValue: oldValue[name] !== undefined ? oldValue[name].valueOf() : oldValue[name]
                 })
                 continue
             }
