@@ -25,6 +25,7 @@
 
 ## Demo
 
+* [TodoMVC](demo/todo/index.html)
 * [监听数据对象的属性](demo/loop.html)
 * [监听表达式 {{}}](demo/expression.html)
 * [监听 DOM 节点的属性](demo/attribute.html)

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-framework="emberjs">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Hyde.js • TodoMVC</title>
+        <link rel="stylesheet" href="/bower_components/todomvc-common/base.css">
+    </head>
+    <body>
+        <script type="text/x-handlebars" data-template-name="todos">
+            <section id="todoapp">
+                <header id="header">
+                    <h1>todos</h1>
+                    <input id="new-todo" placeholder="What needs to be done?" autofocus>
+                </header>
+                <section id="main">
+                    <input id="toggle-all" type="checkbox">
+                    <label for="toggle-all">Mark all as complete</label>
+                    <ul id="todo-list">
+                        {{#each todos}}
+                        <li class="{{#if completed}}completed{{/if}}" data-id="{{id}}">
+                            <div class="view">
+                                <input class="toggle" type="checkbox" checked="{{completed}}">
+                                <label>{{title}}</label>
+                                <button class="destroy"></button>
+                            </div>
+                            <input class="edit" value="{{title}}">
+                        </li>
+                        {{/each}}
+                    </ul>
+                </section>
+                <footer id="footer">
+                    <span id="todo-count"><strong>{{remaining}}</strong> item left</span>
+                    <ul id="filters">
+                        <li><a href="javascript:;" class="all">All</a></li>
+                        <li><a href="javascript:;" class="active">Active</a></li>
+                        <li><a href="javascript:;" class="completed">Completed</a></li>
+                    </ul>
+                    {{#if completed}}
+                    <button id="clear-completed">Clear completed ({{completed}})</button>
+                    {{/if}}
+                </footer>
+            </section>
+            <footer id="info">
+                <p>Double-click to edit a todo</p>
+                <p>Created by <a href="http://github.com/sindresorhus">Sindre Sorhus</a></p>
+                <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+            </footer>
+        </script>
+
+        <script src="/bower_components/todomvc-common/base.js"></script>
+        <script src="/bower_components/jquery/jquery.js"></script>
+        <script src="/bower_components/handlebars/handlebars.js"></script>
+        <script src="/bower_components/mockjs/dist/mock.js"></script>
+        <script src="/dist/hyde.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>
