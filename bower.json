@@ -25,6 +25,8 @@
     "bootstrap": "~3.0.2",
     "jquery": "~1.9.0",
     "json2": "*",
-    "highlightjs": "~7.5.0"
+    "highlightjs": "~7.5.0",
+    "todomvc-common": "~0.1.9",
+    "js-beautify": "~1.4.2"
   }
 }
