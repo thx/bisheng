@@ -5,6 +5,7 @@
 /* global $: true */
 /* global Handlebars: true */
 /* global expose */
+/* global Loop */
 /* global scan */
 
 // CommonJS
@@ -34,6 +35,13 @@ if (typeof module === 'object' && module.exports) {
         var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
         var paths = $(selector)
         var type
+
+        if (paths.length === 0 && change.context instanceof Array) {
+            change.path.pop()
+            change.context = change.getContext(change.root, change.path)()
+            handle(event, change, defined)
+        }
+
         paths.each(function(index, path) {
             type = path.getAttribute('type')
             if (handle[type]) handle[type](path, event, change, defined)
@@ -82,19 +90,29 @@ if (typeof module === 'object' && module.exports) {
         event.target.push(currentTarget = expressionTarget(path))
         $target = $(currentTarget)
 
+        var ast = defined.$blocks[path.getAttribute('guid')]
+        var value = ast ? Handlebars.compile(ast)(change.context) : change.value
+        var oldValue = function() {
+            var oldValue
+            change.context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue
+            oldValue = ast ? Handlebars.compile(ast)(change.context) : change.oldValue
+            change.context[change.path[change.path.length - 1]] = change.value
+            return oldValue
+        }()
+
         name = path.getAttribute('name')
         switch (name) {
             case 'class':
-                $target.removeClass(change.oldValue).addClass(change.value)
+                $target.removeClass('' + oldValue).addClass('' + value)
                 break
             case 'style':
-                $target.css(path.getAttribute('css'), change.value)
+                $target.css(path.getAttribute('css'), value)
                 break
             case 'value':
-                if ($target.val() !== change.value) $target.val(change.value)
+                if ($target.val() !== value) $target.val(value)
                 break
             case 'checked':
-                $target.prop(name, change.value)
+                $target.prop(name, value)
 
                 name = $target.attr('name')
                 if (name && $target.prop('checked')) {
@@ -106,9 +124,9 @@ if (typeof module === 'object' && module.exports) {
             default:
                 // 只更新变化的部分（其实不准确 TODO）
                 $target.attr(name, function(index, attr) {
-                    return change.oldValue === undefined ? change.value :
-                        attr !== change.oldValue.valueOf() ? attr.replace(change.oldValue, change.value) :
-                        change.value
+                    return oldValue === undefined ? value :
+                        attr !== oldValue.valueOf() ? attr.replace(oldValue, value) :
+                        value
                 })
         }
     }
@@ -118,10 +136,11 @@ if (typeof module === 'object' && module.exports) {
         var guid = path.getAttribute('guid')
         var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
         var ast = defined.$blocks[guid]
-        var content = Handlebars.compile(ast)(change.context)
+        var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
+        var content = Handlebars.compile(ast)(context)
 
         content = $('<div>' + content + '</div>')
-        scan(content[0], defined)
+        scan(content[0], change.context)
         content = content.contents()
 
         var target = [],
@@ -161,12 +180,16 @@ if (typeof module === 'object' && module.exports) {
                 target[index].nodeValue = element.nodeValue
                 return
             }
-            if (element.nodeType === 1 && element.outerHTML !== target[index].outerHTML) {
-                target[index].parentNode.insertBefore(element, target[index])
-                target[index].parentNode.removeChild(target[index])
 
-                event.target.push(element)
-                return
+            if (element.nodeType === 1) {
+                // $(target[index]).removeClass('transition highlight')
+                if (element.outerHTML !== target[index].outerHTML) {
+                    target[index].parentNode.insertBefore(element, target[index])
+                    target[index].parentNode.removeChild(target[index])
+
+                    event.target.push(element)
+                    return
+                }
             }
         })
 
@@ -207,14 +230,14 @@ if (typeof module === 'object' && module.exports) {
                     $(item).wrap('<span>').parent().addClass('transition highlight')
                     // $(item.parentNode).addClass('transition highlight')
                     setTimeout(function() {
-                        $(item).unwrap('<span>').removeClass('highlight')
+                        $(item).unwrap('<span>').removeClass('transition highlight')
                         // $(item.parentNode).removeClass('highlight')
                     }, 500)
                     break
                 case 1:
                     $(item).addClass('transition highlight')
                     setTimeout(function() {
-                        $(item).removeClass('highlight')
+                        $(item).removeClass('transition highlight')
                     }, 500)
                     break
             }
