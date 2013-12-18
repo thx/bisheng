@@ -13,19 +13,27 @@ var structure = $(
 <div>
     <h2 class="name"></h2>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Result:</div>
                 <div class="panel-body result"></div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Source:</div>
+                <div class="panel-body pre source"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Template:</div>
                 <div class="panel-body pre tpl"></div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">Data:</div>
                 <div class="panel-body pre data"></div>
@@ -63,6 +71,9 @@ function doit(data, tpl, name) {
             // 更新 div.data
             target
                 .find('div.data').empty().html(JSON.stringify(data, null, 4)).end()
+                .find('div.source').empty().text(
+                    target.find('div.result').html()
+                ).end()
         })
     })
 
