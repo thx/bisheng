@@ -23,11 +23,63 @@ module.exports = function(grunt) {
                 jshintrc: '.jshintrc'
             }
         },
+        concat: {
+            dist: {
+                options: {
+                    separator: '\n\n',
+                    process: function(src, filepath) {
+                        var banner = '/*! ' + filepath + ' */\n';
+                        return banner + src
+                    }
+                },
+                src: [
+                    'src/expose.js',
+                    'src/loop.js',
+                    'src/ast.js',
+                    'src/scan.js',
+                    'src/flush.js',
+                    'src/hyde.js'
+                ],
+                dest: 'dist/hyde.js'
+            }
+        },
         nodeunit: {
             options: {
                 verbose: true
             },
             all: ['test/nodeuinit/watch.js']
+        },
+        uglify: {
+            options: {
+                banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            },
+            dev: {
+                options: {
+                    beautify: true,
+                    compress: false,
+                    mangle: false,
+                    preserveComments: 'some' // false all some
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'dist/',
+                    src: ['**/*.js', '!**/*-min.js'],
+                    dest: 'dist/',
+                    ext: '.js'
+                }]
+            },
+            release: {
+                options: {
+                    sourceMap: 'dist/hyde-min.map'
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'dist/',
+                    src: ['**/*.js', '!**/*-min.js'],
+                    dest: 'dist/',
+                    ext: '-min.js'
+                }]
+            }
         },
         connect: { // grunt connect:server:keepalive
             server: {
@@ -42,7 +94,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: ['<%= jshint.files %>', 'doc/*'],
-                tasks: ['jshint', 'markdown'] // 'nodeunit',
+                tasks: ['jshint', 'concat'] // 'nodeunit', , 'uglify', 'markdown'
             }
         },
         markdown: {
@@ -70,8 +122,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-nodeunit')
     grunt.loadNpmTasks('grunt-contrib-watch')
     grunt.loadNpmTasks('grunt-contrib-connect')
+    grunt.loadNpmTasks('grunt-contrib-concat')
+    grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
 
-    grunt.registerTask('default', ['jshint', 'markdown', 'connect', 'watch']) // , 'nodeunit'
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'markdown', 'connect', 'watch']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown'])
 };
