@@ -91,21 +91,3 @@ function doit(data, name) {
         }
     )
 })();
-
-(function bind() {
-    return
-    var data = {
-        title: Random.title()
-    }
-    var tpl = Mock.heredoc(function() {
-        /*!
-{{#if title}}{{title}}{{/if}}
-         */
-    })
-    Loop.bind(data, tpl)
-    tasks.push(
-        function() {
-            data.abc = 123
-        }
-    )
-})();
