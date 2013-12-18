@@ -13,7 +13,7 @@
     var data = Mock.tpl(tpl, {
         first: '@FIRST'
     })
-    doit(data, tpl)
+    doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
@@ -38,7 +38,7 @@
          */
     })
     var data = Mock.tpl(tpl)
-    doit(data, tpl)
+    doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
@@ -62,7 +62,7 @@
     var data = Mock.tpl(tpl, {
         description: '@SENTENCE'
     })
-    doit(data, tpl)
+    doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
@@ -96,7 +96,7 @@
          */
     })
     var data = Mock.tpl(tpl)
-    doit(data, tpl)
+    doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
@@ -132,7 +132,7 @@
     var data = Mock.tpl(tpl, {
         optionsRadios: ''
     })
-    doit(data, tpl)
+    doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
