@@ -16,7 +16,7 @@
         scanFormElements(node, data)
     }
 
-    // 
+    // 扫描单个节点，包括：属性，子节点。
     function scanNode(node) {
         switch (node.nodeType) {
             case 1: // Element
@@ -43,8 +43,6 @@
                 }
             }).replaceAll(node)
     }
-
-
 
     /*
         <script path="" type="attribute" name="" ></script>
@@ -136,10 +134,11 @@
                 item.setAttribute('path', path)
 
                 var guid = item.getAttribute('guid')
-                slice.call(node.querySelectorAll('script[slot="end"][type="block"][guid="' + guid + '"]') || [], 0)
+                slice.call(node.querySelectorAll('script[slot="end"][guid="' + guid + '"]') || [], 0)
                     .forEach(function(end) {
                         end.setAttribute('path', path)
                     })
+                // [type="block"]
             }
         })
     }
@@ -187,7 +186,7 @@
     /*
      */
     function updateValue(data, path, target) {
-        for (var index = 1; index < path.length - 2; index++) {
+        for (var index = 1; index < path.length - 1; index++) {
             data = data[path[index]]
         }
 
@@ -220,7 +219,7 @@
     }
 
     function updateChecked(data, path, target) {
-        for (var index = 1; index < path.length - 2; index++) {
+        for (var index = 1; index < path.length - 1; index++) {
             data = data[path[index]]
         }
 
@@ -232,12 +231,12 @@
                     case 'radio': // TODO
                     case 'checkbox': // TODO
                         value = $target.prop('checked')
-
-                        var name = $target.attr('name')
-                        if (name && value) data[name] = $target.val()
+                        // var name = $target.attr('name')
+                        // if (name && value) data[name] = $target.val()
                 }
                 break
             default:
+                // TODO
         }
 
         data[path[path.length - 1]] = value

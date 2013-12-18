@@ -14,8 +14,13 @@
 
     var guid = 1;
 
+    var ifHelp = Handlebars.helpers['if']
+    Handlebars.registerHelper('if', function(conditional, options) {
+        return ifHelp.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options)
+    })
+
     Handlebars.registerHelper('$lastest', function(items, options) {
-        return items && items.$path || this.$path
+        return items && items.$path || this && this.$path
     })
 
     return {
@@ -95,10 +100,12 @@
             statements[1].binded = true
             context.splice.apply(context, [index, 0].concat(statements))
 
-            attrs.slot = 'end'
-            placeholder = this.createPathHTML(attrs)
+            // attrs.slot = 'end'
+            placeholder = this.createPathHTML({
+                guid: attrs.guid,
+                slot: 'end'
+            })
             statements = Handlebars.parse(placeholder).statements
-            statements[1].binded = true
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
             helpers[guid++] = {
@@ -133,8 +140,6 @@
             var placeholder
             var statements
 
-
-
             // mustache 定义 DOM 位置
             attrs.slot = 'start'
             placeholder = this.createPathHTML(attrs)
@@ -142,10 +147,12 @@
             statements[1].binded = true
             context.splice.apply(context, [index, 0].concat(statements))
 
-            attrs.slot = 'end'
-            placeholder = this.createPathHTML(attrs)
+            // attrs.slot = 'end'
+            placeholder = this.createPathHTML({
+                guid: attrs.guid,
+                slot: 'end'
+            })
             statements = Handlebars.parse(placeholder).statements
-            statements[1].binded = true
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
             blocks[guid++] = {
