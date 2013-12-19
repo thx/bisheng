@@ -10,7 +10,7 @@ setInterval(function() {
 var structure = $(
     Mock.heredoc(function() {
         /*!
-<div>
+<div class="tc">
     <h2 class="name"></h2>
     <div class="row">
         <div class="col-md-6">
@@ -80,7 +80,7 @@ function doit(data, tpl, name) {
     Flush.scrollIntoView = function scrollIntoView(event) {
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
-            var panel = $(item).parents('.panel')
+            var panel = $(item).parents('.tc')
             if (!panel.length) return
             var top = panel.offset().top
             var height = panel.height()

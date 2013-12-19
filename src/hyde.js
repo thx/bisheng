@@ -65,8 +65,8 @@
             return content
         },
         unbind: function unbind(data) {
-            // TODO
-            return
+            Loop.unwatch(data)
+            return this
         }
     }
 

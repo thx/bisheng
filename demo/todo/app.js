@@ -86,6 +86,7 @@ $(function() {
                 title: val,
                 completed: false
             })
+            Loop.letMeSee()
 
             $input.val('')
         })
@@ -95,6 +96,7 @@ $(function() {
                 if (todo.id === id) {
                     data.todos.splice(index, 1)
                     sync()
+                    Loop.letMeSee()
                     return false
                 }
             });
@@ -110,6 +112,7 @@ $(function() {
             var val = $input.val()
             $input.data('val', val)
             $input.val(val).focus()
+            return false
         })
         .on('keyup', 'input.edit', function(event) {
             var $input = $(this)
@@ -119,8 +122,8 @@ $(function() {
                 $input.val($input.data('val'))
             }
         })
-        .on('keypress blur', 'input.edit', function(event) {
-            var update = event.type === 'blur' || event.type === 'keypress' && event.which === KEY_ENTER
+        .on('keypress focusout blur', 'input.edit', function(event) {
+            var update = event.type === 'focusout' || event.type === 'blur' || event.type === 'keypress' && event.which === KEY_ENTER
             if (update) $(this).closest('li').removeClass('editing')
 
             var val = $.trim($(this).val());

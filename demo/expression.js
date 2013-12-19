@@ -56,17 +56,31 @@
     )
 })();
 
-(function expression_placeholder() {
+(function expression_complex() {
     // return
-    var tpl = '<span>{{{lines}}}</span>'
+    var tpl = Mock.heredoc(function() {
+        /*
+{{#with hero}}
+<div class="media">
+    <a class="pull-left" href="#">
+      <img class="media-object" src="{{icon}}" style="width: 64px; height: 64px;">
+    </a>
+    <div class="media-body">
+        <h4 class="media-heading">{{name}}</h4>
+        {{tooltip}}
+    </div>
+</div>
+{{/with}}
+         */
+    })
     var data = Mock.tpl(tpl, {
-        lines: '@LINES'
+        hero: Random.hero()
     })
     doit(data, tpl, arguments.callee.name)
 
     tasks.push(
         function() {
-            data.lines = Random.lines()
+            data.hero = Random.hero()
         }
     )
 })();

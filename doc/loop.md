@@ -58,6 +58,53 @@
         }
     ]
 
+### Loop.unwatch(data, fn)
+
+移除监听函数。
+
+* Loop.unwatch(data, fn)
+    移除对象（或数组） data 上绑定的监听函数 fn。
+* Loop.unwatch(data)
+    移除对象（或数组） data 上绑定的所有监听函数。
+* Loop.unwatch(fn)
+    全局移除监听函数 fn。
+
+**参数的含义和默认值**如下所示：
+
+* 参数 data：可选。待移除监听函数的对象或数组。
+* 参数 fn：可选。待移除的监听函数。
+
+**使用示例**如下所示：
+
+    var data = { foo: 'foo' }
+    Loop.watch(data, function(changes){
+        console.log(JSON.stringify(changes, null, 4))
+    })
+    data.foo = 'bar'
+    // =>
+    [
+        {
+            "type": "update",
+            "path": [
+                3,
+                "foo"
+            ],
+            "value": "bar",
+            "oldValue": "foo",
+            "root": {
+                "foo": "bar"
+            },
+            "context": {
+                "foo": "bar"
+            }
+        }
+    ]
+    
+    setTimeout(function(){
+        Loop.unwatch(data)
+        data.foo = 'foo'
+        // => 
+    }, 1000)
 ### Loop.clone(obj, autoboxing)
 
 深度复制对象或数组。
