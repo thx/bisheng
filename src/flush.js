@@ -109,7 +109,10 @@ if (typeof module === 'object' && module.exports) {
                 $target.css(path.getAttribute('css'), value)
                 break
             case 'value':
-                if ($target.val() !== value) $target.val(value)
+                if ($target.val() !== value && !$target.data('user is editing')) {
+                    $target.val(value)
+                }
+                $target.data('user is editing', false)
                 break
             case 'checked':
                 $target.prop(name, value)
