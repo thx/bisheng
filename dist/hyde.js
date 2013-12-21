@@ -50,6 +50,7 @@
 
 /*! src/loop.js */
 /*
+    ## Loop
 
     属性监听工具。
     Watch the changes of any object or attribute.
@@ -175,7 +176,7 @@
                 shadow = clone(data, true, [id])
             }
         }
-        task.data = task
+        task.data = data
 
         tasks.push(task)
         return shadow
@@ -191,7 +192,7 @@
         * Loop.unwatch(data)
             移除对象（或数组） data 上绑定的所有监听函数。
         * Loop.unwatch(fn)
-            移除监听函数 fn。
+            全局移除监听函数 fn。
 
         **参数的含义和默认值**如下所示：
 
@@ -205,17 +206,62 @@
                 console.log(JSON.stringify(changes, null, 4))
             })
             data.foo = 'bar'
+            // =>
+            [
+                {
+                    "type": "update",
+                    "path": [
+                        3,
+                        "foo"
+                    ],
+                    "value": "bar",
+                    "oldValue": "foo",
+                    "root": {
+                        "foo": "bar"
+                    },
+                    "context": {
+                        "foo": "bar"
+                    }
+                }
+            ]
             
             setTimeout(function(){
                 Loop.unwatch(data)
                 data.foo = 'foo'
+                // => 
             }, 1000)
 
     */
     function unwatch(data, fn) {
-        for (var i = 0; i < tasks.length; i++) {
-            if (tasks.data === data) tasks.splice(i--, 1)
+
+        function remove(compare) {
+            for (var index = 0; index < tasks.length; index++) {
+                if (compare(tasks[index])) tasks.splice(index--, 1)
+            }
         }
+
+        // Loop.unwatch(data, fn)
+        if (typeof fn === 'function') {
+            remove(function(task) {
+                return task === fn && task.data === data
+            })
+        }
+
+        // Loop.unwatch(fn)
+        if (typeof data === 'function') {
+            remove(function(task) {
+                return task === fn
+            })
+        }
+
+        // Loop.unwatch(data)
+        if (data !== undefined) {
+            remove(function(task) {
+                return task.data === data
+            })
+        }
+
+        // throw new Error('wrong arguments')
     }
 
     /*
@@ -536,6 +582,7 @@
         },
 
         /*
+            * AST.handle(node)
             * AST.handle(node, blocks)
             * AST.handle(node, blocks, helpers)
                 公开方法
@@ -605,7 +652,7 @@
             statements = Handlebars.parse(placeholder).statements
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
-            helpers[guid++] = {
+            if (helpers) helpers[guid++] = {
                 constructor: Handlebars.AST.ProgramNode,
                 type: 'program',
                 statements: [node]
@@ -652,7 +699,7 @@
             statements = Handlebars.parse(placeholder).statements
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
-            blocks[guid++] = {
+            if (blocks) blocks[guid++] = {
                 constructor: Handlebars.AST.ProgramNode,
                 type: 'program',
                 statements: [node]
@@ -830,11 +877,11 @@
                 target = script;
 
             while ((target = target.nextSibling)) {
-                if (target.nodeName !== 'SCRIPT') break
+                if (target.nodeName.toLowerCase() !== 'script') break
             }
 
             // TODO 为什么不触发 change 事件？
-            $(target).on('change keyup', function(event) {
+            $(target).on('keyup', function(event) {
                 updateValue(data, path, event.target)
             })
         })
@@ -844,7 +891,7 @@
                 target = script;
 
             while ((target = target.nextSibling)) {
-                if (target.nodeName !== 'SCRIPT') break
+                if (target.nodeName.toLowerCase() !== 'script') break
             }
 
             var value = data
@@ -877,6 +924,7 @@
             case 'input':
                 switch (target.type) {
                     case 'text':
+                        $target.data('user is editing', true)
                         value = $target.val()
                         break;
                     case 'radio': // TODO
@@ -1039,7 +1087,10 @@ if (typeof module === 'object' && module.exports) {
                 $target.css(path.getAttribute('css'), value)
                 break
             case 'value':
-                if ($target.val() !== value) $target.val(value)
+                if ($target.val() !== value && !$target.data('user is editing')) {
+                    $target.val(value)
+                }
+                $target.data('user is editing', false)
                 break
             case 'checked':
                 $target.prop(name, value)
@@ -1209,9 +1260,41 @@ if (typeof module === 'object' && module.exports) {
         version: '0.1.0',
 
         /*
-            Hyde.bind(data, tpl, callback)
+            ## Hyde
+
+            双向绑定的入口对象，含有两个方法：Hyde.bind(data, tpl, callback) 和 Hyde.unbind(data)。
+
+            ### Hyde.bind(data, tpl, callback(content))
+
+            执行模板和数据的双向绑定。
+
+            * Hyde.bind(data, tpl, callback(content))
+
+            **参数的含义和默认值**如下所示：
+
+            * 参数 data：必选。待绑定的对象或数组。
+            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。
+
+            **使用示例**如下所示：
+
+                // HTML 模板
+                var tpl = '{{title}}'
+                // 数据对象
+                var data = {
+                  title: 'foo'
+                }
+                // 执行双向绑定
+                Hyde.bind(data, tpl, function(content){
+                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                  $('div.container').append(content)
+                })
+                // 改变数据 data.title，对应的文档区域会更新
+                data.title = 'bar'
+
         */
         bind: function bind(data, tpl, callback) {
+            // 为所有属性添加监听函数
             var clone = Loop.watch(data, function(changes) {
                 // console.log(JSON.stringify(changes, null, 2))
                 $.each(changes, function(_, change) {
@@ -1224,10 +1307,7 @@ if (typeof module === 'object' && module.exports) {
                 })
             })
 
-            // 定义数据
-            // var clone = Loop.clone(data, true)
-
-            // 修改 AST，插入 Block 占位符
+            // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl)
             AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {})
 
@@ -1250,9 +1330,46 @@ if (typeof module === 'object' && module.exports) {
             if (callback) return callback.call(data, content) || data
             return content
         },
-        unbind: function unbind(data) {
-            // TODO
-            return
+
+        /*
+            ### Hyde.unbind(data, tpl)
+
+            解除数据和模板之间的双向绑定。
+
+            * Hyde.unbind(data, tpl)
+                解除数据 data 和模板 tpl 之间的双向绑定。
+            * Hyde.unbind(data)
+                解除数据 data 与所有模板之间的双向绑定。
+
+            **参数的含义和默认值**如下所示：
+
+            * 参数 data：必选。待接触绑定的对象或数组。
+            * 参数 tpl：可选。待接触绑绑定的 HTML 模板。
+
+            **使用示例**如下所示：
+
+                // HTML 模板
+                var tpl = '{{title}}'
+                // 数据对象
+                var data = {
+                  title: 'foo'
+                }
+                // 执行双向绑定
+                Hyde.bind(data, tpl, function(content){
+                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                  $('div.container').append(content)
+                })
+                // 改变数据 data.title，对应的文档区域会更新
+                data.title = 'bar'
+                // 解除双向绑定
+                Hyde.unbind(data, tpl)
+                // 改变数据 data.title，对应的文档区域不会更新
+                data.title = 'foo'
+
+        */
+        unbind: function unbind(data, tpl) {
+            Loop.unwatch(data)
+            return this
         }
     }
 
