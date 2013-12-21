@@ -1,4 +1,5 @@
 /*
+    ## Loop
 
     属性监听工具。
     Watch the changes of any object or attribute.
@@ -181,10 +182,35 @@
 
     */
     function unwatch(data, fn) {
-        debugger
-        for (var index = 0; index < tasks.length; index++) {
-            if (tasks[index].data === data) tasks.splice(index--, 1)
+
+        function remove(compare) {
+            for (var index = 0; index < tasks.length; index++) {
+                if (compare(tasks[index])) tasks.splice(index--, 1)
+            }
         }
+
+        // Loop.unwatch(data, fn)
+        if (typeof fn === 'function') {
+            remove(function(task) {
+                return task === fn && task.data === data
+            })
+        }
+
+        // Loop.unwatch(fn)
+        if (typeof data === 'function') {
+            remove(function(task) {
+                return task === fn
+            })
+        }
+
+        // Loop.unwatch(data)
+        if (data !== undefined) {
+            remove(function(task) {
+                return task.data === data
+            })
+        }
+
+        // throw new Error('wrong arguments')
     }
 
     /*
