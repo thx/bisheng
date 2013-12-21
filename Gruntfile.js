@@ -93,8 +93,12 @@ module.exports = function(grunt) {
         },
         watch: {
             dev: {
-                files: ['<%= jshint.files %>', 'doc/*'],
+                files: ['<%= jshint.files %>', 'doc/*.md', 'doc/template.html'],
                 tasks: ['jshint', 'uglify', 'markdown', 'concat'] // 'nodeunit'
+            },
+            doc: {
+                files: ['doc/*.md', 'doc/template.html'],
+                tasks: ['markdown']
             }
         },
         markdown: {
@@ -126,6 +130,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'markdown', 'connect', 'watch']) // , 'nodeunit'
-    grunt.registerTask('doc', ['markdown'])
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'markdown', 'connect', 'watch:dev']) // , 'nodeunit'
+    grunt.registerTask('doc', ['markdown', 'connect', 'watch:doc'])
 };
