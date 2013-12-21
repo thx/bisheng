@@ -149,11 +149,11 @@
                 target = script;
 
             while ((target = target.nextSibling)) {
-                if (target.nodeName !== 'SCRIPT') break
+                if (target.nodeName.toLowerCase() !== 'script') break
             }
 
             // TODO 为什么不触发 change 事件？
-            $(target).on('change keyup', function(event) {
+            $(target).on('keyup', function(event) {
                 updateValue(data, path, event.target)
             })
         })
@@ -163,7 +163,7 @@
                 target = script;
 
             while ((target = target.nextSibling)) {
-                if (target.nodeName !== 'SCRIPT') break
+                if (target.nodeName.toLowerCase() !== 'script') break
             }
 
             var value = data
@@ -196,6 +196,7 @@
             case 'input':
                 switch (target.type) {
                     case 'text':
+                        $target.data('user is editing', true)
                         value = $target.val()
                         break;
                     case 'radio': // TODO
