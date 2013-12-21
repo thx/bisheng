@@ -1,15 +1,41 @@
 # Hyde.js
 ---
 
-轻量级的数据双向绑定库。
+纯粹的数据双向绑定库。
 
-## API
+## 下载
+
+<p>
+    <a href="./dist/hyde.js" class="btn btn-success w250">
+        Development Version (0.1.0)
+    </a> - <i>43kB, Uncompressed</i>
+</p>
+<p>
+    <a href="./dist/hyde-min.js" class="btn btn-primary w250">
+        Production Version (0.1.0)
+    </a> - <i>10kB, Minified</i>
+</p>
+<p>
+    <a href="https://github.com/nuysoft/hyde" class="btn btn-default w250">
+        从 Github 获取最新版本
+    </a> - <i>Unreleased</i>
+</p>
+
+<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=hyde&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
+
+<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=hyde&type=fork&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe>
+
+## API & 文档
+
+<a href="doc/hyde.html" type="button" class="btn btn-success">Hyde</a>
+<a href="doc/loop.html" type="button" class="btn btn-default">Loop</a>
+<a href="doc/how.html" type="button" class="btn btn-default">工作原理</a>
+
+## 开始
 
 `Hyde.bind(data, tpl, callback)`
-
-> 真的只有一个接口。
-
-使用示例如下说：
 
     // HTML 模板
     var tpl = '{{title}}'
@@ -22,8 +48,15 @@
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
     })
+    // 改变数据 data.title，对应的文档区域会更新
+    data.title = 'bar'
 
-## Demo
+## 示例
+
+<div id="simaples"></div>
+<script src="/doc/simaples.js"></script>
+
+### 更多示例
 
 * [TodoMVC](demo/todo/index.html)
 * [监听数据对象的属性](demo/loop.html)
@@ -44,5 +77,3 @@
 6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
 7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
 8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
-
-© 2013 nuysoft

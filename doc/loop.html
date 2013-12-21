@@ -2,11 +2,22 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Hyde.js Test</title>
-  <link href="/bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <title>Hyde.js</title>
+  <meta name="keywords" content="双向数据绑定" />
+  <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <style type="text/css">
       body {
         font: 14px/1.7 'helvetica neue', 'hiragino sans gb', stheiti,'wenquanyi micro hei',\5FAE\8F6F\96C5\9ED1,\5B8B\4F53, sans-serif;
+      }
+
+      .pre {
+          white-space: pre-wrap;
+          font-family: monospace, serif;
+          font-size: 1em;
+      }
+
+      .w250 {
+        width: 250px;
       }
 
       .gist .gist-file .gist-data .line-numbers {
@@ -27,12 +38,33 @@
         margin-bottom: 10px;
       }
 
+      blockquote p {
+        font-size: 14px;
+        line-height: 1.428571429;
+        font-weight: normal;
+      }
+
+      footer {
+        margin-bottom: 30px;
+      }
+
   </style>
+
+  <!--  -->
+  <script src="/bower_components/jquery/jquery.js"></script>
+  <script src="/bower_components/handlebars/handlebars.js"></script>
+  <script src="/bower_components/mockjs/dist/mock.js"></script>
+  <script src="/dist/hyde.js"></script>
+
 </head>
 <body>
-  <div class="container"><h2 id="loop">Loop</h2>
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-9"><h1 id="loop">Loop</h1>
+<hr>
 <p>属性监听工具。</p>
-<h3 id="loop-watch-data-fn-changes-">Loop.watch(data, fn(changes))</h3>
+<h2 id="loop-watch-data-fn-changes-">Loop.watch(data, fn(changes))</h2>
 <p>为所有属性添加监听函数。
 <!--Attach default handler function to all properties.--></p>
 <ul>
@@ -85,7 +117,52 @@ data.foo = &#39;bar&#39;
         }
     }
 ]</code></pre>
-<h3 id="loop-clone-obj-autoboxing-">Loop.clone(obj, autoboxing)</h3>
+<h2 id="loop-unwatch-data-fn-">Loop.unwatch(data, fn)</h2>
+<p>移除监听函数。</p>
+<ul>
+<li>Loop.unwatch(data, fn)
+  移除对象（或数组） data 上绑定的监听函数 fn。</li>
+<li>Loop.unwatch(data)
+  移除对象（或数组） data 上绑定的所有监听函数。</li>
+<li>Loop.unwatch(fn)
+  全局移除监听函数 fn。</li>
+</ul>
+<p><strong>参数的含义和默认值</strong>如下所示：</p>
+<ul>
+<li>参数 data：可选。待移除监听函数的对象或数组。</li>
+<li>参数 fn：可选。待移除的监听函数。</li>
+</ul>
+<p><strong>使用示例</strong>如下所示：</p>
+<pre><code>var data = { foo: &#39;foo&#39; }
+Loop.watch(data, function(changes){
+    console.log(JSON.stringify(changes, null, 4))
+})
+data.foo = &#39;bar&#39;
+// =&gt;
+[
+    {
+        &quot;type&quot;: &quot;update&quot;,
+        &quot;path&quot;: [
+            3,
+            &quot;foo&quot;
+        ],
+        &quot;value&quot;: &quot;bar&quot;,
+        &quot;oldValue&quot;: &quot;foo&quot;,
+        &quot;root&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        },
+        &quot;context&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        }
+    }
+]
+
+setTimeout(function(){
+    Loop.unwatch(data)
+    data.foo = &#39;foo&#39;
+    // =&gt; 
+}, 1000)</code></pre>
+<h2 id="loop-clone-obj-autoboxing-">Loop.clone(obj, autoboxing)</h2>
 <p>深度复制对象或数组。</p>
 <ul>
 <li>Loop.clone(obj, autoboxing)</li>
@@ -120,7 +197,7 @@ console.dir(autoboxing)
         length: 3
     }
 }</code></pre>
-<h3 id="loop-diff-newobject-oldobject-">Loop.diff(newObject, oldObject)</h3>
+<h2 id="loop-diff-newobject-oldobject-">Loop.diff(newObject, oldObject)</h2>
 <p>比较两个对象或数组的差异。</p>
 <ul>
 <li>Loop.diff(newObject, oldObject)</li>
@@ -190,9 +267,43 @@ console.log(JSON.stringify(changes, null, 4))
     }
 ]</code></pre>
 </div>
+      <div class="col-md-3">
+        <div class="panel panel-default" style="position: fixed; margin-top: 75px;">
+          <div class="panel-heading">目录</div>
+          <div class="panel-body catalog"></div>
+        </div>
+      </div>
+    </div><!-- /row-->
+
+  </div>
+
+  <footer class="container">
+    <hr>
+    <p>
+      by
+      <a href="http://nuysoft.com/about.html">nuysoft</a>
+    </p>
+  </footer>
+
+  <!-- Catalog -->
+  <script type="text/javascript">
+    var ul = $('<ul>').addClass('list-unstyled')
+    $('h2').each(function(index, item){
+      var name = $(item).html()
+      $(item).before('<a name="' + name + '"></a>')
+      ul.append(
+        $('<li>').append(
+          $('<a>').attr('href', '#'+ name)
+            .html(name)
+        )
+      )
+    })
+    $('div.catalog').append(ul)
+  </script>
 
   <link rel="stylesheet" href="/bower_components/highlightjs/styles/default.css">
   <script src="/bower_components/highlightjs/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+
 </body>
 </html>

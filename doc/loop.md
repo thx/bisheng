@@ -1,8 +1,9 @@
-## Loop
+# Loop
+---
 
 属性监听工具。
 
-### Loop.watch(data, fn(changes))
+## Loop.watch(data, fn(changes))
 
 为所有属性添加监听函数。
 <!--Attach default handler function to all properties.-->
@@ -58,7 +59,7 @@
         }
     ]
 
-### Loop.unwatch(data, fn)
+## Loop.unwatch(data, fn)
 
 移除监听函数。
 
@@ -105,7 +106,7 @@
         data.foo = 'foo'
         // => 
     }, 1000)
-### Loop.clone(obj, autoboxing)
+## Loop.clone(obj, autoboxing)
 
 深度复制对象或数组。
 
@@ -143,7 +144,7 @@
         }
     }
 
-### Loop.diff(newObject, oldObject)
+## Loop.diff(newObject, oldObject)
 
 比较两个对象或数组的差异。
 
