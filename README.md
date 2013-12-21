@@ -1,4 +1,4 @@
-Hyde.js
+BiSheng.js
 ====
 
 <!-- BI-Directional / Two-Way Data-Binding with JavaScript. -->
