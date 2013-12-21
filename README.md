@@ -10,9 +10,12 @@ Hyde.js
 
     hyde
     ├── dist
-    │   └── hyde.js
+    │   ├── hyde.js
+    │   ├── hyde-min.js
+    │   └── hyde-min.map
     ├── doc
     │   ├── index.md
+    │   ├── loop.md
     │   └── template.html
     ├── src
     │   ├── ast.js
