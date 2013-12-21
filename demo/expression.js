@@ -58,7 +58,7 @@
     )
 })();
 
-(function expression_escap() {
+(function expression_escape() {
     // return
     var tpl = '<span>{{{foo}}}</span>'
     var data = Mock.tpl(tpl)

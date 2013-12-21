@@ -59,12 +59,11 @@ $(function() {
 
     sync()
 
-    console.log(JSON.stringify(data, null, 4))
-
     Hyde.bind(data, tpl, function(content) {
         $(content).appendTo('body')
     })
-    Loop.watch(data, function(changes) {
+    Hyde.Loop.watch(data, function(changes) {
+        // 同步那些附加的数据
         sync()
     })
 
@@ -86,7 +85,7 @@ $(function() {
                 title: val,
                 completed: false
             })
-            Loop.letMeSee()
+            // Hyde.Loop.letMeSee() // 50ms 的延迟是致命伤
 
             $input.val('')
         })
@@ -96,7 +95,7 @@ $(function() {
                 if (todo.id === id) {
                     data.todos.splice(index, 1)
                     sync()
-                    Loop.letMeSee()
+                    // Hyde.Loop.letMeSee()
                     return false
                 }
             });

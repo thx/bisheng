@@ -38,100 +38,47 @@
     })
 
 }(function() {
+    // BEGIN(BROWSER)
 
-    var guid = 1;
+    var Loop = (function() {
+        var guid = 1;
+        var TYPES = {
+            ADD: 'add',
+            DELETE: 'delete',
+            UPDATE: 'update'
+        };
 
-    var tasks = [];
-    var timerId;
+        var tasks = [];
+        var timerId;
 
-    function letMeSee() {
-        clearTimeout(timerId)
-        for (var i = 0; i < tasks.length; i++) {
-            tasks[i] && tasks[i]()
+        function letMeSee() {
+            clearTimeout(timerId)
+            for (var i = 0; i < tasks.length; i++) {
+                tasks[i] && tasks[i]()
+            }
+            timerId = setTimeout(letMeSee, 50)
         }
         timerId = setTimeout(letMeSee, 50)
-    }
-    timerId = setTimeout(letMeSee, 50)
 
-    var TYPES = {
-        ADD: 'add',
-        DELETE: 'delete',
-        UPDATE: 'update'
-    };
+        // 为所有属性添加监听函数
+        function watch(data, fn, fix) {
+            var id = guid++;
+            var shadow = clone(data, fix, [id]);
 
-    /*
-        ### Loop.watch(data, fn(changes))
-
-        为所有属性添加监听函数。
-        <!--Attach default handler function to all properties.-->
-
-        * Loop.watch(data, fn(changes))
-
-        **参数的含义和默认值**如下所示：
-
-        * 参数 data：必选。待监听的对象或数组。
-        * 参数 fn：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：
-            
-                [{
-                    type: 'add',
-                    path: [guid,,],
-                    value: newValue
-                },{
-                    type: 'delete',
-                    path: [guid,,],
-                    value: newValue
-                }, {
-                    type: 'update',
-                    path: [guid,,],
-                    value: value,
-                    oldValue: oldValue
-                }]
-
-        **使用示例**如下所示：
-
-            var data = { foo: 'foo' }
-            Loop.watch(data, function(changes){
-                console.log(JSON.stringify(changes, null, 4))
-            })
-            data.foo = 'bar'
-
-            // =>
-            [
-                {
-                    "type": "update",
-                    "path": [
-                        6,
-                        "foo"
-                    ],
-                    "value": "bar",
-                    "oldValue": "foo",
-                    "root": {
-                        "foo": "bar"
-                    },
-                    "context": {
-                        "foo": "bar"
-                    }
+            function task() {
+                var result = diff(data, shadow, fix ? [id] : [], fix)
+                if (result && result.length) {
+                    fn(result, data, shadow)
+                    shadow = clone(data, fix, [id])
                 }
-            ]
-    */
-    function watch(data, fn) {
-        var id = guid++;
-        var shadow = clone(data, true, [id]);
-
-        function task() {
-            var result = diff(data, shadow, [id], true)
-            if (result && result.length) {
-                fn(result, data, shadow)
-                shadow = clone(data, true, [id])
             }
+            task.data = data
+
+            tasks.push(task)
+            return shadow
         }
-        task.data = data
 
-        tasks.push(task)
-        return shadow
-    }
-
-    /*
+        /*
         ### Loop.unwatch(data, fn)
 
         移除监听函数。
@@ -180,40 +127,40 @@
                 // => 
             }, 1000)
 
-    */
-    function unwatch(data, fn) {
+        */
+        function unwatch(data, fn) {
 
-        function remove(compare) {
-            for (var index = 0; index < tasks.length; index++) {
-                if (compare(tasks[index])) tasks.splice(index--, 1)
+            function remove(compare) {
+                for (var index = 0; index < tasks.length; index++) {
+                    if (compare(tasks[index])) tasks.splice(index--, 1)
+                }
             }
+
+            // Loop.unwatch(data, fn)
+            if (typeof fn === 'function') {
+                remove(function(task) {
+                    return task === fn && task.data === data
+                })
+            }
+
+            // Loop.unwatch(fn)
+            if (typeof data === 'function') {
+                remove(function(task) {
+                    return task === fn
+                })
+            }
+
+            // Loop.unwatch(data)
+            if (data !== undefined) {
+                remove(function(task) {
+                    return task.data === data
+                })
+            }
+
+            // throw new Error('wrong arguments')
         }
 
-        // Loop.unwatch(data, fn)
-        if (typeof fn === 'function') {
-            remove(function(task) {
-                return task === fn && task.data === data
-            })
-        }
-
-        // Loop.unwatch(fn)
-        if (typeof data === 'function') {
-            remove(function(task) {
-                return task === fn
-            })
-        }
-
-        // Loop.unwatch(data)
-        if (data !== undefined) {
-            remove(function(task) {
-                return task.data === data
-            })
-        }
-
-        // throw new Error('wrong arguments')
-    }
-
-    /*
+        /*
         ### Loop.clone(obj, autoboxing)
 
         深度复制对象或数组。
@@ -251,39 +198,39 @@
                     length: 3
                 }
             }
-    */
-    function clone(obj, autoboxing, path) { // path: Internal Use Only
-        var target = obj.constructor(),
-            name, value;
+        */
+        function clone(obj, autoboxing, path) { // path: Internal Use Only
+            var target = obj.constructor(),
+                name, value;
 
-        path = path || []
+            path = path || []
 
-        if (obj === null || typeof obj != 'object') {
-            return obj
-        }
+            if (obj === null || typeof obj != 'object') {
+                return obj
+            }
 
-        if (autoboxing) target.$path = path.join('.')
+            if (autoboxing) target.$path = path.join('.')
 
-        for (name in obj) {
-            value = obj[name]
-            // if (/Object|Array/.test(value.constructor.name)) {
-            if (value !== undefined) {
-                if (value.constructor === Object || value.constructor === Array) {
-                    value = clone(value, autoboxing, path.concat(name))
-                } else {
-                    if (autoboxing) {
-                        value = new Object(value)
-                        value.$path = path.concat(name).join('.')
+            for (name in obj) {
+                value = obj[name]
+                // if (/Object|Array/.test(value.constructor.name)) {
+                if (value !== undefined) {
+                    if (value.constructor === Object || value.constructor === Array) {
+                        value = clone(value, autoboxing, path.concat(name))
+                    } else {
+                        if (autoboxing) {
+                            value = new Object(value)
+                            value.$path = path.concat(name).join('.')
+                        }
                     }
                 }
+                target[name] = value
             }
-            target[name] = value
+
+            return target
         }
 
-        return target
-    }
-
-    /*
+        /*
         ### Loop.diff(newObject, oldObject)
 
         比较两个对象或数组的差异。
@@ -357,134 +304,139 @@
                     "oldValue": "foo"
                 }
             ]
-     */
-    function diff(newObject, oldObject, path, fix) {
-        var result = result || [];
-        path = path || []
+        */
+        function diff(newObject, oldObject, path, fix) {
+            var result = result || [];
+            path = path || []
 
-        if (typeof newObject !== "object" || typeof oldObject !== "object") {
+            if (typeof newObject !== "object" || typeof oldObject !== "object") {
+                if (result.length) return result
+            }
+
+            added(newObject, oldObject, path, result)
+            removed(newObject, oldObject, path, result)
+            updated(newObject, oldObject, path, result)
+
+            /*
+            root    完整的数据对象
+            context 变化的上下文，这里进行遍历计算以简化 Flush.js 对数据上下文的访问
+            */
+            function getContext(root, path) {
+                return function() {
+                    var context = root
+                    for (var index = 1; index < path.length - 1; index++) {
+                        context = context[path[index]]
+                    }
+                    return context
+                }
+            }
+
+            if (fix) {
+                for (var index = 0, change; index < result.length; index++) {
+                    change = result[index]
+                    change.root = newObject
+                    change.context = getContext(newObject, change.path)()
+                    change.getContext = getContext
+                }
+            }
+
             if (result.length) return result
         }
 
-        added(newObject, oldObject, path, result)
-        removed(newObject, oldObject, path, result)
-        updated(newObject, oldObject, path, result)
+        // 获取 newValue 比 oldValue 多出的属性
+        function added(newValue, oldValue, path, result, type) { // type: Internal Use Only
+            var name, value;
 
-        /*
-            root    完整的数据对象
-            context 变化的上下文，这里进行遍历计算以简化 Flush.js 对数据上下文的访问
-        */
-        function getContext(root, path) {
-            return function() {
-                var context = root
-                for (var index = 1; index < path.length - 1; index++) {
-                    context = context[path[index]]
+            for (name in newValue) {
+                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
+
+                value = newValue[name]
+
+                if (!(name in oldValue)) {
+                    result.push({
+                        type: type || TYPES.ADD,
+                        path: path.concat(name),
+                        value: newValue[name]
+                    })
+                    continue
                 }
-                return context
+
+                if (value === undefined) continue
+                if (oldValue[name] === undefined) continue
+                if (value.constructor !== (oldValue[name]).constructor) continue
+
+                // IE 不支持 constructor.name
+                // /Object|Array/.test(value.constructor.name)
+                // http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
+                if (value.constructor === Object || value.constructor === Array) {
+                    added(value, oldValue[name], path.concat(name), result, type)
+                }
             }
+
+            if (result.length) return result
         }
 
-        if (fix) {
-            for (var index = 0, change; index < result.length; index++) {
-                change = result[index]
-                change.root = newObject
-                change.context = getContext(newObject, change.path)()
-                change.getContext = getContext
-            }
+        // 获取 newValue 比 oldValue 少了的属性
+        function removed(newValue, oldValue, path, result) {
+            return added(oldValue, newValue, path, result, TYPES.DELETE)
         }
 
-        if (result.length) return result
-    }
+        // 获取 newValue 比 oldValue 变化了的属性
+        function updated(newValue, oldValue, path, result) {
+            var name, value;
 
-    // 获取 newValue 比 oldValue 多出的属性
-    function added(newValue, oldValue, path, result, type) { // type: Internal Use Only
-        var name, value;
+            for (name in newValue) {
+                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
 
-        for (name in newValue) {
-            if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
+                value = newValue[name]
 
-            value = newValue[name]
+                if (!(name in oldValue)) continue
+                if (value === undefined && oldValue[name] === undefined) continue
 
-            if (!(name in oldValue)) {
-                result.push({
-                    type: type || TYPES.ADD,
-                    path: path.concat(name),
-                    value: newValue[name]
-                })
-                continue
+                if (value === undefined ||
+                    oldValue[name] === undefined ||
+                    value.constructor !== (oldValue[name]).constructor) {
+                    result.push({
+                        type: TYPES.UPDATE,
+                        path: path.concat(name),
+                        value: value,
+                        oldValue: oldValue[name] !== undefined ? oldValue[name].valueOf() : oldValue[name]
+                    })
+                    continue
+                }
+
+                // if (/Object|Array/.test(value.constructor.name)) {
+                if (value.constructor === Object || value.constructor === Array) {
+                    updated(value, oldValue[name], path.concat(name), result)
+                    continue
+                }
+
+                if (value.valueOf() !== (oldValue[name]).valueOf()) {
+                    result.push({
+                        type: TYPES.UPDATE,
+                        path: path.concat(name),
+                        value: value,
+                        oldValue: oldValue[name]
+                    })
+                }
             }
 
-            if (value === undefined) continue
-            if (oldValue[name] === undefined) continue
-            if (value.constructor !== (oldValue[name]).constructor) continue
-
-            // IE 不支持 constructor.name
-            // /Object|Array/.test(value.constructor.name)
-            // http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
-            if (value.constructor === Object || value.constructor === Array) {
-                added(value, oldValue[name], path.concat(name), result, type)
-            }
+            if (result.length) return result
         }
 
-        if (result.length) return result
-    }
-
-    // 获取 newValue 比 oldValue 少了的属性
-    function removed(newValue, oldValue, path, result) {
-        return added(oldValue, newValue, path, result, TYPES.DELETE)
-    }
-
-    // 获取 newValue 比 oldValue 变化了的属性
-    function updated(newValue, oldValue, path, result) {
-        var name, value;
-
-        for (name in newValue) {
-            if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
-
-            value = newValue[name]
-
-            if (!(name in oldValue)) continue
-            if (value === undefined && oldValue[name] === undefined) continue
-
-            if (value === undefined ||
-                oldValue[name] === undefined ||
-                value.constructor !== (oldValue[name]).constructor) {
-                result.push({
-                    type: TYPES.UPDATE,
-                    path: path.concat(name),
-                    value: value,
-                    oldValue: oldValue[name] !== undefined ? oldValue[name].valueOf() : oldValue[name]
-                })
-                continue
-            }
-
-            // if (/Object|Array/.test(value.constructor.name)) {
-            if (value.constructor === Object || value.constructor === Array) {
-                updated(value, oldValue[name], path.concat(name), result)
-                continue
-            }
-
-            if (value.valueOf() !== (oldValue[name]).valueOf()) {
-                result.push({
-                    type: TYPES.UPDATE,
-                    path: path.concat(name),
-                    value: value,
-                    oldValue: oldValue[name]
-                })
-            }
+        // expose
+        return {
+            TYPES: TYPES,
+            watch: watch,
+            unwatch: unwatch,
+            clone: clone,
+            diff: diff,
+            letMeSee: letMeSee
         }
+    })()
 
-        if (result.length) return result
-    }
+    // END(BROWSER)
 
-    // expose
-    return {
-        TYPES: TYPES,
-        watch: watch,
-        unwatch: unwatch,
-        clone: clone,
-        diff: diff,
-        letMeSee: letMeSee
-    }
+    return Loop
 
 }));

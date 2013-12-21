@@ -26,19 +26,31 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 options: {
-                    separator: '\n\n',
+                    separator: '\n',
                     process: function(src, filepath) {
                         var banner = '/*! ' + filepath + ' */\n';
+                        var BEGEIN = '// BEGIN(BROWSER)\n',
+                            END = '// END(BROWSER)';
+                        var indexOfBEGEIN = src.indexOf(BEGEIN),
+                            indexOfEND = src.indexOf(END);
+                        if (indexOfBEGEIN != -1 && indexOfEND != -1) {
+                            return banner + src.slice(indexOfBEGEIN + BEGEIN.length, indexOfEND)
+                        }
                         return banner + src
                     }
                 },
                 src: [
+                    'src/fix/hyde-prefix-1.js',
                     'src/expose.js',
+                    'src/fix/hyde-prefix-2.js',
+
                     'src/loop.js',
                     'src/ast.js',
                     'src/scan.js',
                     'src/flush.js',
-                    'src/hyde.js'
+                    'src/hyde.js',
+
+                    'src/fix/hyde-suffix.js'
                 ],
                 dest: 'dist/hyde.js'
             }
@@ -48,6 +60,9 @@ module.exports = function(grunt) {
                 verbose: true
             },
             all: ['test/nodeuinit/watch.js']
+        },
+        qunit: {
+            files: ['test/*.html']
         },
         uglify: {
             options: {
@@ -93,8 +108,8 @@ module.exports = function(grunt) {
         },
         watch: {
             dev: {
-                files: ['<%= jshint.files %>', 'doc/*.md', 'doc/template.html'],
-                tasks: ['jshint', 'uglify', 'markdown', 'concat'] // 'nodeunit'
+                files: ['<%= jshint.files %>', 'src/fix/*', 'doc/*.md', 'doc/template.html'],
+                tasks: ['jshint', 'uglify', 'qunit', 'markdown', 'concat'] // 'nodeunit'
             },
             doc: {
                 files: ['doc/*.md', 'doc/template.html'],
@@ -124,12 +139,13 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-jshint')
     grunt.loadNpmTasks('grunt-contrib-nodeunit')
+    grunt.loadNpmTasks('grunt-contrib-qunit')
     grunt.loadNpmTasks('grunt-contrib-watch')
     grunt.loadNpmTasks('grunt-contrib-connect')
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'markdown', 'connect', 'watch:dev']) // , 'nodeunit'
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'connect', 'watch:dev']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown', 'connect', 'watch:doc'])
 };

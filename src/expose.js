@@ -16,7 +16,8 @@
     })
 
 }(function() {
-
+    // BEGIN(BROWSER)
+    
     // 模块化 Modular
     function expose(factory, globals) {
         if (typeof module === 'object' && module.exports) {
@@ -42,6 +43,8 @@
 
         }
     }
+
+    // END(BROWSER)
 
     return expose
 

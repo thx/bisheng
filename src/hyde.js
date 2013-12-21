@@ -7,7 +7,7 @@
 /* global expose */
 /* global Loop */
 /* global AST */
-/* global scan */
+/* global Scanner */
 /* global Flush */
 
 (function(factory) {
@@ -18,15 +18,17 @@
     })
 
 }(function() {
+    // BEGIN(BROWSER)
 
-    return {
+    /*
+        ## Hyde
+
+        双向绑定的入口对象，含有两个方法：Hyde.bind(data, tpl, callback) 和 Hyde.unbind(data)。
+    */
+    var Hyde = {
         version: '0.1.0',
 
         /*
-            ## Hyde
-
-            双向绑定的入口对象，含有两个方法：Hyde.bind(data, tpl, callback) 和 Hyde.unbind(data)。
-
             ### Hyde.bind(data, tpl, callback(content))
 
             执行模板和数据的双向绑定。
@@ -66,9 +68,9 @@
                     }
                     Flush.handle(event, change, clone)
                     if (location.href.indexOf('scrollIntoView') > -1) Flush.scrollIntoView(event, data)
-                    Flush.highlight(event, data)
+                    if (location.href.indexOf('highlight') > -1) Flush.highlight(event, data)
                 })
-            })
+            }, true)
 
             // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl)
@@ -80,7 +82,7 @@
 
             // 扫描占位符，定位 Expression 和 Block
             var content = $('<div>' + html + '</div>')
-            if (content.length) scan(content[0], data)
+            if (content.length) Scanner.scan(content[0], data)
             content = content.contents()
 
             /*
@@ -135,5 +137,9 @@
             return this
         }
     }
+
+    // END(BROWSER)
+
+    return Hyde
 
 }));

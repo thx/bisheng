@@ -66,7 +66,7 @@ function doit(data, tpl, name) {
             .appendTo('div.container')
     })
 
-    Loop.watch(data, function(changes) {
+    Hyde.Loop.watch(data, function(changes) {
         $.each(changes, function(_, change) {
             // 更新 div.data
             target
@@ -77,7 +77,7 @@ function doit(data, tpl, name) {
         })
     })
 
-    Flush.scrollIntoView = function scrollIntoView(event) {
+    Hyde.Flush.scrollIntoView = function scrollIntoView(event) {
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
             var panel = $(item).parents('.tc')
