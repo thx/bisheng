@@ -39,6 +39,7 @@
         },
 
         /*
+            * AST.handle(node)
             * AST.handle(node, blocks)
             * AST.handle(node, blocks, helpers)
                 公开方法
@@ -108,7 +109,7 @@
             statements = Handlebars.parse(placeholder).statements
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
-            helpers[guid++] = {
+            if (helpers) helpers[guid++] = {
                 constructor: Handlebars.AST.ProgramNode,
                 type: 'program',
                 statements: [node]
@@ -155,7 +156,7 @@
             statements = Handlebars.parse(placeholder).statements
             context.splice.apply(context, [index + 4, 0].concat(statements))
 
-            blocks[guid++] = {
+            if (blocks) blocks[guid++] = {
                 constructor: Handlebars.AST.ProgramNode,
                 type: 'program',
                 statements: [node]
