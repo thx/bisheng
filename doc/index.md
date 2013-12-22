@@ -6,12 +6,12 @@
 ## 下载
 
 <p>
-    <a href="./dist/bisheng.js" class="btn btn-success w250">
+    <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
     </a> - <i>43kB, Uncompressed</i>
 </p>
 <p>
-    <a href="./dist/bisheng-min.js" class="btn btn-primary w250">
+    <a href="../dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
     </a> - <i>10kB, Minified</i>
 </p>
@@ -29,9 +29,9 @@
 
 ## API & 文档
 
-<a href="doc/bisheng.html" type="button" class="btn btn-success">BiSheng</a>
-<a href="doc/loop.html" type="button" class="btn btn-default">Loop</a>
-<a href="doc/how.html" type="button" class="btn btn-default">工作原理</a>
+<a href="./bisheng.html" type="button" class="btn btn-success">BiSheng</a>
+<a href="./loop.html" type="button" class="btn btn-default">Loop</a>
+<a href="./how.html" type="button" class="btn btn-default">工作原理</a>
 
 ## 开始
 
@@ -54,16 +54,16 @@
 ## 示例
 
 <div id="samples"></div>
-<script src="/doc/samples.js"></script>
+<script src="./samples.js"></script>
 
 **更多示例：**
 
-* [TodoMVC](demo/todo/index.html)
-* [监听数据对象的属性](demo/loop.html)
-* [监听表达式 {{}}](demo/expression.html)
-* [监听 DOM 节点的属性](demo/attribute.html)
-* [监听逻辑块](demo/block.html)
-* [监听表单元素](demo/form.html)
+* [TodoMVC](../demo/todo/index.html)
+* [监听数据对象的属性](../demo/loop.html)
+* [监听表达式 {{}}](../demo/expression.html)
+* [监听 DOM 节点的属性](../demo/attribute.html)
+* [监听逻辑块](../demo/block.html)
+* [监听表单元素](../demo/form.html)
 
 ## 感谢
 
