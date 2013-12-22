@@ -17,9 +17,14 @@
 
         var guid = 1;
 
-        var ifHelp = Handlebars.helpers['if']
+        var ifHelper = Handlebars.helpers['if']
         Handlebars.registerHelper('if', function(conditional, options) {
-            return ifHelp.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options)
+            return ifHelper.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options)
+        })
+
+        var blockHelperMissing = Handlebars.helpers.blockHelperMissing
+        Handlebars.registerHelper('blockHelperMissing', function(context, options) {
+            return blockHelperMissing.call(this, context !== undefined ? context.valueOf() : context, options)
         })
 
         Handlebars.registerHelper('$lastest', function(items, options) {

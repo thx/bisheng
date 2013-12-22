@@ -15,7 +15,7 @@
       }
       
       .container {
-        max-width: 800px;
+        max-width: 1000px;
       }
       
       pre {
@@ -77,7 +77,8 @@
 <hr>
 <p><a href="http://travis-ci.org/nuysoft/bisheng"><img src="https://api.travis-ci.org/nuysoft/bisheng.png?branch=master" alt="Build Status"></a>
 <a href="http://badge.fury.io/gh/nuysoft%2Fbisheng"><img src="https://badge.fury.io/gh/nuysoft%2Fbisheng.png" alt="GitHub version"></a>
-<a href="http://badge.fury.io/bo/bishengjs"><img src="https://badge.fury.io/bo/bishengjs.png" alt="Bower version"></a></p>
+<a href="http://badge.fury.io/bo/bishengjs"><img src="https://badge.fury.io/bo/bishengjs.png" alt="Bower version"></a>
+<a href="https://github.com/nuysoft/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/nuysoft/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a></p>
 <p>纯粹的数据双向绑定库。</p>
 <h2 id="-">下载</h2>
 <p>
@@ -107,7 +108,6 @@
 <a href="./loop.html" type="button" class="btn btn-default">Loop</a>
 <a href="./how.html" type="button" class="btn btn-default">工作原理</a></p>
 <h2 id="-">开始</h2>
-<p><code>BiSheng.bind(data, tpl, callback)</code></p>
 <pre><code>// HTML 模板
 var tpl = &#39;{{title}}&#39;
 // 数据对象
@@ -127,6 +127,7 @@ data.title = &#39;bar&#39;</code></pre>
 
 <p><strong>更多示例：</strong></p>
 <ul>
+<li><a href="../test/bisheng.html">QUnit 测试用例</a></li>
 <li><a href="../demo/todo/index.html">TodoMVC</a></li>
 <li><a href="../demo/loop.html">监听数据对象的属性</a></li>
 <li><a href="../demo/expression.html">监听表达式 {{}}</a></li>

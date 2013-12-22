@@ -147,7 +147,6 @@ if (typeof module === 'object' && module.exports) {
         // 更新数组对应的 Block，路径 > guid > Block
         handle.block = function block(path, event, change, defined) {
             var guid = path.getAttribute('guid')
-            var endPath = document.querySelector('script[slot="end"][guid="' + guid + '"]')
             var ast = defined.$blocks[guid]
             var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
             var content = Handlebars.compile(ast)(context)
@@ -156,18 +155,28 @@ if (typeof module === 'object' && module.exports) {
             Scanner.scan(content[0], change.context)
             content = content.contents()
 
-            var target = [],
-                cur = path,
-                to = endPath
-            while ((cur = cur.nextSibling) && cur !== to) {
-                target.push(cur)
+            var cur = path
+            var $cur
+            var to
+            var target = []
+
+            while ((cur = cur.nextSibling)) {
+                $cur = $(cur)
+                if (cur.nodeName.toLowerCase() === 'script' &&
+                    $cur.attr('slot') === 'end' &&
+                    $cur.attr('guid') === guid) {
+                    to = cur
+                    break
+                } else {
+                    target.push(cur)
+                }
             }
 
             /*
-            优化渲染过程
-            1. 移除多余的旧节点
-            2. 逐个比较节点类型、节点值、节点内容。
-        */
+                优化渲染过程
+                1. 移除多余的旧节点
+                2. 逐个比较节点类型、节点值、节点内容。
+            */
 
             if (content.length < target.length) $(target.splice(content.length)).remove()
 

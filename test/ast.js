@@ -11,6 +11,7 @@ test('object expression', function() {
 test('object block', function() {
     var tpl = '{{#if condition}}{{title}}{{/if}}'
     var ast = BiSheng.AST.handle(Handlebars.parse(tpl))
+    var statements
 
     statements = ast.statements
     equal(statements.length, 5, statements)

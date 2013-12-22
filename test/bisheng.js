@@ -1,4 +1,4 @@
-function bind(data, tpl, task, expected, before) {
+function bindThenCheck(data, tpl, task, expected, before) {
     stop()
     var container = $('div.container')
     BiSheng.bind(data, tpl, function(content) {
@@ -31,7 +31,7 @@ test('placeholder', function() {
     var expected = function(container) {
         equal('456', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('escape', function() {
@@ -45,7 +45,7 @@ test('escape', function() {
     var expected = function(container) {
         equal('456', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('multi-placeholder', function() {
@@ -62,7 +62,7 @@ test('multi-placeholder', function() {
     var expected = function(container) {
         equal('3 3 4 4', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('placeholder + wrapper', function() {
@@ -76,13 +76,14 @@ test('placeholder + wrapper', function() {
     var expected = function(container) {
         equal('456', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('multi-placeholder + multi-wrapper', function() {
     var tpl = '<span>{{foo}}</span> <span>{{foo}}</span> <span>{{bar}}</span> <span>{{bar}}</span>'
     var data = {
-        foo: 1,bar:2
+        foo: 1,
+        bar: 2
     }
     var task = function() {
         data.foo = 3
@@ -91,7 +92,7 @@ test('multi-placeholder + multi-wrapper', function() {
     var expected = function(container) {
         equal('3 3 4 4', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('dot', function() {
@@ -107,7 +108,7 @@ test('dot', function() {
     var expected = function(container) {
         equal('456', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('slash', function() {
@@ -123,7 +124,7 @@ test('slash', function() {
     var expected = function(container) {
         equal('456', container.text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 module('BiSheng Attribute')
@@ -140,7 +141,7 @@ test('title', function() {
         equal('456', container.find('span').attr('title'), tpl)
         equal('456', container.find('span').text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('class', function() {
@@ -157,7 +158,7 @@ test('class', function() {
         ok(container.find('span').hasClass('456'), tpl)
         equal('456', container.find('span').text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('style', function() {
@@ -175,7 +176,7 @@ test('style', function() {
         equal('100px', container.find('div').css('height'), tpl)
         equal('200, 100', container.find('div').text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('part', function() {
@@ -190,7 +191,7 @@ test('part', function() {
         equal('/testcase/456', container.find('a').attr('href'), tpl)
         equal('456', container.find('a').text(), tpl)
     }
-    bind(data, tpl, task, expected)
+    bindThenCheck(data, tpl, task, expected)
 })
 
 test('block unless true > false', function() {
@@ -213,7 +214,7 @@ test('block unless true > false', function() {
         ok(container.find('div').hasClass('show'), tpl)
         equal('true', container.find('div').text(), tpl)
     }
-    bind(data, tpl, task, expected, before)
+    bindThenCheck(data, tpl, task, expected, before)
 })
 
 test('block unless', function() {
@@ -235,14 +236,266 @@ test('block unless', function() {
         ok(container.find('div').hasClass('hide'), tpl)
         equal('false', container.find('div').text(), tpl)
     }
-    bind(data, tpl, task, expected, before)
+    bindThenCheck(data, tpl, task, expected, before)
 })
 
 module('BiSheng Block')
+
+test('if-helper missing, interpret as with-helper, delete', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="entry">
+  <h1>{{title}}</h1>
+  <div class="body">
+    {{#noop}}{{body}}{{/noop}}
+  </div>
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        delete data.noop
+    }
+    var expected = function(container) {
+        equal('', $.trim(container.find('.body').text()))
+    }
+    var before = function(container) {
+        equal('body', $.trim(container.find('.body').text()))
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('if-helper missing, interpret as with-helper, update', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="entry">
+  <h1>{{title}}</h1>
+  <div class="body">
+    {{#noop}}{{body}}{{/noop}}
+  </div>
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.noop = {
+            body: '123'
+        }
+    }
+    var expected = function(container) {
+        equal('123', $.trim(container.find('.body').text()))
+    }
+    var before = function(container) {
+        equal('body', $.trim(container.find('.body').text()))
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('if-helper missing, interpret as if-helper, update', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="entry">
+  <h1>{{title}}</h1>
+  <div class="body">
+    {{#noop}}{{body}}{{/noop}}
+  </div>
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl, {
+        noop: false
+    })
+    var task = function() {
+        data.noop = true
+        data.body = 123
+    }
+    var expected = function(container) {
+        equal('123', $.trim(container.find('.body').text()))
+    }
+    var before = function(container) {
+        equal('', $.trim(container.find('.body').text()))
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('with-helper, {} > undefined', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="entry">
+  <h1>{{title}}</h1>
+  {{#with story}}
+    <div class="intro">intro: {{{intro}}}</div>
+    <div class="body">body: {{{body}}}</div>
+  {{/with}}
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.title = 123
+        data.story = undefined
+    }
+    var expected = function(container) {
+        equal('123', $.trim(container.find('h1').text()))
+        equal(0, container.find('.intro').length)
+        equal(0, container.find('.body').length)
+    }
+    var before = function(container) {
+        equal('title', $.trim(container.find('h1').text()))
+        equal(1, container.find('.intro').length)
+        equal(1, container.find('.body').length)
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('with-helper, {} > {}', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="entry">
+  <h1>{{title}}</h1>
+  {{#with story}}
+    <div class="intro">intro: {{{intro}}}</div>
+    <div class="body">body: {{{body}}}</div>
+  {{/with}}
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.title = 123
+        data.story = {
+            intro: 456,
+            body: 789
+        }
+    }
+    var expected = function(container) {
+        equal('123', $.trim(container.find('h1').text()))
+        equal('intro: 456', container.find('.intro').text())
+        equal('body: 789', container.find('.body').text())
+    }
+    var before = function(container) {
+        equal('title', $.trim(container.find('h1').text()))
+        equal('intro: intro', container.find('.intro').text())
+        equal('body: body', container.find('.body').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('each-helper, add', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="comments">
+  {{#each comments}}
+    <div class="comment">
+      <h2>{{subject}}</h2>
+      <span>{{{body}}}</span>
+    </div>
+  {{/each}}
+  {{#unless comments}}
+    <h3 class="warning">WARNING: This entry does not have any records!</h3>
+  {{/unless}}
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl, {
+        'comments|3': [{
+            subject: '@TITLE(1)',
+            body: '@SENTENCE(5)'
+        }]
+    })
+    var task = function() {
+        data.comments.push({
+            subject: Random.title(1),
+            body: Random.sentence(5)
+        })
+    }
+    var expected = function(container) {
+        equal(4, container.find('div.comment').length)
+        equal(data.comments[3].subject, container.find('div.comment:eq(3) h2').text())
+        equal(data.comments[3].body, container.find('div.comment:eq(3) span').text())
+        equal(0, container.find('h3').length)
+    }
+    var before = function(container) {
+        equal(3, container.find('div.comment').length)
+        equal(0, container.find('h3').length)
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('each-helper, delete', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="comments">
+  {{#each comments}}
+    <div class="comment">
+      <h2>{{subject}}</h2>
+      <span>{{{body}}}</span>
+    </div>
+  {{/each}}
+  {{#unless comments}}
+    <h3 class="warning">WARNING: This entry does not have any records!</h3>
+  {{/unless}}
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl, {
+        'comments|3': [{
+            subject: '@TITLE(1)',
+            body: '@SENTENCE(5)'
+        }]
+    })
+    var task = function() {
+        data.comments.pop()
+    }
+    var expected = function(container) {
+        equal(2, container.find('div.comment').length)
+        equal(0, container.find('h3').length)
+    }
+    var before = function(container) {
+        equal(3, container.find('div.comment').length)
+        equal(0, container.find('h3').length)
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('each-helper, empty', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="comments">
+  {{#each comments}}
+    <div class="comment">
+      <h2>{{subject}}</h2>
+      <span>{{{body}}}</span>
+    </div>
+  {{/each}}
+  {{#unless comments}}
+    <h3 class="warning">WARNING: This entry does not have any records!</h3>
+  {{/unless}}
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl, {
+        'comments|3': [{
+            subject: '@TITLE(1)',
+            body: '@SENTENCE(5)'
+        }]
+    })
+    var task = function() {
+        data.comments = []
+    }
+    var expected = function(container) {
+        equal(0, container.find('div.comment').length)
+        equal(1, container.find('h3').length)
+    }
+    var before = function(container) {
+        equal(3, container.find('div.comment').length)
+        equal(0, container.find('h3').length)
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
 
 
 module('BiSheng Form')
 
 
 module('BiSheng Helper')
-

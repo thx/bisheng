@@ -4,6 +4,7 @@
 [![Build Status](https://api.travis-ci.org/nuysoft/bisheng.png?branch=master)](http://travis-ci.org/nuysoft/bisheng)
 [![GitHub version](https://badge.fury.io/gh/nuysoft%2Fbisheng.png)](http://badge.fury.io/gh/nuysoft%2Fbisheng)
 [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs)
+[![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/nuysoft/bisheng/counters/views-24h.png)](https://github.com/nuysoft/bisheng/)
 
 纯粹的数据双向绑定库。
 
@@ -39,8 +40,6 @@
 
 ## 开始
 
-`BiSheng.bind(data, tpl, callback)`
-
     // HTML 模板
     var tpl = '{{title}}'
     // 数据对象
@@ -62,6 +61,7 @@
 
 **更多示例：**
 
+* [QUnit 测试用例](../test/bisheng.html)
 * [TodoMVC](../demo/todo/index.html)
 * [监听数据对象的属性](../demo/loop.html)
 * [监听表达式 {{}}](../demo/expression.html)
