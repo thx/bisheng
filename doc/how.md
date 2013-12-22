@@ -9,7 +9,9 @@
 
 ![](image/he.png)
 
-数据双向绑定，是指自动在视图和业务逻辑之间建立连接，并自动同步变化的前端技术。当业务逻辑导致数据发生变化时，自动同步更新 DOM；当用户操作导致表单元素发生变化时，自动同步更新数据。这种运行机制，避免掉了操作 DOM 所需的代码，使得前端攻城师可以用 [更清晰优雅的方式](http://en.wikipedia.org/wiki/Data-driven_programming) 来设计和实现业务逻辑。
+## 文前
+
+数据双向绑定，是指自动在视图和业务逻辑之间建立连接，并自动同步变化的前端技术。当业务逻辑导致数据发生变化时，自动同步更新 DOM；当用户操作导致表单元素发生变化时，自动同步更新数据。这种运行机制，避免掉了手工操作 DOM 所需的代码，使得前端攻城师可以用 [更清晰优雅的方式](http://en.wikipedia.org/wiki/Data-driven_programming) 来设计和实现业务逻辑。
 
 > 数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。
 
@@ -23,6 +25,8 @@
 我目前是 [阿里妈妈](http://www.alimama.com/) 的一名 JavaScript 开发人员，负责 [钻石展位广告管理系统] 和 [DMP 数据营销系统]的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。
 
 已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 [BiSheng.js]，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。
+
+BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。
 
 [钻石展位广告管理系统]: http://zuanshi.taobao.com
 [DMP 数据营销系统]: http://dmp.taobao.com/
@@ -112,9 +116,7 @@ BiSheng.js 也选择了 Handlebars.js 作为它支持的第一款模板引擎，
 
 ## 执行绑定
 
-BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/bisheng.html)，用于在模板和数据之间执行双向绑定。
-
-绑定的关键步骤共有 5 步：
+BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/bisheng.html)，用于在模板和数据之间执行双向绑定。绑定的关键步骤共有 5 步：
 
 1. 修改语法树，插入定位符
 2. 渲染模板和定位符
@@ -122,11 +124,11 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 4. 建立数据到 DOM 元素的连接
 5. 建立 DOM 元素到数据的连接
 
-下面以模板 `{{title}}` 为来阐述 BiSheng.js 的绑定过程。
+下面以模板 `{{title}}` 为来说明 `BiSheng.bind()` 的绑定过程。
 
 ### 1. 修改语法树，插入定位符
 
-BiSheng.js 首先在 `{{title}}` 的前后插入两个转义后的定位符，转义之前的内容为：
+`BiSheng.bind()` 首先在 `{{title}}` 的前后插入两个转义后的定位符，转义之前的内容为：
 
     <script guid="1" slot="start" type="" path="{{$lastest title}}" isHelper="false"></script>
     <script guid="1" slot="end"></script>
@@ -137,17 +139,17 @@ BiSheng.js 首先在 `{{title}}` 的前后插入两个转义后的定位符，�
         return items && items.$path || this && this.$path
     })
 
-代码中的 `$path` 是指示了当前属性的路径，由 BiSheng.js 自动计算和设置。
+代码中的 `$path` 指示了当前属性的路径，由 BiSheng.js 自动计算和设置。
 
-对应的语法树的变化代码太多，读者请移步这里 <https://gist.github.com/nuysoft/8055993>。
+对应的语法树的变化代码太多，就不贴在这了，请移步这里 <https://gist.github.com/nuysoft/8055993>。
 
 ### 2. 渲染模板和定位符
 
-然后调用 `Handlebars.compile(ast)` 渲染模板和定位符，结果如下：
+然后执行 `Handlebars.compile(ast)(data)` 渲染模板和定位符，结果如下：
     
     &lt;script guid="1" slot="start" type="" path="1.title" isHelper="false"&gt;&lt;/script&gt;注意，title 的值在这里&lt;script guid="1" slot="end"&gt;&lt;/script&gt;
 
-是不是有些看不懂，没关系，下一步就会解析它。
+转以后的代码有些看不懂，不过没关系，下一步就会解析它。
 
 ### 3. 解析定位符
 
@@ -178,7 +180,7 @@ BiSheng.js 首先在 `{{title}}` 的前后插入两个转义后的定位符，�
 
 理论上，BiSheng.js 可以支持任何基于语法树进行渲染的模板引擎。
 
-源文件 src/ast.js 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从该文件开始。
+源文件 `src/ast.js` 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从这个文件开始。
 
 ## 未来规划
 

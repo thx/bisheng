@@ -83,7 +83,8 @@
 <hr>
 
 <p><img src="image/he.png" alt=""></p>
-<p>数据双向绑定，是指自动在视图和业务逻辑之间建立连接，并自动同步变化的前端技术。当业务逻辑导致数据发生变化时，自动同步更新 DOM；当用户操作导致表单元素发生变化时，自动同步更新数据。这种运行机制，避免掉了操作 DOM 所需的代码，使得前端攻城师可以用 <a href="http://en.wikipedia.org/wiki/Data-driven_programming">更清晰优雅的方式</a> 来设计和实现业务逻辑。</p>
+<h2 id="-">文前</h2>
+<p>数据双向绑定，是指自动在视图和业务逻辑之间建立连接，并自动同步变化的前端技术。当业务逻辑导致数据发生变化时，自动同步更新 DOM；当用户操作导致表单元素发生变化时，自动同步更新数据。这种运行机制，避免掉了手工操作 DOM 所需的代码，使得前端攻城师可以用 <a href="http://en.wikipedia.org/wiki/Data-driven_programming">更清晰优雅的方式</a> 来设计和实现业务逻辑。</p>
 <blockquote>
 <p>数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。</p>
 </blockquote>
@@ -91,6 +92,7 @@
 <h2 id="-">我是谁，以及我为什么写这个主题？</h2>
 <p>我目前是 <a href="http://www.alimama.com/">阿里妈妈</a> 的一名 JavaScript 开发人员，负责 <a href="http://zuanshi.taobao.com">钻石展位广告管理系统</a> 和 <a href="http://dmp.taobao.com/">DMP 数据营销系统</a>的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。</p>
 <p>已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 <a href="https://github.com/nuysoft/bisheng">BiSheng.js</a>，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。</p>
+<p>BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。</p>
 <h2 id="-140-">可以用 140 个字概述这篇文章吗？</h2>
 <p>如果你时间不够，下面是这篇文章的摘要，只有一条 tweet 的长度：</p>
 <p><strong>修改语法树，插入定位符，渲染模板和定位符，解析定位符，建立数据到 DOM 元素的连接，建立 DOM 元素到数据的连接。</strong></p>
@@ -145,8 +147,7 @@
 <p>总体而言，我倾向于选择 <a href="http://handlebarsjs.com/">Handlebars.js</a>，它属于第 2 种组合，可以运行在客户端和服务端，支持在服务端预编译模板，并且支持 Helper 方法。</p>
 <p>BiSheng.js 也选择了 Handlebars.js 作为它支持的第一款模板引擎，不过这并不是唯一的选择，BiSheng.js 还允许扩展支持更多的模板引擎。</p>
 <h2 id="-">执行绑定</h2>
-<p>BiSheng.js 提供了方法 <a href="/doc/bisheng.html"><code>BiSheng.bind(data, tpl, callback(content))</code></a>，用于在模板和数据之间执行双向绑定。</p>
-<p>绑定的关键步骤共有 5 步：</p>
+<p>BiSheng.js 提供了方法 <a href="/doc/bisheng.html"><code>BiSheng.bind(data, tpl, callback(content))</code></a>，用于在模板和数据之间执行双向绑定。绑定的关键步骤共有 5 步：</p>
 <ol>
 <li>修改语法树，插入定位符</li>
 <li>渲染模板和定位符</li>
@@ -154,21 +155,21 @@
 <li>建立数据到 DOM 元素的连接</li>
 <li>建立 DOM 元素到数据的连接</li>
 </ol>
-<p>下面以模板 <code>{{title}}</code> 为来阐述 BiSheng.js 的绑定过程。</p>
+<p>下面以模板 <code>{{title}}</code> 为来说明 <code>BiSheng.bind()</code> 的绑定过程。</p>
 <h3 id="1-">1. 修改语法树，插入定位符</h3>
-<p>BiSheng.js 首先在 <code>{{title}}</code> 的前后插入两个转义后的定位符，转义之前的内容为：</p>
+<p><code>BiSheng.bind()</code> 首先在 <code>{{title}}</code> 的前后插入两个转义后的定位符，转义之前的内容为：</p>
 <pre><code>&lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;{{$lastest title}}&quot; isHelper=&quot;false&quot;&gt;&lt;/script&gt;
 &lt;script guid=&quot;1&quot; slot=&quot;end&quot;&gt;&lt;/script&gt;</code></pre>
 <p>其中，<code>$lastest</code> 是一个全局 Helper 方法，用于获取和输出被定位属性 <code>title</code> 的访问路径，代码如下所示：</p>
 <pre><code>Handlebars.registerHelper(&#39;$lastest&#39;, function(items, options) {
     return items &amp;&amp; items.$path || this &amp;&amp; this.$path
 })</code></pre>
-<p>代码中的 <code>$path</code> 是指示了当前属性的路径，由 BiSheng.js 自动计算和设置。</p>
-<p>对应的语法树的变化代码太多，读者请移步这里 <a href="https://gist.github.com/nuysoft/8055993">https://gist.github.com/nuysoft/8055993</a>。</p>
+<p>代码中的 <code>$path</code> 指示了当前属性的路径，由 BiSheng.js 自动计算和设置。</p>
+<p>对应的语法树的变化代码太多，就不贴在这了，请移步这里 <a href="https://gist.github.com/nuysoft/8055993">https://gist.github.com/nuysoft/8055993</a>。</p>
 <h3 id="2-">2. 渲染模板和定位符</h3>
-<p>然后调用 <code>Handlebars.compile(ast)</code> 渲染模板和定位符，结果如下：</p>
+<p>然后执行 <code>Handlebars.compile(ast)(data)</code> 渲染模板和定位符，结果如下：</p>
 <pre><code>&amp;lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;1.title&quot; isHelper=&quot;false&quot;&amp;gt;&amp;lt;/script&amp;gt;注意，title 的值在这里&amp;lt;script guid=&quot;1&quot; slot=&quot;end&quot;&amp;gt;&amp;lt;/script&amp;gt;</code></pre>
-<p>是不是有些看不懂，没关系，下一步就会解析它。</p>
+<p>转以后的代码有些看不懂，不过没关系，下一步就会解析它。</p>
 <h3 id="3-">3. 解析定位符</h3>
 <p>然后解析渲染结果中的定位符，结果如下：</p>
 <pre><code>&lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;1.title&quot; isHelper=&quot;false&quot;&gt;&lt;/script&gt;注意，title 的值在这里&lt;script guid=&quot;1&quot; slot=&quot;end&quot;&gt;&lt;/script&gt;</code></pre>
@@ -184,7 +185,7 @@
 <!-- 结构、模块职责划分、扩展点 --></p>
 <h2 id="-">扩展</h2>
 <p>理论上，BiSheng.js 可以支持任何基于语法树进行渲染的模板引擎。</p>
-<p>源文件 src/ast.js 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从该文件开始。</p>
+<p>源文件 <code>src/ast.js</code> 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从这个文件开始。</p>
 <h2 id="-">未来规划</h2>
 <p><em>TODO</em></p>
 <h2 id="-">扩展阅读</h2>

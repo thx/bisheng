@@ -1,4 +1,4 @@
-BiSheng.js（毕昇，活字版印刷术发明者）
+BiSheng.js（毕昇）
 ====
 
 [![Build Status](https://api.travis-ci.org/nuysoft/bisheng.png?branch=master)](http://travis-ci.org/nuysoft/bisheng)
