@@ -3,7 +3,7 @@
 
 [![Build Status](https://api.travis-ci.org/nuysoft/bisheng.png?branch=master)](http://travis-ci.org/nuysoft/bisheng)
 [![GitHub version](https://badge.fury.io/gh/nuysoft%2Fbisheng.png)](http://badge.fury.io/gh/nuysoft%2Fbisheng)
-[![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/mockjs)
+[![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs)
 
 纯粹的数据双向绑定库。
 
