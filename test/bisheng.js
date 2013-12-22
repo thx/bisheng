@@ -15,7 +15,7 @@ function bindThenCheck(data, tpl, task, expected, before) {
         BiSheng.unbind(data)
         start()
     })
-    task()
+    task(container)
 }
 
 module('BiSheng Expression')
@@ -497,5 +497,145 @@ test('each-helper, empty', function() {
 
 module('BiSheng Form')
 
+test('input, data => value', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p><input class="form-control" value="{{first}}"></p>
+<p>{{first}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.first = 123
+    }
+    var expected = function(container) {
+        equal('123', container.find('input').val())
+        equal('123', container.find('p:eq(1)').text())
+    }
+    var before = function(container) {
+        equal('first', container.find('input').val())
+        equal('first', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('input, value => data', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p><input class="form-control" value="{{first}}"></p>
+<p>{{first}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function(container) {
+        container.find('input').val(123).trigger('change')
+    }
+    var expected = function(container) {
+        equal('123', data.first)
+    }
+    var before = function(container) {
+        equal('first', container.find('input').val())
+        equal('first', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('select, data => value', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p> 
+    <select class="form-control" value="{{role}}"">
+        <option>Admin</option>
+        <option>User</option>
+    </select>
+</p>
+<p>{{role}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.role = 'User'
+    }
+    var expected = function(container) {
+        equal('User', container.find('select').val())
+        equal('User', container.find('p:eq(1)').text())
+    }
+    var before = function(container) {
+        equal('Admin', container.find('select').val())
+        equal('role', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('select, value => data', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p> 
+    <select class="form-control" value="{{role}}"">
+        <option>Admin</option>
+        <option>User</option>
+    </select>
+</p>
+<p>{{role}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function(container) {
+        container.find('select').val('User').trigger('change') // 必须 trigger 吗？
+    }
+    var expected = function(container) {
+        equal('User', data.role)
+    }
+    var before = function(container) {
+        equal('Admin', container.find('select').val())
+        equal('role', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('textarea, data => value', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p><textarea class="form-control" rows="3" value="{{description}}">{{description}}</textarea></p>
+<p>{{description}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function() {
+        data.description = 123
+    }
+    var expected = function(container) {
+        equal('123', container.find('textarea').val())
+        equal('123', container.find('p:eq(1)').text())
+    }
+    var before = function(container) {
+        equal('description', container.find('textarea').val())
+        equal('description', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+test('textarea, value => data', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<p><textarea class="form-control" rows="3" value="{{description}}">{{description}}</textarea></p>
+<p>{{description}}</p>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    var task = function(container) {
+        container.find('textarea').val(123).trigger('change')
+    }
+    var expected = function(container) {
+        equal('123', data.description)
+    }
+    var before = function(container) {
+        equal('description', container.find('textarea').val())
+        equal('description', container.find('p:eq(1)').text())
+    }
+    bindThenCheck(data, tpl, task, expected, before)
+})
+
+// TODO checkbox radio
 
 module('BiSheng Helper')
