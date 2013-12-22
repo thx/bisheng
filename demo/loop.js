@@ -39,7 +39,7 @@ function doit(data, name) {
         .find('div.data').empty().html(JSON.stringify(data, null, 2)).end()
         .appendTo('div.container')
 
-    Hyde.Loop.watch(data, function(diff) {
+    BiSheng.Loop.watch(data, function(diff) {
         target
             .find('div.diff').empty().html(JSON.stringify(diff, null, 2)).end()
             .find('div.data').empty().html(JSON.stringify(data, null, 2)).end()

@@ -6,9 +6,9 @@ console.json = function(json) {
 
 function doit(data, task, expected) {
     stop()
-    Hyde.Loop.watch(data, function(changes) {
+    BiSheng.Loop.watch(data, function(changes) {
         deepEqual(changes, expected, task)
-        Hyde.Loop.watch(data)
+        BiSheng.Loop.watch(data)
         start()
     })
     task()

@@ -23,12 +23,12 @@ $(function() {
 
     function doit(data, tpl, name) {
         var target = structure.clone();
-        Hyde.bind(data, tpl, function(content) {
-            // 可能有多个 'div#simaples'，记录下来，以便当数据变化时更新对应的页面区域
+        BiSheng.bind(data, tpl, function(content) {
+            // 可能有多个 'div#samples'，记录下来，以便当数据变化时更新对应的页面区域
             target = target
                 .find('div.panel-heading').empty().append(name).end()
                 .find('div.result').empty().append(content).end()
-                .appendTo('div#simaples')
+                .appendTo('div#samples')
         })
     }
 
@@ -49,7 +49,7 @@ $(function() {
             first: '',
             last: ''
         }
-        doit(data, tpl, '示例：自动更新 Handlebars 模板')
+        doit(data, tpl, '自动更新 Handlebars 模板')
     })();
 
 

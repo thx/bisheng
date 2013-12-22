@@ -1,5 +1,5 @@
     expose(factory, function() {
         // Browser globals
-        window.Hyde = factory()
+        window.BiSheng = factory()
     })
 }(function() {

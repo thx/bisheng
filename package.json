@@ -1,6 +1,6 @@
 {
-  "name": "Hyde.js",
-  "title": "Hyde.js",
+  "name": "BiSheng.js",
+  "title": "BiSheng.js",
   "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
   "version": "0.0.1",
   "homepage": "",
@@ -26,16 +26,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/nuysoft/Hyde.git"
+    "url": "git://github.com/nuysoft/BiSheng.git"
   },
-  "main": "./dist/hyde.js",
+  "main": "./dist/bisheng.js",
   "scripts": {
     "test": "grunt travis --verbose"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/nuysoft/Hyde/blob/master/README.md"
+      "url": "https://github.com/nuysoft/BiSheng/blob/master/README.md"
     }
   ]
 }

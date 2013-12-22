@@ -1,13 +1,13 @@
-# Hyde
+# BiSheng
 ---
 
-双向绑定的入口对象，含有两个方法：Hyde.bind(data, tpl, callback) 和 Hyde.unbind(data)。
+双向绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
 
-## Hyde.bind(data, tpl, callback(content))
+## BiSheng.bind(data, tpl, callback(content))
 
 在模板和数据之间执行双向绑定。
 
-* Hyde.bind(data, tpl, callback(content))
+* BiSheng.bind(data, tpl, callback(content))
 
 **参数的含义和默认值**如下所示：
 
@@ -24,7 +24,7 @@
       title: 'foo'
     }
     // 执行双向绑定
-    Hyde.bind(data, tpl, function(content){
+    BiSheng.bind(data, tpl, function(content){
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
     })
@@ -32,13 +32,13 @@
     data.title = 'bar'
 
 
-## Hyde.unbind(data, tpl)
+## BiSheng.unbind(data, tpl)
 
 解除数据和模板之间的双向绑定。
 
-* Hyde.unbind(data, tpl)
+* BiSheng.unbind(data, tpl)
     解除数据 data 和模板 tpl 之间的双向绑定。
-* Hyde.unbind(data)
+* BiSheng.unbind(data)
     解除数据 data 与所有模板之间的双向绑定。
 
 **参数的含义和默认值**如下所示：
@@ -55,14 +55,14 @@
       title: 'foo'
     }
     // 执行双向绑定
-    Hyde.bind(data, tpl, function(content){
+    BiSheng.bind(data, tpl, function(content){
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
     })
     // 改变数据 data.title，对应的文档区域会更新
     data.title = 'bar'
     // 解除双向绑定
-    Hyde.unbind(data, tpl)
+    BiSheng.unbind(data, tpl)
     // 改变数据 data.title，对应的文档区域不会更新
     data.title = 'foo'
 

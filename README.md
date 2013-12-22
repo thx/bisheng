@@ -1,4 +1,4 @@
-BiSheng.js
+BiSheng.js（毕昇，活字版印刷术发明者）
 ====
 
 <!-- BI-Directional / Two-Way Data-Binding with JavaScript. -->
@@ -8,11 +8,11 @@ BiSheng.js
 ## 目录
 <!-- TODO -->
 
-    hyde
+    bisheng
     ├── dist
-    │   ├── hyde.js
-    │   ├── hyde-min.js
-    │   └── hyde-min.map
+    │   ├── bisheng.js
+    │   ├── bisheng-min.js
+    │   └── bisheng-min.map
     ├── doc
     │   ├── index.md
     │   ├── loop.md
@@ -21,7 +21,7 @@ BiSheng.js
     │   ├── ast.js
     │   ├── expose.js
     │   ├── flush.js
-    │   ├── hyde.js
+    │   ├── bisheng.js
     │   ├── loop.js
     │   └── scan.js
     └── test
@@ -44,7 +44,7 @@ BiSheng.js
     $ npm install
     $ bower install
 
-### Hyde.bind(data, tpl, callback)
+### BiSheng.bind(data, tpl, callback)
 
     // HTML 模板
     var tpl = '{{title}}'
@@ -53,7 +53,7 @@ BiSheng.js
       title: 'foo'
     }
     // 执行双向绑定，然后在回调函数中将绑定后的 DOM 元素插入文档中
-    Hyde.bind(data, tpl, function(content){
+    BiSheng.bind(data, tpl, function(content){
       $('div.container').append(content)
     })
 

@@ -40,19 +40,19 @@ module.exports = function(grunt) {
                     }
                 },
                 src: [
-                    'src/fix/hyde-prefix-1.js',
+                    'src/fix/prefix-1.js',
                     'src/expose.js',
-                    'src/fix/hyde-prefix-2.js',
+                    'src/fix/prefix-2.js',
 
                     'src/loop.js',
                     'src/ast.js',
                     'src/scan.js',
                     'src/flush.js',
-                    'src/hyde.js',
+                    'src/bisheng.js',
 
-                    'src/fix/hyde-suffix.js'
+                    'src/fix/suffix.js'
                 ],
-                dest: 'dist/hyde.js'
+                dest: 'dist/bisheng.js'
             }
         },
         nodeunit: {
@@ -85,7 +85,7 @@ module.exports = function(grunt) {
             },
             release: {
                 options: {
-                    sourceMap: 'dist/hyde-min.map'
+                    sourceMap: 'dist/bisheng-min.map'
                 },
                 files: [{
                     expand: true,

@@ -1,12 +1,12 @@
 {
-  "name": "hyde",
+  "name": "bisheng",
   "version": "0.0.1",
-  "homepage": "https://github.com/nuysoft/hyde",
+  "homepage": "https://github.com/nuysoft/bisheng",
   "authors": [
     "nuysoft <nuysoft@gmail.com>"
   ],
   "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
-  "main": "dist/hyde.js",
+  "main": "dist/bisheng.js",
   "license": "MIT",
   "ignore": [
     "**/.*",

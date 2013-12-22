@@ -36,7 +36,7 @@ $(function() {
         title: '@TITLE(3)',
         completed: '@BOOLEAN'
     })
-    data.todos = store('todos-hyde') || data.todos
+    data.todos = store('todos-bisheng') || data.todos
 
     function remaining() {
         var remaining = 0
@@ -48,7 +48,7 @@ $(function() {
 
 
     function sync() {
-        store('todos-hyde', data.todos)
+        store('todos-bisheng', data.todos)
         data.all = data.todos.length
         data.remaining = remaining()
         data.completed = data.all - data.remaining
@@ -59,10 +59,10 @@ $(function() {
 
     sync()
 
-    Hyde.bind(data, tpl, function(content) {
+    BiSheng.bind(data, tpl, function(content) {
         $(content).appendTo('body')
     })
-    Hyde.Loop.watch(data, function(changes) {
+    BiSheng.Loop.watch(data, function(changes) {
         // 同步那些附加的数据
         sync()
     })
@@ -85,7 +85,7 @@ $(function() {
                 title: val,
                 completed: false
             })
-            // Hyde.Loop.letMeSee() // 50ms 的延迟是致命伤
+            // BiSheng.Loop.letMeSee() // 50ms 的延迟是致命伤
 
             $input.val('')
         })
@@ -95,7 +95,7 @@ $(function() {
                 if (todo.id === id) {
                     data.todos.splice(index, 1)
                     sync()
-                    // Hyde.Loop.letMeSee()
+                    // BiSheng.Loop.letMeSee()
                     return false
                 }
             });

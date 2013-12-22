@@ -1,4 +1,4 @@
-# Hyde.js
+# BiSheng.js
 ---
 
 纯粹的数据双向绑定库。
@@ -6,36 +6,36 @@
 ## 下载
 
 <p>
-    <a href="./dist/hyde.js" class="btn btn-success w250">
+    <a href="./dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
     </a> - <i>43kB, Uncompressed</i>
 </p>
 <p>
-    <a href="./dist/hyde-min.js" class="btn btn-primary w250">
+    <a href="./dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
     </a> - <i>10kB, Minified</i>
 </p>
 <p>
-    <a href="https://github.com/nuysoft/hyde" class="btn btn-default w250">
+    <a href="https://github.com/nuysoft/bisheng" class="btn btn-default w250">
         从 Github 获取最新版本
     </a> - <i>Unreleased</i>
 </p>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=hyde&type=watch&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=hyde&type=fork&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=fork&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe>
 
 ## API & 文档
 
-<a href="doc/hyde.html" type="button" class="btn btn-success">Hyde</a>
+<a href="doc/bisheng.html" type="button" class="btn btn-success">BiSheng</a>
 <a href="doc/loop.html" type="button" class="btn btn-default">Loop</a>
 <a href="doc/how.html" type="button" class="btn btn-default">工作原理</a>
 
 ## 开始
 
-`Hyde.bind(data, tpl, callback)`
+`BiSheng.bind(data, tpl, callback)`
 
     // HTML 模板
     var tpl = '{{title}}'
@@ -44,19 +44,19 @@
       title: 'foo'
     }
     // 执行双向绑定
-    Hyde.bind(data, tpl, function(content){
+    BiSheng.bind(data, tpl, function(content){
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
-    })
+    });
     // 改变数据 data.title，对应的文档区域会更新
     data.title = 'bar'
 
 ## 示例
 
-<div id="simaples"></div>
-<script src="/doc/simaples.js"></script>
+<div id="samples"></div>
+<script src="/doc/samples.js"></script>
 
-### 更多示例
+**更多示例：**
 
 * [TodoMVC](demo/todo/index.html)
 * [监听数据对象的属性](demo/loop.html)
@@ -67,7 +67,7 @@
 
 ## 感谢
 
-感谢以下框架给 Hyde.js 的启发：
+感谢以下框架给 BiSheng.js 的启发：
 
 1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
 2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)

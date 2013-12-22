@@ -56,7 +56,7 @@ if (!window.JSON) {
 /* jshint unused: false */
 function doit(data, tpl, name) {
     var target = structure.clone();
-    Hyde.bind(data, tpl, function(content) {
+    BiSheng.bind(data, tpl, function(content) {
         // 可能有多个 'div.container'，记录下来，以便当数据变化时更新对应的页面区域
         target = target
             .find('h2.name').empty().append(name).end()
@@ -66,7 +66,7 @@ function doit(data, tpl, name) {
             .appendTo('div.container')
     })
 
-    Hyde.Loop.watch(data, function(changes) {
+    BiSheng.Loop.watch(data, function(changes) {
         $.each(changes, function(_, change) {
             // 更新 div.data
             target
@@ -77,7 +77,7 @@ function doit(data, tpl, name) {
         })
     })
 
-    Hyde.Flush.scrollIntoView = function scrollIntoView(event) {
+    BiSheng.Flush.scrollIntoView = function scrollIntoView(event) {
         if (event.target.nodeType) event.target = [event.target]
         event.target.forEach && event.target.forEach(function(item, index) {
             var panel = $(item).parents('.tc')

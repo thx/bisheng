@@ -3,14 +3,14 @@ module('AST')
 test('object expression', function() {
     var tpl = '{{title}}'
     var ast = Handlebars.parse(tpl)
-    Hyde.AST.handle(ast)
+    BiSheng.AST.handle(ast)
 
     equal(ast.statements.length, 5, ast.statements)
 })
 
 test('object block', function() {
     var tpl = '{{#if condition}}{{title}}{{/if}}'
-    var ast = Hyde.AST.handle(Handlebars.parse(tpl))
+    var ast = BiSheng.AST.handle(Handlebars.parse(tpl))
 
     statements = ast.statements
     equal(statements.length, 5, statements)
