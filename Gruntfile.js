@@ -141,4 +141,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'connect', 'watch:dev']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown', 'connect', 'watch:doc'])
+    grunt.registerTask('travis', ['jshint', 'qunit']) // grunt travis --verbose
 };

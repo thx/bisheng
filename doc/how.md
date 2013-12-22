@@ -1,3 +1,9 @@
+<style type="text/css">
+  img {
+    width: 100%;
+  }
+</style>
+
 <h1>毕昇工作原理 <small>How BiSheng.js works</smaLL></h1>
 <hr>
 
@@ -165,6 +171,7 @@ BiSheng.js 首先在 `{{title}}` 的前后插入两个转义后的定位符，�
 
 ## 源码导读
 
+*TODO*
 <!-- 结构、模块职责划分、扩展点 -->
 
 ## 扩展
@@ -175,11 +182,15 @@ BiSheng.js 首先在 `{{title}}` 的前后插入两个转义后的定位符，�
 
 ## 未来规划
 
+*TODO*
+
 ## 扩展阅读
+
+*TODO*
 
 ## 总结
 
-
+*TODO*
 
 
 

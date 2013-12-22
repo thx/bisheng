@@ -11,7 +11,7 @@
       }
 
       img {
-        width: 100%;
+        /*width: 100%;*/
       }
       
       .container {
@@ -73,7 +73,13 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-md-9"><p><h1>毕昇工作原理 <small>How BiSheng.js works</smaLL></h1></p>
+      <div class="col-md-9"><style type="text/css">
+  img {
+    width: 100%;
+  }
+</style>
+
+<p><h1>毕昇工作原理 <small>How BiSheng.js works</smaLL></h1></p>
 <hr>
 
 <p><img src="image/he.png" alt=""></p>
@@ -174,14 +180,17 @@
 <h3 id="-">小结</h3>
 <p>前面以 <code>{{title}}</code> 为例阐述了绑定过程。这尚是最简单的情况，事实上内部的实现比示例要复杂和繁琐许多，但处理的步骤是一样的。</p>
 <h2 id="-">源码导读</h2>
-<!-- 结构、模块职责划分、扩展点 -->
-
+<p><em>TODO</em>
+<!-- 结构、模块职责划分、扩展点 --></p>
 <h2 id="-">扩展</h2>
 <p>理论上，BiSheng.js 可以支持任何基于语法树进行渲染的模板引擎。</p>
 <p>源文件 src/ast.js 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从该文件开始。</p>
 <h2 id="-">未来规划</h2>
+<p><em>TODO</em></p>
 <h2 id="-">扩展阅读</h2>
+<p><em>TODO</em></p>
 <h2 id="-">总结</h2>
+<p><em>TODO</em></p>
 </div>
       <div class="col-md-3">
         <div class="panel panel-default" style="position: fixed; margin-top: 75px;">
