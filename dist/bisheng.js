@@ -729,7 +729,7 @@
                 }
 
                 // TODO 为什么不触发 change 事件？
-                $(target).on('keyup', function(event) {
+                $(target).on('change keyup', function(event) {
                     updateValue(data, path, event.target)
                 })
             })
