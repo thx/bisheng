@@ -109,7 +109,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: ['<%= jshint.files %>', 'src/fix/*', 'doc/*.md', 'doc/template.html'],
-                tasks: ['jshint', 'uglify', 'qunit', 'markdown', 'concat'] // 'nodeunit'
+                tasks: ['jshint','concat', 'uglify', 'qunit', 'markdown'] // 'nodeunit'
             },
             doc: {
                 files: ['doc/*.md', 'doc/template.html'],

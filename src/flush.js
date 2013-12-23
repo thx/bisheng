@@ -128,10 +128,10 @@ if (typeof module === 'object' && module.exports) {
                     $target.prop(name, value)
 
                     name = $target.attr('name')
-                    if (name && $target.prop('checked')) {
-                        setTimeout(function() {
-                            change.context[name] = $target.val()
-                        }, 0)
+                    if (name && $target.prop('checked') && name in change.context) {
+                        // setTimeout(function() {
+                        change.context[name] = $target.val()
+                        // }, 0)
                     }
                     break
                 default:

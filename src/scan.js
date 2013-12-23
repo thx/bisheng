@@ -153,17 +153,25 @@
                 }
 
                 var value = data
-                // Watch.define.defining.push(true) // 暂停事件
                 for (var index = 1; index < path.length; index++) {
                     value = value[path[index]]
                 }
-                // Watch.define.defining.pop() // 恢复事件
                 // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
                 if (value === undefined || value.valueOf() === false || value.valueOf() === 'false') {
                     $(target).prop('checked', false)
                 }
+                if (value !== undefined &&
+                    (value.valueOf() === true || value.valueOf() === 'true' || value.valueOf() === 'checked')) {
+                    $(target).prop('checked', true)
+                }
 
-                $(target).on('change', function(event) {
+                $(target).on('change', function(event, firing) {
+                    // radio：点击其中一个后，需要同步更新同名的其他 radio
+                    if (!firing && event.target.type === 'radio') {
+                        $('input:radio[name="' + event.target.name + '"]')
+                            .not(event.target)
+                            .trigger('change', firing = true)
+                    }
                     updateChecked(data, path, event.target)
                 })
             })
@@ -215,15 +223,18 @@
             }
 
             var $target = $(target),
-                value
+                value, name
             switch (target.nodeName.toLowerCase()) {
                 case 'input':
                     switch (target.type) {
                         case 'radio': // TODO
+                            value = $target.prop('checked')
+                            name = $target.attr('name')
+                            if (name && value && name in data) data[name] = $target.val()
+                            break
                         case 'checkbox': // TODO
                             value = $target.prop('checked')
-                            // var name = $target.attr('name')
-                            // if (name && value) data[name] = $target.val()
+                            break
                     }
                     break
                 default:
