@@ -15,10 +15,12 @@
 
 > 数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。
 
-这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]。
+这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译]）。
 
 [AngularJS]: http://angularjs.org/
 [EmberJS]: http://emberjs.com/
+[Patterns For Large-Scale JavaScript Application Architecture]: http://addyosmani.com/largescalejavascript/
+[翻译]: http://nuysoft.com/2013/08/13/large-scale-javascript/
 
 ## 我是谁，以及我为什么写这个主题？
 
@@ -55,7 +57,7 @@ BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因
 监听数据变化的可选方案并不少，一一逐条罗列和分析：
 
 1. 建立数据的副本，用定时器（[setTimeout 或 setInterval]）周期性地与副本进行比较，并将变化封装成事件，用观察者（Pub/Sub）模式来实现事件广播。
-2. 采用 ES5 规范中的 [Object.defineProperty] 和 [Object.defineProperties] 为属性定义 `get()` 和 `set()` 方法，依此来监听属性的读取和设置操作，功能上非常完善，但是 IE9- [不支持](http://kangax.github.io/es5-compat-table/)，一些 Polyfill（例如，TODO）也不完善。
+2. 采用 ES5 规范中的 [Object.defineProperty] 和 [Object.defineProperties] 为属性定义 `get()` 和 `set()` 方法，依此来监听属性的读取和设置操作，功能上非常完善，但是 [IE9- 不支持](http://kangax.github.io/es5-compat-table/)，一些 Polyfill（例如，TODO）也不完善。
 3. [Object.observe()] 也可以用来监听属性的变化，可是距离可应用也太远了。
 4. 甚至你可能会想到 [Object.prototype.\_\_defineGetter\_\_] 和 [Object.prototype.\_\_defineSetter\_\_]，但是未被纳入规范，不过这不重点，关键是 [IE11 才会支持](TODO)。
 
@@ -64,8 +66,12 @@ BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因
 > `Object.defineProperty/defineProperties` 的缺点在于无法检测未知属性，例如，对象中新增的属性和数组中新增的元素；定时器 `setTimeout` 的缺点在于（周期性运行必然会导致）不能及时反映数据的变化，此外，也会有性能和电量损耗的问题。
 
 [setTimeout 或 setInterval]: http://stackoverflow.com/questions/729921/settimeout-or-setinterval
+
 [Object.defineProperty]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
 [Object.defineProperties]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties
+
+[Object.observe()]: http://wiki.ecmascript.org/doku.php?id=harmony:observe
+
 [Object.prototype.\_\_defineGetter\_\_]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineGetter
 [Object.prototype.\_\_defineSetter\_\_]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineSetter
 
@@ -118,17 +124,17 @@ BiSheng.js 也选择了 Handlebars.js 作为它支持的第一款模板引擎，
 
 BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/bisheng.html)，用于在模板和数据之间执行双向绑定。绑定的关键步骤共有 5 步：
 
-1. 修改语法树，插入定位符
-2. 渲染模板和定位符
-3. 解析定位符
-4. 建立数据到 DOM 元素的连接
-5. 建立 DOM 元素到数据的连接
+1. 修改语法树，插入定位符。
+2. 渲染模板和定位符。
+3. 解析定位符。
+4. 建立数据到 DOM 元素的连接。
+5. 建立 DOM 元素到数据的连接。
 
 下面以模板 `{{title}}` 为来说明 `BiSheng.bind()` 的绑定过程。
 
 ### 1. 修改语法树，插入定位符
 
-`BiSheng.bind()` 首先在 `{{title}}` 的前后插入两个转义后的定位符，转义之前的内容为：
+`BiSheng.bind()` 首先在 `{{title}}` 的前后插入两个转义后的定位符，在转义之前是：
 
     <script guid="1" slot="start" type="" path="{{$lastest title}}" isHelper="false"></script>
     <script guid="1" slot="end"></script>
@@ -139,7 +145,7 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
         return items && items.$path || this && this.$path
     })
 
-代码中的 `$path` 指示了当前属性的路径，由 BiSheng.js 自动计算和设置。
+其中，`$path` 指示了当前属性的路径，由 BiSheng.js 自动计算和设置。
 
 对应的语法树的变化代码太多，就不贴在这了，请移步这里 <https://gist.github.com/nuysoft/8055993>。
 
@@ -149,9 +155,9 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
     
     &lt;script guid="1" slot="start" type="" path="1.title" isHelper="false"&gt;&lt;/script&gt;注意，title 的值在这里&lt;script guid="1" slot="end"&gt;&lt;/script&gt;
 
-转以后的代码有些看不懂，不过没关系，下一步就会解析它。
+转以后的代码有些不易读，不过没关系，下一步就会解析它。
 
-### 3. 解析定位符
+### 3. 扫描 DOM 元素，解析定位符
 
 然后解析渲染结果中的定位符，结果如下：
 
@@ -169,9 +175,31 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 
 ### 小结
 
-前面以 `{{title}}` 为例阐述了绑定过程。这尚是最简单的情况，事实上内部的实现比示例要复杂和繁琐许多，但处理的步骤是一样的。
+前面以 `{{title}}` 为例阐述了绑定过程。这尚是最简单的情况，事实上内部的实现比示例要复杂和繁琐许多，不过处理的步骤是一样的。
 
 ## 源码导读
+
+**代码的结构**按照职责来设计，见下表；**打包后的文件**在 [dist/] 目录下；**测试用例**在 [test/] 目录下，基本覆盖了目前已实现的功能。
+
+源文件            | 职责 & 功能
+----------------- | -------------------------------------
+[src/ast.js]      | 修改语法树，插入定位符。
+[src/bisheng.js]  | 双向数据绑定的入口；
+[src/expose.js]   | 模块化，适配主流加载器。
+[src/flush.js]    | 更新 DOM 元素。
+[src/loop.js]     | 属性监听工具。
+[src/scan.js]     | 扫描 DOM 元素，解析定位符。
+
+[src/ast.js]: https://github.com/nuysoft/bisheng/tree/master/src/ast.js
+[src/bisheng.js]: https://github.com/nuysoft/bisheng/tree/master/src/bisheng.js
+[src/expose.js]: https://github.com/nuysoft/bisheng/tree/master/src/expose.js
+[src/flush.js]: https://github.com/nuysoft/bisheng/tree/master/src/flush.js
+[src/loop.js]: https://github.com/nuysoft/bisheng/tree/master/src/loop.js
+[src/scan.js]: https://github.com/nuysoft/bisheng/tree/master/src/scan.js
+
+[dist/]: https://github.com/nuysoft/bisheng/tree/master/dist/
+[test/]: https://github.com/nuysoft/bisheng/tree/master/src/
+<!-- 注释行数大约占总行数的 40～50%。 -->
 
 *TODO*
 <!-- 结构、模块职责划分、扩展点 -->
@@ -182,7 +210,10 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 
 源文件 `src/ast.js` 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从这个文件开始。
 
-## 未来规划
+## 下一步
+
+1. 支持 [KISSY XTempalte](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)
+2. 定位符由 script 改为注释节点。
 
 *TODO*
 
