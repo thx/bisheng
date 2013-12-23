@@ -13,6 +13,21 @@
 }(function() {
     // BEGIN(BROWSER)
 
+    /*
+        # AST
+
+        修改语法树，插入定位符。
+
+        * AST.handle(node, blocks, helpers)
+            入口方法。
+        * AST.program(node, context, index, blocks, helpers)
+            遍历语法树。
+        * AST.mustache(node, context, index, blocks, helpers)
+            为表达式插入定位符。
+        * AST.block(node, context, index, blocks, helpers)
+            为逻辑块插入定位符
+
+    */
     var AST = (function() {
 
         var guid = 1;
@@ -46,12 +61,18 @@
             },
 
             /*
+                ### AST.handle(node, blocks, helpers)
+
+                修改语法树的入口方法。
+
                 * AST.handle(node)
                 * AST.handle(node, blocks)
                 * AST.handle(node, blocks, helpers)
-                    公开方法
+                    公开方法。
                 * AST.handle(node, context, index, blocks, helpers)
-                    用于内部递归修改 AST
+                    用于内部递归修改语法树。
+
+
             */
             handle: function handle(node, context, index, blocks, helpers) {
                 if (arguments.length === 2) {
@@ -76,7 +97,7 @@
                 }
             },
 
-            // 为 Expression 插入占位符
+            // 为表达式插入定位符
             mustache: function(node, context, index, blocks, helpers) {
                 if (node.binded) return
 
@@ -126,7 +147,7 @@
                 node.binded = true
             },
 
-            // 为 Block 插入占位符
+            // 为逻辑块插入定位符
             block: function block(node, context, index, blocks, helpers) {
                 if (node.binded) return
 
@@ -176,6 +197,7 @@
                 this.handle(node.program || node.inverse, context, index, blocks, helpers)
             }
         }
+
     })()
 
     // END(BROWSER)

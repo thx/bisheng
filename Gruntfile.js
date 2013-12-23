@@ -73,7 +73,7 @@ module.exports = function(grunt) {
                     beautify: true,
                     compress: false,
                     mangle: false,
-                    preserveComments: 'some' // false all some
+                    preserveComments: 'all' // false all some
                 },
                 files: [{
                     expand: true,

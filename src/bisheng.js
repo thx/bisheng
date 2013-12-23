@@ -23,7 +23,7 @@
     /*
         ## BiSheng
 
-        双向绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
+        双向数据绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
     */
     var BiSheng = {
         version: '0.1.0',

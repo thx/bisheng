@@ -13,6 +13,12 @@
 }(function() {
     // BEGIN(BROWSER)
 
+    /*
+        # Scanner
+
+        扫描 DOM 元素，解析定位符
+
+    */
     var Scanner = (function() {
 
         // 入口方法

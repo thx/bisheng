@@ -27,6 +27,19 @@ if (typeof module === 'object' && module.exports) {
 
     // BEGIN(BROWSER)
 
+    /*
+        # Flush
+        
+        更新 DOM 元素
+
+        * Flush.handle(event, change, defined)
+            * Flush.handle.text(path, event, change, defined)
+            * Flush.handle.attribute(path, event, change, defined)
+            * Flush.handle.block(path, event, change, defined)
+        * Flush.scrollIntoView(event, change)
+        * Flush.highlight(event, change)
+
+    */
     var Flush = (function() {
 
         function expressionTarget(node) {
@@ -35,6 +48,41 @@ if (typeof module === 'object' && module.exports) {
             }
         }
 
+        /*
+            ## Flush.handle(event, change, defined)
+
+            更新 DOM 元素。其中含有 3 个方法：
+
+            * Flush.handle.text(path, event, change, defined)
+                更新文本节点的值。
+            * Flush.handle.attribute(path, event, change, defined)
+                更新属性的值。
+            * Flush.handle.block(path, event, change, defined)
+                更新逻辑块的内容。
+
+            **参数的含义和默认值**如下所示：
+
+            * 参数 event：必选。事件对象，初始值如下，其中的数组 target 用于收集需要（被）更新的 DOM 元素：
+                    { 
+                        target: [] 
+                    }
+            * 参数 change：必选。事件对象，格式为：
+                    {
+                        type: 'add/delete/update',
+                        path: [guid, , ],
+                        value: newValue,
+                        oldValue: oldValue
+                    }
+            * 参数 defined：必选。数据副本，其中的基本类型已被自动装包。
+            * 参数 path：script 元素，用作起始定位符，结构为：
+                    <script guid="guid", slot="start" type="text|attribute|block" path="guid.property...", ishelper="true|false"></script>
+                    
+                    > 结束定位符的结构为：
+
+                    <script guid="guid", slot="start" 
+
+
+        */
         function handle(event, change, defined) {
             var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
             var paths = $(selector)
@@ -52,7 +100,12 @@ if (typeof module === 'object' && module.exports) {
             })
         }
 
-        // 更新属性对应的 Expression
+        // 
+        /*
+           更新属性对应的 Expression 
+           更新文本节点的值。
+
+        */
         handle.text = function text(path, event, change, defined) {
             var guid = path.getAttribute('guid')
             var helper = path.getAttribute('helper')

@@ -18,7 +18,12 @@
 }(function() {
     // BEGIN(BROWSER)
     
-    // 模块化 Modular
+    /*
+        # expose(factory, globals)
+
+        模块化，适配主流加载器。
+        Modular
+    */
     function expose(factory, globals) {
         if (typeof module === 'object' && module.exports) {
             // CommonJS
