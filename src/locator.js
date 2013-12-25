@@ -31,7 +31,7 @@
                 return this.nodeType === 8
             })
             .filter(function(index, item) {
-                /*jslint evil: true */
+                /* jslint evil: true */
                 var json = (new Function('return ' + item.nodeValue))()
                 for (var key in attrs) {
                     if (attrs[key] !== json[key]) return false
@@ -130,6 +130,7 @@
             return $(locator).attr(attr)
         },
         parseJsonCommentLocator: function parseJsonCommentLocator(locator, attr) {
+            /* jslint evil: true */
             return (new Function('return ' + locator.nodeValue))()[attr]
         },
 
