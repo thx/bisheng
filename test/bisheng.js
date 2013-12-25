@@ -92,7 +92,7 @@ test('multi-placeholder + multi-wrapper', function() {
         data.bar = 4
     }
     var expected = function(container) {
-        equal('3 3 4 4', container.text(), tpl)
+        equal(container.text(), '3 3 4 4', tpl)
     }
     bindThenCheck(data, tpl, task, expected)
 })
@@ -174,9 +174,9 @@ test('style', function() {
         data.height = 100
     }
     var expected = function(container) {
-        equal('200px', container.find('div').css('width'), tpl)
-        equal('100px', container.find('div').css('height'), tpl)
-        equal('200, 100', container.find('div').text(), tpl)
+        equal(container.find('div').css('width'), '200px', container.find('div')[0].outerHTML)
+        equal(container.find('div').css('height'), '100px', 'height')
+        equal(container.find('div').text(), '200, 100', 'text')
     }
     bindThenCheck(data, tpl, task, expected)
 })
@@ -846,12 +846,12 @@ test('radio, checked, doom => data', function() {
     var expected = function(container) {
         equal(false, container.find('input:eq(0)').prop('checked'))
         equal(true, container.find('input:eq(1)').prop('checked'))
-        equal('radioValue2',$.trim(container.find('p').text()))
+        equal('radioValue2', $.trim(container.find('p').text()))
     }
     var before = function(container) {
         equal(true, container.find('input:eq(0)').prop('checked'))
         equal(false, container.find('input:eq(1)').prop('checked'))
-        equal('optionsRadios',$.trim(container.find('p').text()))
+        equal('optionsRadios', $.trim(container.find('p').text()))
     }
     bindThenCheck(data, tpl, task, expected, before)
 })

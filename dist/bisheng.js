@@ -1,4 +1,4 @@
-/*! BiSheng.js 2013-12-25 07:13:47 PM CST */
+/*! BiSheng.js 2013-12-25 07:36:10 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -467,6 +467,18 @@
             helper: helper
         }
     */
+    if (!window.JSON) {
+        window.JSON = {
+            stringify: function(json) {
+                var props = [], value;
+                for (var key in json) {
+                    value = typeof json[key] === "string" ? '"' + json[key] + '"' : json[key];
+                    props.push('"' + key + '":' + value);
+                }
+                return "{" + props.join(",") + "}";
+            }
+        };
+    }
     function getCommentsByRegExp(regexFilters, container) {
         var comments = $(container).add("*", container).contents().filter(function() {
             return this.nodeType === 8;

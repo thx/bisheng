@@ -25,6 +25,20 @@
         }
     */
 
+    if (!window.JSON) {
+        window.JSON = {
+            stringify: function(json) {
+                var props = [],
+                    value
+                for (var key in json) {
+                    value = typeof json[key] === 'string' ? '"' + json[key] + '"' : json[key]
+                    props.push('"' + key + '":' + value)
+                }
+                return '{' + props.join(',') + '}'
+            }
+        }
+    }
+
     function getCommentsByRegExp(regexFilters, container) {
         var comments = $(container).add('*', container).contents()
             .filter(function() {

@@ -1,7 +1,9 @@
 module('Loop')
 
-console.json = function(json) {
-    console.log(JSON.stringify(json, null, 4))
+if (window.console) {
+    console.json = function(json) {
+        console.log(JSON.stringify(json, null, 4))
+    }
 }
 
 function doit(data, task, expected) {
