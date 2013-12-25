@@ -188,6 +188,7 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 [src/bisheng.js]  | 双向数据绑定的入口；
 [src/expose.js]   | 模块化，适配主流加载器。
 [src/flush.js]    | 更新 DOM 元素。
+[src/locator.js]  | 生成定位符，解析、更新定位符的属性。
 [src/loop.js]     | 属性监听工具。
 [src/scan.js]     | 扫描 DOM 元素，解析定位符。
 
