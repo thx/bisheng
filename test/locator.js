@@ -1,11 +1,12 @@
 module('Locator')
 
-var Locator = BiSheng.Locator
+var ScriptLocator = BiSheng.Locators[0]
+var JsonCommentLocator = BiSheng.Locators[1]
 
 // 创建
 
 test('create script locator', function() {
-    var locator = Locator.createScriptLocator({
+    var locator = ScriptLocator.create({
         guid: 1,
         slot: "start"
     })
@@ -14,7 +15,7 @@ test('create script locator', function() {
 })
 
 test('create comment locator', function() {
-    var locator = Locator.createJsonCommentLocator({
+    var locator = JsonCommentLocator.create({
         guid: 1,
         slot: "start"
     })
@@ -26,16 +27,16 @@ test('create comment locator', function() {
 
 test('match script locator', function() {
     var locator = '<script guid="1" slot="start"></script>'
-    var ma = Locator.scriptLocatorRegExp.exec(locator)
+    var ma = ScriptLocator.getLocatorRegExp().exec(locator)
     ok(ma)
     equal(ma[1], locator)
 })
 
 test('match comment locator', function() {
     var locator = '<!-- {"guid":1,"slot":"start"} -->'
-    var ma = Locator.jsonCommentLocatorRegExp.exec(locator)
+    var ma = JsonCommentLocator.getLocatorRegExp().exec(locator)
     ok(ma)
-    equal(ma[1], '{"guid":1,"slot":"start"}')
+    equal(ma[2], '{"guid":1,"slot":"start"}')
 })
 
 // 查找
@@ -46,19 +47,7 @@ test('find script locator', function() {
         .append('<script guid="1" slot="end"></script>')
         .append('<script guid="2" slot="start"></script>')
         .append('<script guid="2" slot="end"></script>')
-    var locators = Locator.findScriptLocator({
-        slot: 'start'
-    }, container)
-    equal(locators.length, 2)
-})
-
-test('find comment locator', function() {
-    var container = $('<div>')
-        .append('<!-- guid="1" slot="start" -->')
-        .append('<!-- guid="1" slot="end" -->')
-        .append('<!-- guid="2" slot="start" -->')
-        .append('<!-- guid="2" slot="end" -->')
-    var locators = Locator.findCommentLocator({
+    var locators = ScriptLocator.find({
         slot: 'start'
     }, container)
     equal(locators.length, 2)
@@ -70,7 +59,7 @@ test('find json comment locator', function() {
         .append('<!-- {guid:"1",slot:"end"} -->')
         .append('<!-- {guid:"2",slot:"start"} -->')
         .append('<!-- {guid:"2",slot:"end"} -->')
-    var locators = Locator.findJsonCommentLocator({
+    var locators = JsonCommentLocator.find({
         slot: 'start'
     }, container)
     equal(locators.length, 2)
@@ -85,11 +74,11 @@ test('parse script locator', function() {
         .append('<script guid="1" slot="end"></script>')
         .append('<script guid="2" slot="start"></script>')
         .append('<script guid="2" slot="end"></script>')
-    var locators = Locator.findScriptLocator({
+    var locators = ScriptLocator.find({
         slot: 'start'
     }, container)
     locators.each(function(index, locator) {
-        equal(Locator.parseScriptLocator(locator, 'slot'), 'start')
+        equal(ScriptLocator.parse(locator, 'slot'), 'start')
     })
 })
 
@@ -100,18 +89,18 @@ test('parse json comment locator', function() {
         .append('<!-- {guid:"1",slot:"end"} -->')
         .append('<!-- {guid:"2",slot:"start"} -->')
         .append('<!-- {guid:"2",slot:"end"} -->')
-    var locators = Locator.findJsonCommentLocator({
+    var locators = JsonCommentLocator.find({
         slot: 'start'
     }, container)
     locators.each(function(index, locator) {
-        equal(Locator.parseJsonCommentLocator(locator, 'slot'), 'start')
+        equal(JsonCommentLocator.parse(locator, 'slot'), 'start')
     })
 
-    Locator.findJsonCommentLocator({
+    JsonCommentLocator.find({
         guid: '1'
     }, container)
         .each(function(index, locator) {
-            equal(Locator.parseJsonCommentLocator(locator, 'guid'), '1')
+            equal(JsonCommentLocator.parse(locator, 'guid'), '1')
         })
 })
 
@@ -125,22 +114,22 @@ test('update json comment locator', function() {
         .append('<!-- {guid:"2",slot:"start"} -->')
         .append('<!-- {guid:"2",slot:"end"} -->')
 
-    Locator.findJsonCommentLocator({
+    JsonCommentLocator.find({
         slot: 'start'
     }, container)
         .each(function(index, locator) {
-            Locator.updateJsonCommentLocator(locator, {
+            JsonCommentLocator.update(locator, {
                 type: 'text',
                 path: [1, 2, 3].join('.')
             })
         })
 
-    Locator.findJsonCommentLocator({
+    JsonCommentLocator.find({
         slot: 'start'
     }, container)
         .each(function(index, locator) {
-            equal(Locator.parseJsonCommentLocator(locator, 'type'), 'text')
-            equal(Locator.parseJsonCommentLocator(locator, 'path'), '1.2.3')
+            equal(JsonCommentLocator.parse(locator, 'type'), 'text')
+            equal(JsonCommentLocator.parse(locator, 'path'), '1.2.3')
         })
 })
 
@@ -156,11 +145,11 @@ test('parse target', function() {
         .append('<span>target2-1</span>')
         .append('<span>target2-2</span>')
         .append('<!-- {guid:"2",slot:"end"} -->')
-    Locator.findJsonCommentLocator({
+    JsonCommentLocator.find({
         slot: 'start'
     }, container)
         .each(function(index, locator) {
-            var target = Locator.parseTargetOfJsonCommentLocator(locator)
+            var target = JsonCommentLocator.parseTarget(locator)
             equal(target.length, 2, target.html())
         })
 

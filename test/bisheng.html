@@ -12,6 +12,14 @@
   <script src="../bower_components/mockjs/dist/mock.js"></script>
   <script type="text/javascript" src="../dist/bisheng.js"></script>
   <!-- Load local tests. -->
+  <script type="text/javascript">
+    QUnit.begin(function(){
+      if (window.console && console.time) console.time('BiSheng.js Test Suite')
+    })
+    QUnit.done(function(){
+      if (window.console && console.time) console.timeEnd('BiSheng.js Test Suite')
+    })
+  </script>
   <script type="text/javascript" src="loop.js"></script>
   <script type="text/javascript" src="ast.js"></script>
   <script type="text/javascript" src="locator.js"></script>

@@ -3,7 +3,7 @@
 .idea
 node_modules
 bower_components
-build
+bak
 *.TODO
 PLAN.md
 npm-debug.log

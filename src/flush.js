@@ -94,7 +94,7 @@ if (typeof module === 'object' && module.exports) {
             }
 
             paths.each(function(index, path) {
-                type = path.getAttribute('type')
+                type = Locator.parse(path, 'type')
                 if (handle[type]) handle[type](path, event, change, defined)
             })
         }
@@ -106,8 +106,8 @@ if (typeof module === 'object' && module.exports) {
 
         */
         handle.text = function text(locator, event, change, defined) {
-            var guid = locator.getAttribute('guid')
-            var helper = locator.getAttribute('helper')
+            var guid = Locator.parse(locator, 'guid')
+            var helper = Locator.parse(locator, 'helper')
             var target = Locator.parseTarget(locator)
             var content
 
@@ -139,7 +139,7 @@ if (typeof module === 'object' && module.exports) {
             event.target.push(currentTarget = Locator.parseTarget(path)[0])
             $target = $(currentTarget)
 
-            var ast = defined.$blocks[path.getAttribute('guid')]
+            var ast = defined.$blocks[Locator.parse(path, 'guid')]
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value
             var oldValue = function() {
                 var oldValue
@@ -149,13 +149,13 @@ if (typeof module === 'object' && module.exports) {
                 return oldValue
             }()
 
-            name = path.getAttribute('name')
+            name = Locator.parse(path, 'name')
             switch (name) {
                 case 'class':
                     $target.removeClass('' + oldValue).addClass('' + value)
                     break
                 case 'style':
-                    $target.css(path.getAttribute('css'), value)
+                    $target.css(Locator.parse(path, 'css'), value)
                     break
                 case 'value':
                     if ($target.val() !== value && !$target.data('user is editing')) {
@@ -185,7 +185,7 @@ if (typeof module === 'object' && module.exports) {
 
         // 更新数组对应的 Block，路径 > guid > Block
         handle.block = function block(locator, event, change, defined) {
-            var guid = locator.getAttribute('guid')
+            var guid = Locator.parse(locator, 'guid')
             var ast = defined.$blocks[guid]
             var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
             var content = Handlebars.compile(ast)(context)
@@ -195,7 +195,7 @@ if (typeof module === 'object' && module.exports) {
             content = content.contents()
 
             var target = Locator.parseTarget(locator)
-            var endLocator = target.length ? target[target.length -1].nextSibling : locator.nextSibling
+            var endLocator = target.length ? target[target.length - 1].nextSibling : locator.nextSibling
 
             /*
                 优化渲染过程

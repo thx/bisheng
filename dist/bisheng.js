@@ -1,4 +1,4 @@
-/*! BiSheng.js 2013-12-25 07:36:10 PM CST */
+/*! BiSheng.js 2013-12-26 12:07:52 AM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -479,36 +479,14 @@
             }
         };
     }
-    function getCommentsByRegExp(regexFilters, container) {
-        var comments = $(container).add("*", container).contents().filter(function() {
-            return this.nodeType === 8;
-        });
-        if (regexFilters instanceof Array) {
-            comments = comments.filter(function(index, item) {
-                for (var i = 0; i < regexFilters.length; i++) {
-                    if (!regexFilters[i].test(item.nodeValue)) return false;
-                }
-                return true;
-            });
-        } else {
-            comments = comments.filter(function(index, item) {
-                return regexFilters ? regexFilters.test(item.nodeValue) : true;
-            });
-        }
-        return comments;
-    }
-    var escapeExpression = Handlebars.Utils.escapeExpression;
     /*
         定位符
     */
-    var Locator = {
-        // AST
-        // 创建定位符
+    // script 定位符
+    var ScriptLocator = {
+        // AST 创建定位符
         create: function create(attrs) {
-            return this.createScriptLocator(attrs);
-        },
-        // 创建 script 定位符
-        createScriptLocator: function createScriptLocator(attrs) {
+            var escapeExpression = Handlebars.Utils.escapeExpression;
             var pathHTML = escapeExpression("<script");
             for (var key in attrs) {
                 if (attrs[key] === undefined) continue;
@@ -517,65 +495,24 @@
             pathHTML += escapeExpression("></script>");
             return pathHTML;
         },
-        // 创建 comment 定位符
-        createJsonCommentLocator: function createCommentLocator(attrs) {
-            return escapeExpression("<!-- ") + escapeExpression(JSON.stringify(attrs)) + escapeExpression(" -->");
-        },
-        // Scanner
-        // 定位符正则
+        // Scanner 定位符正则
         getLocatorRegExp: function() {
-            return this.scriptLocatorRegExp;
+            return /(<script(?:.*?)><\/script>)/gi;
         },
-        scriptLocatorRegExp: /(<script(?:.*?)><\/script>)/gi,
-        jsonCommentLocatorRegExp: /<!--\s*({(?:.*?)})\s*-->/gi,
-        // 查找定位符
+        // Scanner  查找定位符
         find: function find(attrs, context) {
-            return this.findScriptLocator(attrs, context);
-        },
-        findScriptLocator: function findScriptLocator(attrs, context) {
             var selector = "script";
             for (var key in attrs) {
                 selector += "[" + key + '="' + attrs[key] + '"]';
             }
             return $(selector, context);
         },
-        findCommentLocator: function findCommentLocator(attrs, context) {
-            var regexFilters = [];
-            for (var key in attrs) {
-                regexFilters.push(new RegExp(key + '="?' + attrs[key] + '"?', "i"));
-            }
-            return getCommentsByRegExp(regexFilters, context);
-        },
-        findJsonCommentLocator: function findCommentLocator(attrs, context) {
-            // getJsonCommentsByProperty
-            return $(context).add("*", context).contents().filter(function() {
-                return this.nodeType === 8;
-            }).filter(function(index, item) {
-                /* jslint evil: true */
-                var json = new Function("return " + item.nodeValue)();
-                for (var key in attrs) {
-                    if (attrs[key] !== json[key]) return false;
-                }
-                return true;
-            });
-        },
-        // 解析占位符
+        // Scanner 解析占位符
         parse: function parse(locator, attr) {
             return $(locator).attr(attr);
         },
-        parseScriptLocator: function parseScriptLocator(locator, attr) {
-            return $(locator).attr(attr);
-        },
-        parseJsonCommentLocator: function parseJsonCommentLocator(locator, attr) {
-            /* jslint evil: true */
-            var json = new Function("return " + locator.nodeValue)();
-            return attr ? json[attr] : json;
-        },
-        // 更新占位符
+        // Scanner 更新占位符
         update: function update(locator, attrs, force) {
-            return this.updateScriptLocator(locator, attrs, force);
-        },
-        updateScriptLocator: function updateScriptLocator(locator, attrs, force) {
             if (locator.nodeName.toLowerCase() === "script" && locator.getAttribute("guid") && locator.getAttribute("slot") === "start") {
                 if (force || !locator.getAttribute("type")) {
                     for (var key in attrs) {
@@ -585,26 +522,8 @@
             }
             return locator;
         },
-        updateJsonCommentLocator: function updateJsonCommentLocator(locator, attrs, force) {
-            if (locator.nodeType === 8) {
-                var json = this.parseJsonCommentLocator(locator);
-                if (json.guid && json.slot === "start") {
-                    if (force || !json.type) {
-                        for (var key in attrs) {
-                            json[key] = attrs[key];
-                        }
-                        locator.nodeValue = JSON.stringify(json);
-                    }
-                }
-            }
-        },
-        /*
-            Flush
-        */
+        // Flush 解析目标节点
         parseTarget: function parseTarget(locator) {
-            return this.parseTargetOfScriptLocator(locator);
-        },
-        parseTargetOfScriptLocator: function parseTargetOfScriptLocator(locator) {
             var guid = $(locator).attr("guid");
             var target = [], node = locator, $node;
             while (node = node.nextSibling) {
@@ -618,14 +537,66 @@
                 }
             }
             return $(target);
+        }
+    };
+    // comment 定位符
+    var JsonCommentLocator = {
+        // AST 创建定位符
+        create: function create(attrs) {
+            var escapeExpression = Handlebars.Utils.escapeExpression;
+            return escapeExpression("<!-- ") + escapeExpression(JSON.stringify(attrs)) + escapeExpression(" -->");
         },
-        parseTargetOfJsonCommentLocator: function parseTargetOfJsonCommentLocator(locator) {
-            var json = this.parseJsonCommentLocator(locator);
+        // Scanner 定位符正则
+        getLocatorRegExp: function getLocatorRegExp() {
+            return /(<!--\s*({(?:.*?)})\s*-->)/gi;
+        },
+        // Scanner 查找定位符
+        find: function find(attrs, context) {
+            // getJsonCommentsByProperty
+            return $(context).add("*", context).contents().filter(function() {
+                return this.nodeType === 8;
+            }).filter(function(index, item) {
+                /* jslint evil: true */
+                try {
+                    var json = new Function("return " + item.nodeValue)();
+                    for (var key in attrs) {
+                        if (attrs[key] !== json[key]) return false;
+                    }
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            });
+        },
+        // Scanner 解析占位符
+        parse: function parse(locator, attr) {
+            /* jslint evil: true */
+            var json = new Function("return " + locator.nodeValue)();
+            return attr ? json[attr] : json;
+        },
+        // Scanner 更新占位符
+        update: function update(locator, attrs, force) {
+            if (locator.nodeType === 8) {
+                var json = this.parse(locator);
+                if (json.guid && json.slot === "start") {
+                    if (force || !json.type) {
+                        for (var key in attrs) {
+                            json[key] = attrs[key];
+                        }
+                        locator.nodeValue = JSON.stringify(json);
+                    }
+                }
+            }
+            return locator;
+        },
+        // Flush 解析目标节点
+        parseTarget: function parseTarget(locator) {
+            var json = this.parse(locator);
             var target = [];
             var node = locator;
             while (node = node.nextSibling) {
                 if (node.nodeType === 8) {
-                    var end = this.parseJsonCommentLocator(node);
+                    var end = this.parse(node);
                     if (end.guid === json.guid && end.slot === "end") break;
                 } else {
                     target.push(node);
@@ -634,6 +605,8 @@
             return $(target);
         }
     };
+    var Locators = [ ScriptLocator, JsonCommentLocator ];
+    var Locator = Locators[0];
     /*! src/ast.js */
     /*
         # AST
@@ -1057,7 +1030,7 @@
                 handle(event, change, defined);
             }
             paths.each(function(index, path) {
-                type = path.getAttribute("type");
+                type = Locator.parse(path, "type");
                 if (handle[type]) handle[type](path, event, change, defined);
             });
         }
@@ -1068,8 +1041,8 @@
 
         */
         handle.text = function text(locator, event, change, defined) {
-            var guid = locator.getAttribute("guid");
-            var helper = locator.getAttribute("helper");
+            var guid = Locator.parse(locator, "guid");
+            var helper = Locator.parse(locator, "helper");
             var target = Locator.parseTarget(locator);
             var content;
             if (target.length === 1 && target[0].nodeType === 3) {
@@ -1094,7 +1067,7 @@
             var currentTarget, name, $target;
             event.target.push(currentTarget = Locator.parseTarget(path)[0]);
             $target = $(currentTarget);
-            var ast = defined.$blocks[path.getAttribute("guid")];
+            var ast = defined.$blocks[Locator.parse(path, "guid")];
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value;
             var oldValue = function() {
                 var oldValue;
@@ -1103,14 +1076,14 @@
                 change.context[change.path[change.path.length - 1]] = change.value;
                 return oldValue;
             }();
-            name = path.getAttribute("name");
+            name = Locator.parse(path, "name");
             switch (name) {
               case "class":
                 $target.removeClass("" + oldValue).addClass("" + value);
                 break;
 
               case "style":
-                $target.css(path.getAttribute("css"), value);
+                $target.css(Locator.parse(path, "css"), value);
                 break;
 
               case "value":
@@ -1138,7 +1111,7 @@
         };
         // 更新数组对应的 Block，路径 > guid > Block
         handle.block = function block(locator, event, change, defined) {
-            var guid = locator.getAttribute("guid");
+            var guid = Locator.parse(locator, "guid");
             var ast = defined.$blocks[guid];
             var context = Loop.clone(change.context, true, change.path.slice(0, -1));
             // TODO
@@ -1353,6 +1326,7 @@
     };
     /*! src/fix/suffix.js */
     BiSheng.Loop = Loop;
+    BiSheng.Locators = Locators;
     BiSheng.Locator = Locator;
     BiSheng.AST = AST;
     BiSheng.Scanner = Scanner;

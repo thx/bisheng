@@ -61,7 +61,7 @@
 
 **更多示例：**
 
-* [QUnit 测试用例](../test/bisheng.html)
+* [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
 * [TodoMVC](../demo/todo/index.html)
 * [监听数据对象的属性](../demo/loop.html)
 * [监听表达式 {{}}](../demo/expression.html)
