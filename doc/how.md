@@ -196,6 +196,7 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 [src/bisheng.js]: https://github.com/nuysoft/bisheng/tree/master/src/bisheng.js
 [src/expose.js]: https://github.com/nuysoft/bisheng/tree/master/src/expose.js
 [src/flush.js]: https://github.com/nuysoft/bisheng/tree/master/src/flush.js
+[src/locator.js]: https://github.com/nuysoft/bisheng/tree/master/src/locator.js
 [src/loop.js]: https://github.com/nuysoft/bisheng/tree/master/src/loop.js
 [src/scan.js]: https://github.com/nuysoft/bisheng/tree/master/src/scan.js
 

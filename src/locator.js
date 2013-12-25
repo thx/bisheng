@@ -8,7 +8,7 @@
 (function(factory) {
 
     expose(factory, function() {
-        window.AST = factory()
+        window.Locator = factory()
     })
 
 }(function() {
@@ -25,35 +25,20 @@
         }
     */
 
-    function getJsonCommentsByProperty(attrs, context) {
-        return $(context).add('*', context).contents()
-            .filter(function() {
-                return this.nodeType === 8
-            })
-            .filter(function(index, item) {
-                /* jslint evil: true */
-                var json = (new Function('return ' + item.nodeValue))()
-                for (var key in attrs) {
-                    if (attrs[key] !== json[key]) return false
-                }
-                return true
-            })
-    }
-
-    function getCommentsByRegExp(container, regexFilters) {
+    function getCommentsByRegExp(regexFilters, container) {
         var comments = $(container).add('*', container).contents()
             .filter(function() {
                 return this.nodeType === 8
             });
 
-        function doit(index, item) {
-            return regexFilters[index].test(item.nodeValue)
-        }
-
         if (regexFilters instanceof Array) {
-            for (var i = 0; i < regexFilters.length; i++) {
-                comments = comments.filter(doit)
-            }
+            comments = comments.filter(function(index, item) {
+                for (var i = 0; i < regexFilters.length; i++) {
+                    if (!regexFilters[i].test(item.nodeValue)) return false
+                }
+                return true
+            })
+
         } else {
             comments = comments.filter(function(index, item) {
                 return regexFilters ? regexFilters.test(item.nodeValue) : true
@@ -87,8 +72,8 @@
             return pathHTML
         },
         // 创建 comment 定位符
-        createCommentLocator: function createCommentLocator(attrs) {
-            return escapeExpression('<!--') + escapeExpression(JSON.stringify(attrs)) + escapeExpression(' -->')
+        createJsonCommentLocator: function createCommentLocator(attrs) {
+            return escapeExpression('<!-- ') + escapeExpression(JSON.stringify(attrs)) + escapeExpression(' -->')
         },
 
         // Scanner
@@ -98,10 +83,9 @@
             return this.scriptLocatorRegExp
         },
         scriptLocatorRegExp: /(<script(?:.*?)><\/script>)/ig,
-        commentLocatorRegExp: /<!--\s*(?:.*?)\s*-->/ig,
         jsonCommentLocatorRegExp: /<!--\s*({(?:.*?)})\s*-->/ig,
 
-        // 获取定位符
+        // 查找定位符
         find: function find(attrs, context) {
             return this.findScriptLocator(attrs, context)
         },
@@ -116,44 +100,79 @@
             var regexFilters = []
             for (var key in attrs) {
                 regexFilters.push(
-                    new RegExp('key:"?' + attrs[key] + '"?', 'i')
+                    new RegExp(key + '="?' + attrs[key] + '"?', 'i')
                 )
             }
-            return getCommentsByRegExp(context, regexFilters)
+            return getCommentsByRegExp(regexFilters, context)
         },
         findJsonCommentLocator: function findCommentLocator(attrs, context) {
-            return getJsonCommentsByProperty(attrs, context)
+            // getJsonCommentsByProperty
+            return $(context).add('*', context).contents()
+                .filter(function() {
+                    return this.nodeType === 8
+                })
+                .filter(function(index, item) {
+                    /* jslint evil: true */
+                    var json = (new Function('return ' + item.nodeValue))()
+                    for (var key in attrs) {
+                        if (attrs[key] !== json[key]) return false
+                    }
+                    return true
+                })
         },
 
         // 解析占位符
         parse: function parse(locator, attr) {
             return $(locator).attr(attr)
         },
+        parseScriptLocator: function parseScriptLocator(locator, attr) {
+            return $(locator).attr(attr)
+        },
         parseJsonCommentLocator: function parseJsonCommentLocator(locator, attr) {
             /* jslint evil: true */
-            return (new Function('return ' + locator.nodeValue))()[attr]
+            var json = (new Function('return ' + locator.nodeValue))()
+            return attr ? json[attr] : json
         },
 
         // 更新占位符
-        update: function update(node, attrs, force) {
+        update: function update(locator, attrs, force) {
+            return this.updateScriptLocator(locator, attrs, force)
+        },
+        updateScriptLocator: function updateScriptLocator(locator, attrs, force) {
             if (
-                node.nodeName.toLowerCase() === 'script' &&
-                node.getAttribute('guid') &&
-                node.getAttribute('slot') === 'start'
+                locator.nodeName.toLowerCase() === 'script' &&
+                locator.getAttribute('guid') &&
+                locator.getAttribute('slot') === 'start'
             ) {
-                if (force || !node.getAttribute('type')) {
+                if (force || !locator.getAttribute('type')) {
                     for (var key in attrs) {
-                        node.setAttribute(key, attrs[key])
+                        locator.setAttribute(key, attrs[key])
                     }
                 }
             }
-            return node
+            return locator
+        },
+        updateJsonCommentLocator: function updateJsonCommentLocator(locator, attrs, force) {
+            if (locator.nodeType === 8) {
+                var json = this.parseJsonCommentLocator(locator)
+                if (json.guid && json.slot === 'start') {
+                    if (force || !json.type) {
+                        for (var key in attrs) {
+                            json[key] = attrs[key]
+                        }
+                        locator.nodeValue = JSON.stringify(json)
+                    }
+                }
+            }
         },
 
         /*
             Flush
         */
         parseTarget: function parseTarget(locator) {
+            return this.parseTargetOfScriptLocator(locator)
+        },
+        parseTargetOfScriptLocator: function parseTargetOfScriptLocator(locator) {
             var guid = $(locator).attr('guid')
             var target = [],
                 node = locator,
@@ -168,9 +187,22 @@
                     target.push(node)
                 }
             }
-            return target
+            return $(target)
+        },
+        parseTargetOfJsonCommentLocator: function parseTargetOfJsonCommentLocator(locator) {
+            var json = this.parseJsonCommentLocator(locator)
+            var target = []
+            var node = locator
+            while ((node = node.nextSibling)) {
+                if (node.nodeType === 8) {
+                    var end = this.parseJsonCommentLocator(node)
+                    if (end.guid === json.guid && end.slot === 'end') break
+                } else {
+                    target.push(node)
+                }
+            }
+            return $(target)
         }
-
 
     }
 
