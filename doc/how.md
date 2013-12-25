@@ -15,7 +15,7 @@
 
 > 数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。
 
-这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译]）。
+这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译](http://nuysoft.com/2013/08/13/large-scale-javascript/)）。
 
 [AngularJS]: http://angularjs.org/
 [EmberJS]: http://emberjs.com/
@@ -28,11 +28,12 @@
 
 已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 [BiSheng.js]，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。
 
-BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。
+BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。
 
 [钻石展位广告管理系统]: http://zuanshi.taobao.com
 [DMP 数据营销系统]: http://dmp.taobao.com/
 [BiSheng.js]: https://github.com/nuysoft/bisheng
+[毕昇]: http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&fromid=64860&type=syn
 
 ## 可以用 140 个字概述这篇文章吗？
 
@@ -211,6 +212,14 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 源文件 `src/ast.js` 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从这个文件开始。
 
 ## 下一步
+
+<!-- 
+功能上：覆盖了编译型模板的大部分功能，尚未处理的有：子模板、Helper。
+测试用例：已覆盖了目前开发的所有功能。
+API 文档：已覆盖目前的公开 API。
+其他文档：主页，实现原理
+正在做的：用 HTML 注释节点来替换 script 节点，作为定位符。 
+-->
 
 1. 支持 [KISSY XTempalte](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)
 2. 定位符由 script 改为注释节点。

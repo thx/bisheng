@@ -6,6 +6,7 @@
 /* global Handlebars: true */
 /* global expose */
 /* global Loop */
+/* global Locator */
 /* global Scanner */
 
 // CommonJS
@@ -41,12 +42,6 @@ if (typeof module === 'object' && module.exports) {
 
     */
     var Flush = (function() {
-
-        function expressionTarget(node) {
-            while ((node = node.nextSibling)) {
-                if (node.nodeName !== 'SCRIPT') return node
-            }
-        }
 
         /*
             ## Flush.handle(event, change, defined)
@@ -84,8 +79,12 @@ if (typeof module === 'object' && module.exports) {
 
         */
         function handle(event, change, defined) {
-            var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
-            var paths = $(selector)
+            // var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
+            // var paths = $(selector)
+            var paths = Locator.find({
+                slot: 'start',
+                path: change.path.join('.')
+            })
             var type
 
             if (paths.length === 0 && change.context instanceof Array) {
@@ -106,24 +105,11 @@ if (typeof module === 'object' && module.exports) {
            更新文本节点的值。
 
         */
-        handle.text = function text(path, event, change, defined) {
-            var guid = path.getAttribute('guid')
-            var helper = path.getAttribute('helper')
-            var target = []
-            var cur, $cur
+        handle.text = function text(locator, event, change, defined) {
+            var guid = locator.getAttribute('guid')
+            var helper = locator.getAttribute('helper')
+            var target = Locator.parseTarget(locator)
             var content
-
-            cur = path
-            while ((cur = cur.nextSibling)) {
-                $cur = $(cur)
-                if (cur.nodeName.toLowerCase() === 'script' &&
-                    $cur.attr('slot') === 'end' &&
-                    $cur.attr('guid') === guid) {
-                    break
-                } else {
-                    target.push(cur)
-                }
-            }
 
             if (target.length === 1 && target[0].nodeType === 3) {
                 // TextNode
@@ -139,7 +125,7 @@ if (typeof module === 'object' && module.exports) {
                 }
 
                 $('<div>' + content + '</div>').contents()
-                    .insertAfter(path)
+                    .insertAfter(locator)
                     .each(function(index, elem) {
                         event.target.push(elem)
                     })
@@ -150,7 +136,7 @@ if (typeof module === 'object' && module.exports) {
         // 更新属性对应的 Expression
         handle.attribute = function attribute(path, event, change, defined) {
             var currentTarget, name, $target;
-            event.target.push(currentTarget = expressionTarget(path))
+            event.target.push(currentTarget = Locator.parseTarget(path)[0])
             $target = $(currentTarget)
 
             var ast = defined.$blocks[path.getAttribute('guid')]
@@ -198,8 +184,8 @@ if (typeof module === 'object' && module.exports) {
         }
 
         // 更新数组对应的 Block，路径 > guid > Block
-        handle.block = function block(path, event, change, defined) {
-            var guid = path.getAttribute('guid')
+        handle.block = function block(locator, event, change, defined) {
+            var guid = locator.getAttribute('guid')
             var ast = defined.$blocks[guid]
             var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
             var content = Handlebars.compile(ast)(context)
@@ -208,22 +194,8 @@ if (typeof module === 'object' && module.exports) {
             Scanner.scan(content[0], change.context)
             content = content.contents()
 
-            var cur = path
-            var $cur
-            var to
-            var target = []
-
-            while ((cur = cur.nextSibling)) {
-                $cur = $(cur)
-                if (cur.nodeName.toLowerCase() === 'script' &&
-                    $cur.attr('slot') === 'end' &&
-                    $cur.attr('guid') === guid) {
-                    to = cur
-                    break
-                } else {
-                    target.push(cur)
-                }
-            }
+            var target = Locator.parseTarget(locator)
+            var endLocator = target.length ? target[target.length -1].nextSibling : locator.nextSibling
 
             /*
                 优化渲染过程
@@ -231,15 +203,18 @@ if (typeof module === 'object' && module.exports) {
                 2. 逐个比较节点类型、节点值、节点内容。
             */
 
+            // 移除旧节点中多余的
             if (content.length < target.length) $(target.splice(content.length)).remove()
 
             content.each(function(index, element) {
+                // 新正节点
                 if (!target[index]) {
-                    to.parentNode.insertBefore(element, to)
+                    endLocator.parentNode.insertBefore(element, endLocator)
 
                     event.target.push(element)
                     return
                 }
+                // 节点类型有变化，替换之
                 if (element.nodeType !== target[index].nodeType) {
                     target[index].parentNode.insertBefore(element, target[index])
                     target[index].parentNode.removeChild(target[index])
@@ -247,15 +222,17 @@ if (typeof module === 'object' && module.exports) {
                     event.target.push(element)
                     return
                 }
+                // 同是文本节点，则更新节点值
                 if (element.nodeType === 3 && element.nodeValue !== target[index].nodeValue) {
                     target[index].nodeValue = element.nodeValue
                     return
                 }
+                // 同是注释节点，则更新节点值
                 if (element.nodeType === 8 && element.nodeValue !== target[index].nodeValue) {
                     target[index].nodeValue = element.nodeValue
                     return
                 }
-
+                // 同是 DOM 元素，则检测属性 outerHTML 是否相等，不相等则替换之
                 if (element.nodeType === 1) {
                     // $(target[index]).removeClass('transition highlight')
                     if (element.outerHTML !== target[index].outerHTML) {
@@ -267,12 +244,6 @@ if (typeof module === 'object' && module.exports) {
                     }
                 }
             })
-
-            // $(target).remove() // remove
-            // $(content).insertAfter(item) // insert
-
-            // scan
-            // Bind.scan(path.parentNode, defined)
         }
 
         /*
@@ -298,8 +269,8 @@ if (typeof module === 'object' && module.exports) {
             event.target.forEach && event.target.forEach(function(item, index) {
                 switch (item.nodeType) {
                     /*
-                    如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
-                */
+                        如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
+                    */
                     case 3:
                         $(item).wrap('<span>').parent().addClass('transition highlight')
                         // $(item.parentNode).addClass('transition highlight')

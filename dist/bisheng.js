@@ -1,7 +1,7 @@
-/*! BiSheng.js 2013-12-23 10:25:05 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
-    /*! src/expose.js */
+/*! src/expose.js */
+    
     /*
         # expose(factory, globals)
 
@@ -9,30 +9,39 @@
         Modular
     */
     function expose(factory, globals) {
-        if (typeof module === "object" && module.exports) {
+        if (typeof module === 'object' && module.exports) {
             // CommonJS
-            module.exports = factory();
+            module.exports = factory()
+
+
         } else if (typeof define === "function" && define.amd) {
             // AMD modules
-            define(factory);
+            define(factory)
+
         } else if (typeof define === "function" && define.cmd) {
             // CMD modules
-            define(factory);
-        } else if (typeof KISSY != "undefined") {
+            define(factory)
+
+        } else if (typeof KISSY != 'undefined') {
             // For KISSY 1.4
-            KISSY.add(factory);
+            KISSY.add(factory)
+
         } else {
             // Browser globals
-            if (globals) globals();
+            if (globals) globals()
+
         }
     }
-    /*! src/fix/prefix-2.js */
+
+    
+/*! src/fix/prefix-2.js */
     expose(factory, function() {
         // Browser globals
-        window.BiSheng = factory();
-    });
-})(function() {
-    /*! src/loop.js */
+        window.BiSheng = factory()
+    })
+}(function() {
+/*! src/loop.js */
+
     /*
         # Loop
 
@@ -48,23 +57,26 @@
         * Loop.letMeSee(letMeSee)
 
     */
-    var Loop = function() {
+    var Loop = (function() {
         var guid = 1;
         var TYPES = {
-            ADD: "add",
-            DELETE: "delete",
-            UPDATE: "update"
+            ADD: 'add',
+            DELETE: 'delete',
+            UPDATE: 'update'
         };
+
         var tasks = [];
         var timerId;
+
         function letMeSee() {
-            clearTimeout(timerId);
+            clearTimeout(timerId)
             for (var i = 0; i < tasks.length; i++) {
-                tasks[i] && tasks[i]();
+                tasks[i] && tasks[i]()
             }
-            timerId = setTimeout(letMeSee, 50);
+            timerId = setTimeout(letMeSee, 50)
         }
-        timerId = setTimeout(letMeSee, 50);
+        timerId = setTimeout(letMeSee, 50)
+
         /*
             ## Loop.watch(data, fn(changes))
 
@@ -124,18 +136,21 @@
         */
         function watch(data, fn, fix) {
             var id = guid++;
-            var shadow = clone(data, fix, [ id ]);
+            var shadow = clone(data, fix, [id]);
+
             function task() {
-                var result = diff(data, shadow, fix ? [ id ] : [], fix);
+                var result = diff(data, shadow, fix ? [id] : [], fix)
                 if (result && result.length) {
-                    fn(result, data, shadow);
-                    shadow = clone(data, fix, [ id ]);
+                    fn(result, data, shadow)
+                    shadow = clone(data, fix, [id])
                 }
             }
-            task.data = data;
-            tasks.push(task);
-            return shadow;
+            task.data = data
+
+            tasks.push(task)
+            return shadow
         }
+
         /*
             ### Loop.unwatch(data, fn)
 
@@ -187,30 +202,37 @@
 
         */
         function unwatch(data, fn) {
+
             function remove(compare) {
                 for (var index = 0; index < tasks.length; index++) {
-                    if (compare(tasks[index])) tasks.splice(index--, 1);
+                    if (compare(tasks[index])) tasks.splice(index--, 1)
                 }
             }
+
             // Loop.unwatch(data, fn)
-            if (typeof fn === "function") {
+            if (typeof fn === 'function') {
                 remove(function(task) {
-                    return task === fn && task.data === data;
-                });
+                    return task === fn && task.data === data
+                })
             }
+
             // Loop.unwatch(fn)
-            if (typeof data === "function") {
+            if (typeof data === 'function') {
                 remove(function(task) {
-                    return task === fn;
-                });
+                    return task === fn
+                })
             }
+
             // Loop.unwatch(data)
             if (data !== undefined) {
                 remove(function(task) {
-                    return task.data === data;
-                });
+                    return task.data === data
+                })
             }
+
+            // throw new Error('wrong arguments')
         }
+
         /*
             ### Loop.clone(obj, autoboxing)
 
@@ -250,31 +272,37 @@
                     }
                 }
         */
-        function clone(obj, autoboxing, path) {
-            // path: Internal Use Only
-            var target = obj.constructor(), name, value;
-            path = path || [];
-            if (obj === null || typeof obj != "object") {
-                return obj;
+        function clone(obj, autoboxing, path) { // path: Internal Use Only
+            var target = obj.constructor(),
+                name, value;
+
+            path = path || []
+
+            if (obj === null || typeof obj != 'object') {
+                return obj
             }
-            if (autoboxing) target.$path = path.join(".");
+
+            if (autoboxing) target.$path = path.join('.')
+
             for (name in obj) {
-                value = obj[name];
+                value = obj[name]
                 // if (/Object|Array/.test(value.constructor.name)) {
                 if (value !== undefined) {
                     if (value.constructor === Object || value.constructor === Array) {
-                        value = clone(value, autoboxing, path.concat(name));
+                        value = clone(value, autoboxing, path.concat(name))
                     } else {
                         if (autoboxing) {
-                            value = new Object(value);
-                            value.$path = path.concat(name).join(".");
+                            value = new Object(value)
+                            value.$path = path.concat(name).join('.')
                         }
                     }
                 }
-                target[name] = value;
+                target[name] = value
             }
-            return target;
+
+            return target
         }
+
         /*
             ### Loop.diff(newObject, oldObject)
 
@@ -352,100 +380,123 @@
         */
         function diff(newObject, oldObject, path, fix) {
             var result = result || [];
-            path = path || [];
+            path = path || []
+
             if (typeof newObject !== "object" || typeof oldObject !== "object") {
-                if (result.length) return result;
+                if (result.length) return result
             }
-            added(newObject, oldObject, path, result);
-            removed(newObject, oldObject, path, result);
-            updated(newObject, oldObject, path, result);
+
+            added(newObject, oldObject, path, result)
+            removed(newObject, oldObject, path, result)
+            updated(newObject, oldObject, path, result)
+
             /*
             root    完整的数据对象
             context 变化的上下文，这里进行遍历计算以简化 Flush.js 对数据上下文的访问
             */
             function getContext(root, path) {
                 return function() {
-                    var context = root;
+                    var context = root
                     for (var index = 1; index < path.length - 1; index++) {
-                        context = context[path[index]];
+                        context = context[path[index]]
                     }
-                    return context;
-                };
-            }
-            if (fix) {
-                for (var index = 0, change; index < result.length; index++) {
-                    change = result[index];
-                    change.root = newObject;
-                    change.context = getContext(newObject, change.path)();
-                    change.getContext = getContext;
+                    return context
                 }
             }
-            if (result.length) return result;
+
+            if (fix) {
+                for (var index = 0, change; index < result.length; index++) {
+                    change = result[index]
+                    change.root = newObject
+                    change.context = getContext(newObject, change.path)()
+                    change.getContext = getContext
+                }
+            }
+
+            if (result.length) return result
         }
+
         // 获取 newValue 比 oldValue 多出的属性
-        function added(newValue, oldValue, path, result, type) {
-            // type: Internal Use Only
+        function added(newValue, oldValue, path, result, type) { // type: Internal Use Only
             var name, value;
+
             for (name in newValue) {
-                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue;
-                value = newValue[name];
+                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
+
+                value = newValue[name]
+
                 if (!(name in oldValue)) {
                     result.push({
                         type: type || TYPES.ADD,
                         path: path.concat(name),
                         value: newValue[name]
-                    });
-                    continue;
+                    })
+                    continue
                 }
-                if (value === undefined) continue;
-                if (oldValue[name] === undefined) continue;
-                if (value.constructor !== oldValue[name].constructor) continue;
+
+                if (value === undefined) continue
+                if (oldValue[name] === undefined) continue
+                if (value.constructor !== (oldValue[name]).constructor) continue
+
                 // IE 不支持 constructor.name
                 // /Object|Array/.test(value.constructor.name)
                 // http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
                 if (value.constructor === Object || value.constructor === Array) {
-                    added(value, oldValue[name], path.concat(name), result, type);
+                    added(value, oldValue[name], path.concat(name), result, type)
                 }
             }
-            if (result.length) return result;
+
+            if (result.length) return result
         }
+
         // 获取 newValue 比 oldValue 少了的属性
         function removed(newValue, oldValue, path, result) {
-            return added(oldValue, newValue, path, result, TYPES.DELETE);
+            return added(oldValue, newValue, path, result, TYPES.DELETE)
         }
+
         // 获取 newValue 比 oldValue 变化了的属性
         function updated(newValue, oldValue, path, result) {
             var name, value;
+
             for (name in newValue) {
-                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue;
-                value = newValue[name];
-                if (!(name in oldValue)) continue;
-                if (value === undefined && oldValue[name] === undefined) continue;
-                if (value === undefined || oldValue[name] === undefined || value.constructor !== oldValue[name].constructor) {
+                if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue
+
+                value = newValue[name]
+
+                if (!(name in oldValue)) continue
+                if (value === undefined && oldValue[name] === undefined) continue
+
+                if (value === undefined ||
+                    oldValue[name] === undefined ||
+                    value.constructor !== (oldValue[name]).constructor) {
                     result.push({
                         type: TYPES.UPDATE,
                         path: path.concat(name),
                         value: value,
                         oldValue: oldValue[name] !== undefined ? oldValue[name].valueOf() : oldValue[name]
-                    });
-                    continue;
+                    })
+                    continue
                 }
+
                 // if (/Object|Array/.test(value.constructor.name)) {
                 if (value.constructor === Object || value.constructor === Array) {
-                    updated(value, oldValue[name], path.concat(name), result);
-                    continue;
+                    updated(value, oldValue[name], path.concat(name), result)
+                    continue
                 }
-                if (value.valueOf() !== oldValue[name].valueOf()) {
+
+                if (value.valueOf() !== (oldValue[name]).valueOf()) {
                     result.push({
                         type: TYPES.UPDATE,
                         path: path.concat(name),
                         value: value,
                         oldValue: oldValue[name]
-                    });
+                    })
                 }
             }
-            if (result.length) return result;
+
+            if (result.length) return result
         }
+
         // expose
         return {
             TYPES: TYPES,
@@ -454,9 +505,171 @@
             clone: clone,
             diff: diff,
             letMeSee: letMeSee
-        };
-    }();
-    /*! src/ast.js */
+        }
+    })()
+
+    
+/*! src/locator.js */
+
+    /*
+        attrs = {
+            guid: guid,
+            slot: 'start/end',
+            type: 'text/attribute/block',
+            path: '{{$lastest ' + prop + '}}',
+            isHelper: !! node.isHelper,
+            helper: helper
+        }
+    */
+
+    function getJsonCommentsByProperty(attrs, context) {
+        return $(context).add('*', context).contents()
+            .filter(function() {
+                return this.nodeType === 8
+            })
+            .filter(function(index, item) {
+                /*jslint evil: true */
+                var json = (new Function('return ' + item.nodeValue))()
+                for (var key in attrs) {
+                    if (attrs[key] !== json[key]) return false
+                }
+                return true
+            })
+    }
+
+    function getCommentsByRegExp(container, regexFilters) {
+        var comments = $(container).add('*', container).contents()
+            .filter(function() {
+                return this.nodeType === 8
+            });
+
+        function doit(index, item) {
+            return regexFilters[index].test(item.nodeValue)
+        }
+
+        if (regexFilters instanceof Array) {
+            for (var i = 0; i < regexFilters.length; i++) {
+                comments = comments.filter(doit)
+            }
+        } else {
+            comments = comments.filter(function(index, item) {
+                return regexFilters ? regexFilters.test(item.nodeValue) : true
+            })
+        }
+
+        return comments
+    }
+
+    var escapeExpression = Handlebars.Utils.escapeExpression
+
+    /*
+        定位符
+    */
+    var Locator = {
+
+        // AST
+
+        // 创建定位符
+        create: function create(attrs) {
+            return this.createScriptLocator(attrs)
+        },
+        // 创建 script 定位符
+        createScriptLocator: function createScriptLocator(attrs) {
+            var pathHTML = escapeExpression('<script')
+            for (var key in attrs) {
+                if (attrs[key] === undefined) continue
+                pathHTML += ' ' + key + escapeExpression('="') + attrs[key] + escapeExpression('"')
+            }
+            pathHTML += escapeExpression('></script>')
+            return pathHTML
+        },
+        // 创建 comment 定位符
+        createCommentLocator: function createCommentLocator(attrs) {
+            return escapeExpression('<!--') + escapeExpression(JSON.stringify(attrs)) + escapeExpression(' -->')
+        },
+
+        // Scanner
+
+        // 定位符正则
+        getLocatorRegExp: function() {
+            return this.scriptLocatorRegExp
+        },
+        scriptLocatorRegExp: /(<script(?:.*?)><\/script>)/ig,
+        commentLocatorRegExp: /<!--\s*(?:.*?)\s*-->/ig,
+        jsonCommentLocatorRegExp: /<!--\s*({(?:.*?)})\s*-->/ig,
+
+        // 获取定位符
+        find: function find(attrs, context) {
+            return this.findScriptLocator(attrs, context)
+        },
+        findScriptLocator: function findScriptLocator(attrs, context) {
+            var selector = 'script'
+            for (var key in attrs) {
+                selector += '[' + key + '="' + attrs[key] + '"]'
+            }
+            return $(selector, context)
+        },
+        findCommentLocator: function findCommentLocator(attrs, context) {
+            var regexFilters = []
+            for (var key in attrs) {
+                regexFilters.push(
+                    new RegExp('key:"?' + attrs[key] + '"?', 'i')
+                )
+            }
+            return getCommentsByRegExp(context, regexFilters)
+        },
+        findJsonCommentLocator: function findCommentLocator(attrs, context) {
+            return getJsonCommentsByProperty(attrs, context)
+        },
+
+        // 解析占位符
+        parse: function parse(locator, attr) {
+            return $(locator).attr(attr)
+        },
+
+        // 更新占位符
+        update: function update(node, attrs, force) {
+            if (
+                node.nodeName.toLowerCase() === 'script' &&
+                node.getAttribute('guid') &&
+                node.getAttribute('slot') === 'start'
+            ) {
+                if (force || !node.getAttribute('type')) {
+                    for (var key in attrs) {
+                        node.setAttribute(key, attrs[key])
+                    }
+                }
+            }
+            return node
+        },
+
+        /*
+            Flush
+        */
+        parseTarget: function parseTarget(locator) {
+            var guid = $(locator).attr('guid')
+            var target = [],
+                node = locator,
+                $node
+            while ((node = node.nextSibling)) {
+                $node = $(node)
+                if (node.nodeName.toLowerCase() === 'script' && $node.attr('guid')) {
+                    if ($node.attr('guid') === guid && $node.attr('slot') === 'end') {
+                        break
+                    }
+                } else {
+                    target.push(node)
+                }
+            }
+            return target
+        }
+
+
+    }
+
+    
+/*! src/ast.js */
+
     /*
         # AST
 
@@ -472,30 +685,25 @@
             为逻辑块插入定位符
 
     */
-    var AST = function() {
+    var AST = (function() {
+
         var guid = 1;
-        var ifHelper = Handlebars.helpers["if"];
-        Handlebars.registerHelper("if", function(conditional, options) {
-            return ifHelper.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options);
-        });
-        var blockHelperMissing = Handlebars.helpers.blockHelperMissing;
-        Handlebars.registerHelper("blockHelperMissing", function(context, options) {
-            return blockHelperMissing.call(this, context !== undefined ? context.valueOf() : context, options);
-        });
-        Handlebars.registerHelper("$lastest", function(items, options) {
-            return items && items.$path || this && this.$path;
-        });
+
+        var ifHelper = Handlebars.helpers['if']
+        Handlebars.registerHelper('if', function(conditional, options) {
+            return ifHelper.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options)
+        })
+
+        var blockHelperMissing = Handlebars.helpers.blockHelperMissing
+        Handlebars.registerHelper('blockHelperMissing', function(context, options) {
+            return blockHelperMissing.call(this, context !== undefined ? context.valueOf() : context, options)
+        })
+
+        Handlebars.registerHelper('$lastest', function(items, options) {
+            return items && items.$path || this && this.$path
+        })
+
         return {
-            createPathHTML: function createPathHTML(attrs) {
-                var escape = Handlebars.Utils.escapeExpression;
-                var pathHTML = escape("<script");
-                for (var key in attrs) {
-                    if (attrs[key] === undefined) continue;
-                    pathHTML += " " + key + escape('="') + attrs[key] + escape('"');
-                }
-                pathHTML += escape("></script>");
-                return pathHTML;
-            },
             /*
                 ### AST.handle(node, blocks, helpers)
 
@@ -512,318 +720,378 @@
             */
             handle: function handle(node, context, index, blocks, helpers) {
                 if (arguments.length === 2) {
-                    blocks = context;
-                    context = undefined;
-                    helpers = {};
+                    blocks = context
+                    context = undefined
+                    helpers = {}
                 }
                 if (arguments.length === 3) {
-                    blocks = context;
-                    helpers = index;
-                    context = index = undefined;
+                    blocks = context
+                    helpers = index
+                    context = index = undefined
                 }
-                if (this[node.type]) this[node.type](node, context, index, blocks, helpers);
-                return node;
+
+                if (this[node.type]) this[node.type](node, context, index, blocks, helpers)
+
+                return node
             },
+
             program: function program(node, context, index, blocks, helpers) {
                 for (var i = 0; i < node.statements.length; i++) {
-                    this.handle(node.statements[i], node.statements, i, blocks, helpers);
+                    this.handle(node.statements[i], node.statements, i, blocks, helpers)
                 }
             },
+
             // 为表达式插入定位符
             mustache: function(node, context, index, blocks, helpers) {
-                if (node.binded) return;
-                var prop = [];
+                if (node.binded) return
+
+                var prop = []
                 if (node.isHelper) {
                     node.params.forEach(function(param) {
-                        if (param.type === "ID") {
-                            prop.push(param.string);
+                        if (param.type === 'ID') {
+                            prop.push(param.string)
                         }
-                    });
+                    })
                 } else {
-                    prop.push(node.id.string);
+                    prop.push(node.id.string)
                 }
-                prop = prop.join(" ");
+                prop = prop.join(' ')
+
                 var attrs = {
                     guid: guid,
-                    slot: "",
-                    type: "",
-                    path: "{{$lastest " + prop + "}}",
-                    isHelper: !!node.isHelper
-                };
-                var placeholder;
-                var statements;
-                attrs.slot = "start";
-                placeholder = this.createPathHTML(attrs);
-                statements = Handlebars.parse(placeholder).statements;
-                statements[1].binded = true;
-                context.splice.apply(context, [ index, 0 ].concat(statements));
-                placeholder = this.createPathHTML({
+                    slot: '',
+                    type: '',
+                    path: '{{$lastest ' + prop + '}}',
+                    isHelper: !! node.isHelper
+                }
+                var placeholder
+                var statements
+
+                attrs.slot = 'start'
+                placeholder = Locator.create(attrs)
+                statements = Handlebars.parse(placeholder).statements
+                statements[1].binded = true
+                context.splice.apply(context, [index, 0].concat(statements))
+
+                placeholder = Locator.create({
                     guid: attrs.guid,
-                    slot: "end"
-                });
-                statements = Handlebars.parse(placeholder).statements;
-                context.splice.apply(context, [ index + 4, 0 ].concat(statements));
+                    slot: 'end'
+                })
+                statements = Handlebars.parse(placeholder).statements
+                context.splice.apply(context, [index + 4, 0].concat(statements))
+
                 if (helpers) helpers[guid] = {
                     constructor: Handlebars.AST.ProgramNode,
-                    type: "program",
-                    statements: [ node ]
-                };
-                guid++;
-                node.binded = true;
+                    type: 'program',
+                    statements: [node]
+                }
+
+                guid++
+
+                node.binded = true
             },
+
             // 为逻辑块插入定位符
             block: function block(node, context, index, blocks, helpers) {
-                if (node.binded) return;
-                var helper, prop;
+                if (node.binded) return
+
+                var helper, prop
                 if (node.mustache.params.length === 0) {
-                    helper = "";
-                    prop = node.mustache.id.string;
+                    helper = ''
+                    prop = node.mustache.id.string
                 } else {
-                    helper = node.mustache.id.string;
-                    prop = node.mustache.params[0].string;
+                    helper = node.mustache.id.string
+                    prop = node.mustache.params[0].string
                 }
+
                 var attrs = {
                     guid: guid,
-                    slot: "",
-                    type: "block",
-                    path: "{{$lastest " + prop + "}}",
+                    slot: '',
+                    type: 'block',
+                    path: '{{$lastest ' + prop + '}}',
                     helper: helper
-                };
-                var placeholder;
-                var statements;
+                }
+                var placeholder
+                var statements
+
                 // mustache 定义 DOM 位置
-                attrs.slot = "start";
-                placeholder = this.createPathHTML(attrs);
-                statements = Handlebars.parse(placeholder).statements;
-                statements[1].binded = true;
-                context.splice.apply(context, [ index, 0 ].concat(statements));
-                placeholder = this.createPathHTML({
+                attrs.slot = 'start'
+                placeholder = Locator.create(attrs)
+                statements = Handlebars.parse(placeholder).statements
+                statements[1].binded = true
+                context.splice.apply(context, [index, 0].concat(statements))
+
+                placeholder = Locator.create({
                     guid: attrs.guid,
-                    slot: "end"
-                });
-                statements = Handlebars.parse(placeholder).statements;
-                context.splice.apply(context, [ index + 4, 0 ].concat(statements));
+                    slot: 'end'
+                })
+                statements = Handlebars.parse(placeholder).statements
+                context.splice.apply(context, [index + 4, 0].concat(statements))
+
                 if (blocks) blocks[guid] = {
                     constructor: Handlebars.AST.ProgramNode,
-                    type: "program",
-                    statements: [ node ]
-                };
-                guid++;
-                node.binded = true;
-                this.handle(node.program || node.inverse, context, index, blocks, helpers);
+                    type: 'program',
+                    statements: [node]
+                }
+
+                guid++
+
+                node.binded = true
+
+                this.handle(node.program || node.inverse, context, index, blocks, helpers)
             }
-        };
-    }();
-    /*! src/scan.js */
+        }
+
+    })()
+
+    
+/*! src/scan.js */
+
     /*
         # Scanner
 
         扫描 DOM 元素，解析定位符
 
     */
-    var Scanner = function() {
+    var Scanner = (function() {
+
         // 入口方法
         function scan(node, data) {
             // data > dom, expression
-            scanNode(node);
+            scanNode(node)
             // dom > data
-            scanFormElements(node, data);
+            scanFormElements(node, data)
         }
+
         // 扫描单个节点，包括：属性，子节点。
         function scanNode(node) {
             switch (node.nodeType) {
-              case 1:
-              // Element
-                case 9:
-              // Document
-                case 11:
-                // DocumentFragment
-                scanAttributes(node);
-                scanChildNode(node);
-                break;
-
-              case 3:
-                // Text
-                scanTexNode(node);
-                break;
+                case 1: // Element
+                case 9: // Document
+                case 11: // DocumentFragment
+                    scanAttributes(node)
+                    scanChildNode(node)
+                    break
+                case 3: // Text
+                    scanTexNode(node)
+                    break
             }
         }
+
         /*
             扫描文本节点
         */
         function scanTexNode(node) {
-            var content = node.textContent || node.innerText || node.nodeValue;
-            $("<div>" + content + "</div>").contents().each(function(index, elem) {
-                if (elem.nodeName.toLowerCase() === "script" && elem.getAttribute("path")) {
-                    if (!elem.getAttribute("type")) elem.setAttribute("type", "text");
-                }
-            }).replaceAll(node);
+            var content = node.textContent || node.innerText || node.nodeValue
+            $('<div>' + content + '</div>')
+                .contents()
+                .each(function(index, elem) {
+                    Locator.update(elem, {
+                        type: 'text'
+                    })
+                })
+                .replaceAll(node)
         }
+
         /*
             扫描属性
         */
         function scanAttributes(node) {
-            var reph = /(<script(?:.*?)><\/script>)/gi;
-            var restyle = /([^;]*?): ([^;]*)/gi;
-            var attributes = [];
-            $.each(// “Array.prototype.slice: 'this' is not a JavaScript object” error in IE8
-            // slice.call(node.attributes || [], 0)
-            function() {
-                var re = [];
-                var all = node.attributes;
-                for (var i = 0; i < all.length; i++) re.push(all[i]);
-                return re;
-            }(), function(index, attributeNode) {
-                if (!attributeNode.specified) return;
-                var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema;
-                if (nodeName === "style") {
-                    restyle.exec("");
-                    while (stylema = restyle.exec(nodeValue)) {
-                        reph.exec("");
-                        while (ma = reph.exec(stylema[2])) {
-                            attributes.push($("<div>" + ma[1] + "</div>").contents().attr({
-                                type: "attribute",
-                                name: attributeNode.nodeName.toLowerCase(),
-                                css: $.trim(stylema[1])
-                            })[0]);
+            var reph = Locator.getLocatorRegExp()
+            var restyle = /([^;]*?): ([^;]*)/ig
+
+            var attributes = []
+            $.each(
+                // “Array.prototype.slice: 'this' is not a JavaScript object” error in IE8
+                // slice.call(node.attributes || [], 0)
+                function() {
+                    var re = []
+                    var all = node.attributes
+                    for (var i = 0; i < all.length; i++) re.push(all[i])
+                    return re
+                }(),
+                function(index, attributeNode) {
+                    if (!attributeNode.specified) return
+
+                    var nodeName = attributeNode.nodeName,
+                        nodeValue = attributeNode.nodeValue,
+                        ma, stylema;
+
+                    if (nodeName === 'style') {
+                        restyle.exec('')
+                        while ((stylema = restyle.exec(nodeValue))) {
+                            reph.exec('')
+                            while ((ma = reph.exec(stylema[2]))) {
+                                attributes.push(
+                                    Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
+                                        type: 'attribute',
+                                        name: attributeNode.nodeName.toLowerCase(),
+                                        css: $.trim(stylema[1])
+                                    })
+                                )
+                            }
+                        }
+
+                    } else {
+                        reph.exec('')
+                        while ((ma = reph.exec(nodeValue))) {
+                            attributes.push(
+                                Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
+                                    type: 'attribute',
+                                    name: attributeNode.nodeName.toLowerCase()
+                                }, true)
+                            )
                         }
                     }
-                } else {
-                    reph.exec("");
-                    while (ma = reph.exec(nodeValue)) {
-                        attributes.push($("<div>" + ma[1] + "</div>").contents().attr({
-                            type: "attribute",
-                            name: attributeNode.nodeName.toLowerCase()
-                        })[0]);
+
+                    if (attributes.length) {
+                        nodeValue = nodeValue.replace(reph, '')
+                        attributeNode.nodeValue = nodeValue
+
+                        $(attributes).each(function(index, elem) {
+                            var slot = Locator.parse(elem, 'slot')
+                            if (slot === 'start') $(node).before(elem)
+                            if (slot === 'end') $(node).after(elem)
+                        })
+
                     }
                 }
-                if (attributes.length) {
-                    nodeValue = nodeValue.replace(reph, "");
-                    attributeNode.nodeValue = nodeValue;
-                    $(attributes).each(function(index, elem) {
-                        var slot = $(elem).attr("slot");
-                        if (slot === "start") $(node).before(elem);
-                        if (slot === "end") $(node).after(elem);
-                    });
-                }
-            });
+            )
         }
+
         // 扫描子节点
         function scanChildNode(node) {
             $(node.childNodes).each(function(index, childNode) {
-                scanNode(childNode);
-            });
+                scanNode(childNode)
+            })
         }
+
         // 扫描表单元素
         function scanFormElements(node, data) {
-            $('script[slot="start"][type="attribute"][name="value"]', node).each(function(index, script) {
-                var path = $(script).attr("path").split("."), target = script;
-                while (target = target.nextSibling) {
-                    if (target.nodeName.toLowerCase() !== "script") break;
-                }
+            Locator.find({
+                slot: "start",
+                type: "attribute",
+                name: "value"
+            }, node).each(function(index, locator) {
+                var path = Locator.parse(locator, 'path').split('.'),
+                    target = Locator.parseTarget(locator)[0];
+
                 // TODO 为什么不触发 change 事件？
-                $(target).on("change keyup", function(event) {
-                    updateValue(data, path, event.target);
-                });
-            });
-            $('script[slot="start"][type="attribute"][name="checked"]', node).each(function(_, script) {
-                var path = $(script).attr("path").split("."), target = script;
-                while (target = target.nextSibling) {
-                    if (target.nodeName.toLowerCase() !== "script") break;
-                }
-                var value = data;
+                $(target).on('change keyup', function(event) {
+                    updateValue(data, path, event.target)
+                })
+            })
+
+            Locator.find({
+                slot: "start",
+                type: "attribute",
+                name: "checked"
+            }, node).each(function(_, locator) {
+                var path = Locator.parse(locator, 'path').split('.'),
+                    target = Locator.parseTarget(locator)[0];
+
+                var value = data
                 for (var index = 1; index < path.length; index++) {
-                    value = value[path[index]];
+                    value = value[path[index]]
                 }
                 // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
-                if (value === undefined || value.valueOf() === false || value.valueOf() === "false") {
-                    $(target).prop("checked", false);
+                if (value === undefined || value.valueOf() === false || value.valueOf() === 'false') {
+                    $(target).prop('checked', false)
                 }
-                if (value !== undefined && (value.valueOf() === true || value.valueOf() === "true" || value.valueOf() === "checked")) {
-                    $(target).prop("checked", true);
+                if (value !== undefined &&
+                    (value.valueOf() === true || value.valueOf() === 'true' || value.valueOf() === 'checked')) {
+                    $(target).prop('checked', true)
                 }
-                $(target).on("change", function(event, firing) {
+
+                $(target).on('change', function(event, firing) {
                     // radio：点击其中一个后，需要同步更新同名的其他 radio
-                    if (!firing && event.target.type === "radio") {
-                        $('input:radio[name="' + event.target.name + '"]').not(event.target).trigger("change", firing = true);
+                    if (!firing && event.target.type === 'radio') {
+                        $('input:radio[name="' + event.target.name + '"]')
+                            .not(event.target)
+                            .trigger('change', firing = true)
                     }
-                    updateChecked(data, path, event.target);
-                });
-            });
+                    updateChecked(data, path, event.target)
+                })
+            })
         }
+
         /*
             更新属性 value 对应的数据
          */
         function updateValue(data, path, target) {
             for (var index = 1; index < path.length - 1; index++) {
-                data = data[path[index]];
+                data = data[path[index]]
             }
-            var $target = $(target), value;
+
+            var $target = $(target),
+                value
             switch (target.nodeName.toLowerCase()) {
-              case "input":
-                switch (target.type) {
-                  case "text":
-                    $target.data("user is editing", true);
-                    value = $target.val();
-                    break;
-
-                  case "radio":
-                  // TODO
-                    case "checkbox":
-                    // TODO
-                    return;
-
-                  default:
-                    value = $target.val();
-                }
-                break;
-
-              case "select":
-                value = $target.val();
-                break;
-
-              case "textarea":
-                value = $target.val();
-                break;
-
-              default:
-                value = $target.val();
+                case 'input':
+                    switch (target.type) {
+                        case 'text':
+                            $target.data('user is editing', true)
+                            value = $target.val()
+                            break;
+                        case 'radio': // TODO
+                        case 'checkbox': // TODO
+                            return
+                        default:
+                            value = $target.val()
+                    }
+                    break
+                case 'select':
+                    value = $target.val()
+                    break
+                case 'textarea':
+                    value = $target.val()
+                    break
+                default:
+                    value = $target.val()
             }
-            data[path[path.length - 1]] = value;
+
+            data[path[path.length - 1]] = value
         }
+
         /*
             更新属性 checked 对应的数据
         */
         function updateChecked(data, path, target) {
             for (var index = 1; index < path.length - 1; index++) {
-                data = data[path[index]];
+                data = data[path[index]]
             }
-            var $target = $(target), value, name;
+
+            var $target = $(target),
+                value, name
             switch (target.nodeName.toLowerCase()) {
-              case "input":
-                switch (target.type) {
-                  case "radio":
+                case 'input':
+                    switch (target.type) {
+                        case 'radio': // TODO
+                            value = $target.prop('checked')
+                            name = $target.attr('name')
+                            if (name && value && name in data) data[name] = $target.val()
+                            break
+                        case 'checkbox': // TODO
+                            value = $target.prop('checked')
+                            break
+                    }
+                    break
+                default:
                     // TODO
-                    value = $target.prop("checked");
-                    name = $target.attr("name");
-                    if (name && value && name in data) data[name] = $target.val();
-                    break;
+            }
 
-                  case "checkbox":
-                    // TODO
-                    value = $target.prop("checked");
-                    break;
-                }
-                break;
-
-              default:            }
-            data[path[path.length - 1]] = value;
+            data[path[path.length - 1]] = value
         }
+
         return {
             scan: scan
-        };
-    }();
-    /*! src/flush.js */
+        }
+
+    })()
+
+
+    
+/*! src/flush.js */
+
     /*
         # Flush
         
@@ -837,12 +1105,8 @@
         * Flush.highlight(event, change)
 
     */
-    var Flush = function() {
-        function expressionTarget(node) {
-            while (node = node.nextSibling) {
-                if (node.nodeName !== "SCRIPT") return node;
-            }
-        }
+    var Flush = (function() {
+
         /*
             ## Flush.handle(event, change, defined)
 
@@ -879,220 +1143,235 @@
 
         */
         function handle(event, change, defined) {
-            var selector = 'script[slot="start"][path="' + change.path.join(".") + '"]';
-            var paths = $(selector);
-            var type;
+            // var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
+            // var paths = $(selector)
+            var paths = Locator.find({
+                slot: 'start',
+                path: change.path.join('.')
+            })
+            var type
+
             if (paths.length === 0 && change.context instanceof Array) {
-                change.path.pop();
-                change.context = change.getContext(change.root, change.path)();
-                handle(event, change, defined);
+                change.path.pop()
+                change.context = change.getContext(change.root, change.path)()
+                handle(event, change, defined)
             }
+
             paths.each(function(index, path) {
-                type = path.getAttribute("type");
-                if (handle[type]) handle[type](path, event, change, defined);
-            });
+                type = path.getAttribute('type')
+                if (handle[type]) handle[type](path, event, change, defined)
+            })
         }
+
         // 
         /*
            更新属性对应的 Expression 
            更新文本节点的值。
 
         */
-        handle.text = function text(path, event, change, defined) {
-            var guid = path.getAttribute("guid");
-            var helper = path.getAttribute("helper");
-            var target = [];
-            var cur, $cur;
-            var content;
-            cur = path;
-            while (cur = cur.nextSibling) {
-                $cur = $(cur);
-                if (cur.nodeName.toLowerCase() === "script" && $cur.attr("slot") === "end" && $cur.attr("guid") === guid) {
-                    break;
-                } else {
-                    target.push(cur);
-                }
-            }
+        handle.text = function text(locator, event, change, defined) {
+            var guid = locator.getAttribute('guid')
+            var helper = locator.getAttribute('helper')
+            var target = Locator.parseTarget(locator)
+            var content
+
             if (target.length === 1 && target[0].nodeType === 3) {
                 // TextNode
-                event.target.push(target[0]);
-                target[0].nodeValue = change.value;
+                event.target.push(target[0])
+                target[0].nodeValue = change.value
+
             } else {
                 // Element
-                if (helper === "true") {
-                    content = Handlebars.compile(defined.$helpers[guid])(change.context);
+                if (helper === 'true') {
+                    content = Handlebars.compile(defined.$helpers[guid])(change.context)
                 } else {
-                    content = change.value;
+                    content = change.value
                 }
-                $("<div>" + content + "</div>").contents().insertAfter(path).each(function(index, elem) {
-                    event.target.push(elem);
-                });
-                $(target).remove();
+
+                $('<div>' + content + '</div>').contents()
+                    .insertAfter(locator)
+                    .each(function(index, elem) {
+                        event.target.push(elem)
+                    })
+                $(target).remove()
             }
-        };
+        }
+
         // 更新属性对应的 Expression
         handle.attribute = function attribute(path, event, change, defined) {
             var currentTarget, name, $target;
-            event.target.push(currentTarget = expressionTarget(path));
-            $target = $(currentTarget);
-            var ast = defined.$blocks[path.getAttribute("guid")];
-            var value = ast ? Handlebars.compile(ast)(change.context) : change.value;
+            event.target.push(currentTarget = Locator.parseTarget(path)[0])
+            $target = $(currentTarget)
+
+            var ast = defined.$blocks[path.getAttribute('guid')]
+            var value = ast ? Handlebars.compile(ast)(change.context) : change.value
             var oldValue = function() {
-                var oldValue;
-                change.context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue;
-                oldValue = ast ? Handlebars.compile(ast)(change.context) : change.oldValue;
-                change.context[change.path[change.path.length - 1]] = change.value;
-                return oldValue;
-            }();
-            name = path.getAttribute("name");
+                var oldValue
+                change.context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue
+                oldValue = ast ? Handlebars.compile(ast)(change.context) : change.oldValue
+                change.context[change.path[change.path.length - 1]] = change.value
+                return oldValue
+            }()
+
+            name = path.getAttribute('name')
             switch (name) {
-              case "class":
-                $target.removeClass("" + oldValue).addClass("" + value);
-                break;
+                case 'class':
+                    $target.removeClass('' + oldValue).addClass('' + value)
+                    break
+                case 'style':
+                    $target.css(path.getAttribute('css'), value)
+                    break
+                case 'value':
+                    if ($target.val() !== value && !$target.data('user is editing')) {
+                        $target.val(value)
+                    }
+                    $target.data('user is editing', false)
+                    break
+                case 'checked':
+                    $target.prop(name, value)
 
-              case "style":
-                $target.css(path.getAttribute("css"), value);
-                break;
-
-              case "value":
-                if ($target.val() !== value && !$target.data("user is editing")) {
-                    $target.val(value);
-                }
-                $target.data("user is editing", false);
-                break;
-
-              case "checked":
-                $target.prop(name, value);
-                name = $target.attr("name");
-                if (name && $target.prop("checked") && name in change.context) {
-                    // setTimeout(function() {
-                    change.context[name] = $target.val();
-                }
-                break;
-
-              default:
-                // 只更新变化的部分（其实不准确 TODO）
-                $target.attr(name, function(index, attr) {
-                    return oldValue === undefined ? value : attr !== oldValue.valueOf() ? attr.replace(oldValue, value) : value;
-                });
+                    name = $target.attr('name')
+                    if (name && $target.prop('checked') && name in change.context) {
+                        // setTimeout(function() {
+                        change.context[name] = $target.val()
+                        // }, 0)
+                    }
+                    break
+                default:
+                    // 只更新变化的部分（其实不准确 TODO）
+                    $target.attr(name, function(index, attr) {
+                        return oldValue === undefined ? value :
+                            attr !== oldValue.valueOf() ? attr.replace(oldValue, value) :
+                            value
+                    })
             }
-        };
+        }
+
         // 更新数组对应的 Block，路径 > guid > Block
-        handle.block = function block(path, event, change, defined) {
-            var guid = path.getAttribute("guid");
-            var ast = defined.$blocks[guid];
-            var context = Loop.clone(change.context, true, change.path.slice(0, -1));
-            // TODO
-            var content = Handlebars.compile(ast)(context);
-            content = $("<div>" + content + "</div>");
-            Scanner.scan(content[0], change.context);
-            content = content.contents();
-            var cur = path;
-            var $cur;
-            var to;
-            var target = [];
-            while (cur = cur.nextSibling) {
-                $cur = $(cur);
-                if (cur.nodeName.toLowerCase() === "script" && $cur.attr("slot") === "end" && $cur.attr("guid") === guid) {
-                    to = cur;
-                    break;
-                } else {
-                    target.push(cur);
-                }
-            }
+        handle.block = function block(locator, event, change, defined) {
+            var guid = locator.getAttribute('guid')
+            var ast = defined.$blocks[guid]
+            var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
+            var content = Handlebars.compile(ast)(context)
+
+            content = $('<div>' + content + '</div>')
+            Scanner.scan(content[0], change.context)
+            content = content.contents()
+
+            var target = Locator.parseTarget(locator)
+            var endLocator = target.length ? target[target.length -1].nextSibling : locator.nextSibling
+
             /*
                 优化渲染过程
                 1. 移除多余的旧节点
                 2. 逐个比较节点类型、节点值、节点内容。
             */
-            if (content.length < target.length) $(target.splice(content.length)).remove();
+
+            // 移除旧节点中多余的
+            if (content.length < target.length) $(target.splice(content.length)).remove()
+
             content.each(function(index, element) {
+                // 新正节点
                 if (!target[index]) {
-                    to.parentNode.insertBefore(element, to);
-                    event.target.push(element);
-                    return;
+                    endLocator.parentNode.insertBefore(element, endLocator)
+
+                    event.target.push(element)
+                    return
                 }
+                // 节点类型有变化，替换之
                 if (element.nodeType !== target[index].nodeType) {
-                    target[index].parentNode.insertBefore(element, target[index]);
-                    target[index].parentNode.removeChild(target[index]);
-                    event.target.push(element);
-                    return;
+                    target[index].parentNode.insertBefore(element, target[index])
+                    target[index].parentNode.removeChild(target[index])
+
+                    event.target.push(element)
+                    return
                 }
+                // 同是文本节点，则更新节点值
                 if (element.nodeType === 3 && element.nodeValue !== target[index].nodeValue) {
-                    target[index].nodeValue = element.nodeValue;
-                    return;
+                    target[index].nodeValue = element.nodeValue
+                    return
                 }
+                // 同是注释节点，则更新节点值
                 if (element.nodeType === 8 && element.nodeValue !== target[index].nodeValue) {
-                    target[index].nodeValue = element.nodeValue;
-                    return;
+                    target[index].nodeValue = element.nodeValue
+                    return
                 }
+                // 同是 DOM 元素，则检测属性 outerHTML 是否相等，不相等则替换之
                 if (element.nodeType === 1) {
                     // $(target[index]).removeClass('transition highlight')
                     if (element.outerHTML !== target[index].outerHTML) {
-                        target[index].parentNode.insertBefore(element, target[index]);
-                        target[index].parentNode.removeChild(target[index]);
-                        event.target.push(element);
-                        return;
+                        target[index].parentNode.insertBefore(element, target[index])
+                        target[index].parentNode.removeChild(target[index])
+
+                        event.target.push(element)
+                        return
                     }
                 }
-            });
-        };
+            })
+        }
+
         /*
             如果 URL 中含有参数 scrollIntoView，则自动滚动至发生变化的元素。
             用于调试、演示，或者在项目中提醒用户。
         */
         function scrollIntoView(event, change) {
-            if (event.target.nodeType) event.target = [ event.target ];
+            if (event.target.nodeType) event.target = [event.target]
             event.target.forEach && event.target.forEach(function(item, index) {
                 switch (item.nodeType) {
-                  case 3:
-                    item.parentNode.scrollIntoView();
-                    break;
-
-                  case 1:
-                    item.scrollIntoView();
-                    break;
-                }
-            });
-        }
-        function highlight(event, change) {
-            if (event.target.nodeType) event.target = [ event.target ];
-            event.target.forEach && event.target.forEach(function(item, index) {
-                switch (item.nodeType) {
-                  /*
-                    如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
-                */
                     case 3:
-                    $(item).wrap("<span>").parent().addClass("transition highlight");
-                    // $(item.parentNode).addClass('transition highlight')
-                    setTimeout(function() {
-                        $(item).unwrap("<span>").removeClass("transition highlight");
-                    }, 500);
-                    break;
-
-                  case 1:
-                    $(item).addClass("transition highlight");
-                    setTimeout(function() {
-                        $(item).removeClass("transition highlight");
-                    }, 500);
-                    break;
+                        item.parentNode.scrollIntoView()
+                        break
+                    case 1:
+                        item.scrollIntoView()
+                        break
                 }
-            });
+            })
         }
+
+        function highlight(event, change) {
+            if (event.target.nodeType) event.target = [event.target]
+            event.target.forEach && event.target.forEach(function(item, index) {
+                switch (item.nodeType) {
+                    /*
+                        如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
+                    */
+                    case 3:
+                        $(item).wrap('<span>').parent().addClass('transition highlight')
+                        // $(item.parentNode).addClass('transition highlight')
+                        setTimeout(function() {
+                            $(item).unwrap('<span>').removeClass('transition highlight')
+                            // $(item.parentNode).removeClass('highlight')
+                        }, 500)
+                        break
+                    case 1:
+                        $(item).addClass('transition highlight')
+                        setTimeout(function() {
+                            $(item).removeClass('transition highlight')
+                        }, 500)
+                        break
+                }
+            })
+        }
+
         return {
             handle: handle,
             scrollIntoView: scrollIntoView,
             highlight: highlight
-        };
-    }();
-    /*! src/bisheng.js */
+        }
+
+    })()
+
+    
+/*! src/bisheng.js */
+
     /*
         ## BiSheng
 
         双向数据绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
     */
     var BiSheng = {
-        version: "0.1.0",
+        version: '0.1.0',
+
         /*
             ### BiSheng.bind(data, tpl, callback(content))
 
@@ -1130,22 +1409,26 @@
                 $.each(changes, function(_, change) {
                     var event = {
                         target: []
-                    };
-                    Flush.handle(event, change, clone);
-                    if (location.href.indexOf("scrollIntoView") > -1) Flush.scrollIntoView(event, data);
-                    if (location.href.indexOf("highlight") > -1) Flush.highlight(event, data);
-                });
-            }, true);
+                    }
+                    Flush.handle(event, change, clone)
+                    if (location.href.indexOf('scrollIntoView') > -1) Flush.scrollIntoView(event, data)
+                    if (location.href.indexOf('highlight') > -1) Flush.highlight(event, data)
+                })
+            }, true)
+
             // 修改 AST，为 Expression 和 Block 插入占位符
-            var ast = Handlebars.parse(tpl);
-            AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {});
+            var ast = Handlebars.parse(tpl)
+            AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {})
+
             // 渲染 HTML
-            var compiled = Handlebars.compile(ast);
-            var html = compiled(clone);
+            var compiled = Handlebars.compile(ast)
+            var html = compiled(clone)
+
             // 扫描占位符，定位 Expression 和 Block
-            var content = $("<div>" + html + "</div>");
-            if (content.length) Scanner.scan(content[0], data);
-            content = content.contents();
+            var content = $('<div>' + html + '</div>')
+            if (content.length) Scanner.scan(content[0], data)
+            content = content.contents()
+
             /*
                 返回什么呢
                 如果传入了 callback()，则返回 data，因为 callback() 的作用在于处理 content；
@@ -1153,9 +1436,10 @@
                 如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
 
             */
-            if (callback) return callback.call(data, content) || data;
-            return content;
+            if (callback) return callback.call(data, content) || data
+            return content
         },
+
         /*
             ### BiSheng.unbind(data, tpl)
 
@@ -1193,13 +1477,16 @@
 
         */
         unbind: function unbind(data, tpl) {
-            Loop.unwatch(data);
-            return this;
+            Loop.unwatch(data)
+            return this
         }
-    };
-    /*! src/fix/suffix.js */
-    BiSheng.Loop = Loop;
-    BiSheng.AST = AST;
-    BiSheng.Flush = Flush;
-    return BiSheng;
-});
+    }
+
+    
+/*! src/fix/suffix.js */
+	BiSheng.Loop = Loop
+	BiSheng.AST = AST
+	BiSheng.Flush = Flush
+
+	return BiSheng
+}));

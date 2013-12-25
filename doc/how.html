@@ -88,11 +88,11 @@
 <blockquote>
 <p>数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。</p>
 </blockquote>
-<p>这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 <a href="http://angularjs.org/">AngularJS</a> 和 <a href="http://emberjs.com/">EmberJS</a>，结构借鉴了 <a href="http://addyosmani.com/largescalejavascript/">Patterns For Large-Scale JavaScript Application Architecture</a>（[中文翻译]）。</p>
+<p>这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 <a href="http://angularjs.org/">AngularJS</a> 和 <a href="http://emberjs.com/">EmberJS</a>，结构借鉴了 <a href="http://addyosmani.com/largescalejavascript/">Patterns For Large-Scale JavaScript Application Architecture</a>（<a href="http://nuysoft.com/2013/08/13/large-scale-javascript/">中文翻译</a>）。</p>
 <h2 id="-">我是谁，以及我为什么写这个主题？</h2>
 <p>我目前是 <a href="http://www.alimama.com/">阿里妈妈</a> 的一名 JavaScript 开发人员，负责 <a href="http://zuanshi.taobao.com">钻石展位广告管理系统</a> 和 <a href="http://dmp.taobao.com/">DMP 数据营销系统</a>的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。</p>
 <p>已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 <a href="https://github.com/nuysoft/bisheng">BiSheng.js</a>，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。</p>
-<p>BiSheng.js 的名称源自“毕昇”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。</p>
+<p>BiSheng.js 的名称源自“<a href="http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&amp;fromid=64860&amp;type=syn">毕昇</a>”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。</p>
 <h2 id="-140-">可以用 140 个字概述这篇文章吗？</h2>
 <p>如果你时间不够，下面是这篇文章的摘要，只有一条 tweet 的长度：</p>
 <p><strong>修改语法树，插入定位符，渲染模板和定位符，解析定位符，建立数据到 DOM 元素的连接，建立 DOM 元素到数据的连接。</strong></p>
@@ -224,6 +224,14 @@
 <p>理论上，BiSheng.js 可以支持任何基于语法树进行渲染的模板引擎。</p>
 <p>源文件 <code>src/ast.js</code> 负责修改语法树，插入一些用于定位 DOM 元素的占位符。如果需要扩展对更多模板引擎的支持，则可以从这个文件开始。</p>
 <h2 id="-">下一步</h2>
+<!-- 
+功能上：覆盖了编译型模板的大部分功能，尚未处理的有：子模板、Helper。
+测试用例：已覆盖了目前开发的所有功能。
+API 文档：已覆盖目前的公开 API。
+其他文档：主页，实现原理
+正在做的：用 HTML 注释节点来替换 script 节点，作为定位符。 
+-->
+
 <ol>
 <li>支持 <a href="http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html">KISSY XTempalte</a></li>
 <li>定位符由 script 改为注释节点。</li>

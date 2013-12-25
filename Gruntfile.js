@@ -45,6 +45,7 @@ module.exports = function(grunt) {
                     'src/fix/prefix-2.js',
 
                     'src/loop.js',
+                    'src/locator.js',
                     'src/ast.js',
                     'src/scan.js',
                     'src/flush.js',
@@ -109,7 +110,7 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: ['<%= jshint.files %>', 'src/fix/*', 'doc/*.md', 'doc/template.html'],
-                tasks: ['jshint','concat', 'uglify', 'qunit', 'markdown'] // 'nodeunit'
+                tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown'] // 'nodeunit'
             },
             doc: {
                 files: ['doc/*.md', 'doc/template.html'],

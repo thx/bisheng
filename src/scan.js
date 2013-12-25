@@ -3,6 +3,7 @@
 /* global window: true */
 /* global expose */
 /* global $: true */
+/* global Locator */
 
 (function(factory) {
 
@@ -52,9 +53,9 @@
             $('<div>' + content + '</div>')
                 .contents()
                 .each(function(index, elem) {
-                    if (elem.nodeName.toLowerCase() === 'script' && elem.getAttribute('path')) {
-                        if (!elem.getAttribute('type')) elem.setAttribute('type', 'text')
-                    }
+                    Locator.update(elem, {
+                        type: 'text'
+                    })
                 })
                 .replaceAll(node)
         }
@@ -63,7 +64,7 @@
             扫描属性
         */
         function scanAttributes(node) {
-            var reph = /(<script(?:.*?)><\/script>)/ig
+            var reph = Locator.getLocatorRegExp()
             var restyle = /([^;]*?): ([^;]*)/ig
 
             var attributes = []
@@ -89,12 +90,11 @@
                             reph.exec('')
                             while ((ma = reph.exec(stylema[2]))) {
                                 attributes.push(
-                                    $('<div>' + ma[1] + '</div>').contents()
-                                    .attr({
+                                    Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
                                         type: 'attribute',
                                         name: attributeNode.nodeName.toLowerCase(),
                                         css: $.trim(stylema[1])
-                                    })[0]
+                                    })
                                 )
                             }
                         }
@@ -103,11 +103,10 @@
                         reph.exec('')
                         while ((ma = reph.exec(nodeValue))) {
                             attributes.push(
-                                $('<div>' + ma[1] + '</div>').contents()
-                                .attr({
+                                Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
                                     type: 'attribute',
                                     name: attributeNode.nodeName.toLowerCase()
-                                })[0]
+                                }, true)
                             )
                         }
                     }
@@ -117,7 +116,7 @@
                         attributeNode.nodeValue = nodeValue
 
                         $(attributes).each(function(index, elem) {
-                            var slot = $(elem).attr('slot')
+                            var slot = Locator.parse(elem, 'slot')
                             if (slot === 'start') $(node).before(elem)
                             if (slot === 'end') $(node).after(elem)
                         })
@@ -136,13 +135,13 @@
 
         // 扫描表单元素
         function scanFormElements(node, data) {
-            $('script[slot="start"][type="attribute"][name="value"]', node).each(function(index, script) {
-                var path = $(script).attr('path').split('.'),
-                    target = script;
-
-                while ((target = target.nextSibling)) {
-                    if (target.nodeName.toLowerCase() !== 'script') break
-                }
+            Locator.find({
+                slot: "start",
+                type: "attribute",
+                name: "value"
+            }, node).each(function(index, locator) {
+                var path = Locator.parse(locator, 'path').split('.'),
+                    target = Locator.parseTarget(locator)[0];
 
                 // TODO 为什么不触发 change 事件？
                 $(target).on('change keyup', function(event) {
@@ -150,13 +149,13 @@
                 })
             })
 
-            $('script[slot="start"][type="attribute"][name="checked"]', node).each(function(_, script) {
-                var path = $(script).attr('path').split('.'),
-                    target = script;
-
-                while ((target = target.nextSibling)) {
-                    if (target.nodeName.toLowerCase() !== 'script') break
-                }
+            Locator.find({
+                slot: "start",
+                type: "attribute",
+                name: "checked"
+            }, node).each(function(_, locator) {
+                var path = Locator.parse(locator, 'path').split('.'),
+                    target = Locator.parseTarget(locator)[0];
 
                 var value = data
                 for (var index = 1; index < path.length; index++) {

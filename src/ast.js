@@ -3,6 +3,7 @@
 /* global window */
 /* global expose */
 /* global Handlebars */
+/* global Locator */
 
 (function(factory) {
 
@@ -47,19 +48,6 @@
         })
 
         return {
-            createPathHTML: function createPathHTML(attrs) {
-                var escape = Handlebars.Utils.escapeExpression
-
-                var pathHTML = escape('<script')
-                for (var key in attrs) {
-                    if (attrs[key] === undefined) continue
-                    pathHTML += ' ' + key + escape('="') + attrs[key] + escape('"')
-                }
-                pathHTML += escape('></script>')
-
-                return pathHTML
-            },
-
             /*
                 ### AST.handle(node, blocks, helpers)
 
@@ -124,12 +112,12 @@
                 var statements
 
                 attrs.slot = 'start'
-                placeholder = this.createPathHTML(attrs)
+                placeholder = Locator.create(attrs)
                 statements = Handlebars.parse(placeholder).statements
                 statements[1].binded = true
                 context.splice.apply(context, [index, 0].concat(statements))
 
-                placeholder = this.createPathHTML({
+                placeholder = Locator.create({
                     guid: attrs.guid,
                     slot: 'end'
                 })
@@ -172,12 +160,12 @@
 
                 // mustache 定义 DOM 位置
                 attrs.slot = 'start'
-                placeholder = this.createPathHTML(attrs)
+                placeholder = Locator.create(attrs)
                 statements = Handlebars.parse(placeholder).statements
                 statements[1].binded = true
                 context.splice.apply(context, [index, 0].concat(statements))
 
-                placeholder = this.createPathHTML({
+                placeholder = Locator.create({
                     guid: attrs.guid,
                     slot: 'end'
                 })

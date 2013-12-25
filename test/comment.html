@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Comment Selector</title>
+  <!-- Load local QUnit. -->
+  <link rel="stylesheet" href="../node_modules/grunt-contrib-qunit/test/libs/qunit.css" media="screen">
+  <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
+  <!-- Load local lib. -->
+  <script src="../bower_components/jquery/jquery.js"></script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
+  <div class="container">
+    <div></div>
+    <!-- guid="123" -->
+    <!-- slot="start" -->
+    <p>
+      <!-- path="a.b.c" -->
+      <span>
+        <!-- ishelper="false" -->
+      </span>
+    </p>
+  </div>
+  <script type="text/javascript">
+    // https://github.com/mitzip/jquery.comments/blob/master/jquery.comments.js
+
+    // guid: guid,
+    // slot: '',
+    // type: '',
+    // path: '{{$lastest ' + prop + '}}',
+    // isHelper: !! node.isHelper
+
+    
+    function comment(container, regexFilter){
+      var comments = $(container).add('*', container).contents()
+        .filter(function(){
+          return this.nodeType === 8
+        })
+        .filter(function(){
+          return regexFilter ? regexFilter.test(this.nodeValue) : true
+        })
+      return comments
+    }
+
+    test('regexFilter', function(){
+      comment('.container', /path/).each(function(){
+        equal('path="a.b.c"', $.trim(this.nodeValue))
+      })  
+    })
+
+  </script>
+</body>
+</html>
