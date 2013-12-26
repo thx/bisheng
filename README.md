@@ -12,9 +12,9 @@ BiSheng.js（毕昇）
 
 ## API & 文档
 
-* [BiSheng](blob/master/doc/bisheng.md)
-* [Loop](blob/master/doc/loop.md)
-* [工作原理](blob/master/doc/how.md)
+* [BiSheng](doc/bisheng.md)
+* [Loop](doc/loop.md)
+* [工作原理](doc/how.md)
 
 ## 开始
 
