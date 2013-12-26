@@ -4,6 +4,7 @@
 /* global $ */
 /* global expose */
 /* global Handlebars */
+/* global location */
 
 (function(factory) {
 
@@ -177,7 +178,9 @@
     }
 
     var Locators = [ScriptLocator, JsonCommentLocator]
-    var Locator = Locators[0]
+    var Locator = location.search.indexOf('locator=script') !== -1 ? ScriptLocator :
+        location.search.indexOf('locator=comment') !== -1 ? JsonCommentLocator :
+        Locators[0]
 
     // END(BROWSER)
 
