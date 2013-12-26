@@ -8,61 +8,41 @@ BiSheng.js（毕昇）
 
 <!-- BI-Directional / Two-Way Data-Binding with JavaScript. -->
 
-轻量级的数据双向绑定库。
+纯粹的数据双向绑定库。
 
-## 目录
-<!-- TODO -->
+## API & 文档
 
-    bisheng
-    ├── dist
-    │   ├── bisheng.js
-    │   ├── bisheng-min.js
-    │   └── bisheng-min.map
-    ├── doc
-    │   ├── index.md
-    │   ├── loop.md
-    │   └── template.html
-    ├── src
-    │   ├── ast.js
-    │   ├── expose.js
-    │   ├── flush.js
-    │   ├── bisheng.js
-    │   ├── loop.js
-    │   └── scan.js
-    └── test
-        ├── attribute.html
-        ├── attribute.js
-        ├── block.html
-        ├── block.js
-        ├── expression.html
-        ├── expression.js
-        ├── form.html
-        ├── form.js
-        ├── loop.html
-        └── loop.js
+* [BiSheng](blob/master/doc/bisheng.md)
+* [Loop](blob/master/doc/loop.md)
+* [工作原理](blob/master/doc/how.md)
 
-## 用法
+## 开始
 
-### 安装包和依赖关系
+1. 下载 BiSheng.js
 
-    $ npm install -g bower
-    $ npm install
-    $ bower install
+        bower install bishengjs
 
-### BiSheng.bind(data, tpl, callback)
+2. 引入 BiSheng.js
 
-    // HTML 模板
-    var tpl = '{{title}}'
-    // 数据对象
-    var data = {
-      title: 'foo'
-    }
-    // 执行双向绑定，然后在回调函数中将绑定后的 DOM 元素插入文档中
-    BiSheng.bind(data, tpl, function(content){
-      $('div.container').append(content)
-    })
+        <script src="./bower_components/bishengjs/dist/bisheng.js"></script>
 
-## 演示
+3. 使用
+
+        // HTML 模板
+        var tpl = '{{title}}'
+        // 数据对象
+        var data = {
+          title: 'foo'
+        }
+        // 执行双向绑定
+        BiSheng.bind(data, tpl, function(content){
+          // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+          $('div.container').append(content)
+        });
+        // 改变数据 data.title，对应的文档区域会更新
+        data.title = 'bar'
+
+## 更多演示
 
     grunt 
 

@@ -40,19 +40,29 @@
 
 ## 开始
 
-    // HTML 模板
-    var tpl = '{{title}}'
-    // 数据对象
-    var data = {
-      title: 'foo'
-    }
-    // 执行双向绑定
-    BiSheng.bind(data, tpl, function(content){
-      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-      $('div.container').append(content)
-    });
-    // 改变数据 data.title，对应的文档区域会更新
-    data.title = 'bar'
+1. 下载 BiSheng.js
+
+        bower install bishengjs
+
+2. 引入 BiSheng.js
+
+        <script src="./bower_components/bishengjs/dist/bisheng.js"></script>
+
+3. 使用
+
+        // HTML 模板
+        var tpl = '{{title}}'
+        // 数据对象
+        var data = {
+          title: 'foo'
+        }
+        // 执行双向绑定
+        BiSheng.bind(data, tpl, function(content){
+          // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+          $('div.container').append(content)
+        });
+        // 改变数据 data.title，对应的文档区域会更新
+        data.title = 'bar'
 
 ## 示例
 
@@ -61,13 +71,16 @@
 
 **更多示例：**
 
-* [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
 * [TodoMVC](../demo/todo/index.html)
 * [监听数据对象的属性](../demo/loop.html)
 * [监听表达式 {{}}](../demo/expression.html)
 * [监听 DOM 节点的属性](../demo/attribute.html)
 * [监听逻辑块](../demo/block.html)
 * [监听表单元素](../demo/form.html)
+
+**测试用例**：
+
+* [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
 
 ## 感谢
 

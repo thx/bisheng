@@ -19,7 +19,9 @@ $(function() {
     var KEY_ENTER = 13;
     var KEY_ESCAPE = 27;
 
+    // localStorage
     function store(namespace, data) {
+        if (!window.localStorage) return
         if (arguments.length > 1) {
             return localStorage.setItem(namespace, JSON.stringify(data));
         } else {
@@ -29,28 +31,20 @@ $(function() {
     }
 
     var tpl = $('script[type="text/x-handlebars"][data-template-name="todos"]').text();
-    tpl = $.trim(tpl)
-
-    data = Mock.tpl(tpl, {
-        id: '@GUID',
-        title: '@TITLE(3)',
-        completed: '@BOOLEAN'
-    })
-    data.todos = store('todos-bisheng') || data.todos
-
-    function remaining() {
-        var remaining = 0
-        for (var i = 0; i < data.todos.length; i++) {
-            if (!data.todos[i].completed) remaining++
-        }
-        return remaining
-    }
-
+    var data = {
+        todos: store('todos-bishengjs') || []
+    };
 
     function sync() {
-        store('todos-bisheng', data.todos)
+        store('todos-bishengjs', data.todos)
         data.all = data.todos.length
-        data.remaining = remaining()
+        data.remaining = function() {
+            var remaining = 0
+            for (var i = 0; i < data.todos.length; i++) {
+                if (!data.todos[i].completed) remaining++
+            }
+            return remaining
+        }()
         data.completed = data.all - data.remaining
         if (data.status) {
             $('a.' + data.status).click()
@@ -69,8 +63,9 @@ $(function() {
 
     $('section#todoapp')
         .on('change', 'input#toggle-all', function(event) {
-            var checked = $(event.target).prop('checked')
-            $('ul#todo-list > li input.toggle').prop('checked', checked).trigger('change')
+            $('ul#todo-list > li input.toggle')
+                .prop('checked', $(event.target).prop('checked'))
+                .trigger('change')
         })
         .on('keyup', 'input#new-todo', function(event) {
             var $input = $(this);
@@ -163,4 +158,5 @@ $(function() {
                 if (data.todos[i].completed) data.todos.splice(i--, 1)
             }
         })
+
 })

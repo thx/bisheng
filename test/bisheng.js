@@ -62,7 +62,7 @@ test('multi-placeholder', function() {
         data.bar = 4
     }
     var expected = function(container) {
-        equal('3 3 4 4', container.text(), tpl)
+        equal(container.text(), '3 3 4 4', tpl)
     }
     bindThenCheck(data, tpl, task, expected)
 })
@@ -163,6 +163,9 @@ test('class', function() {
     bindThenCheck(data, tpl, task, expected)
 })
 
+/*
+    IE 不支持非法的样式值（这里指带有定位符）
+*/
 test('style', function() {
     var tpl = '<div style="width: {{width}}px; height: {{height}}px; background-color: green;">{{width}}, {{height}}</div>'
     var data = {
@@ -177,6 +180,23 @@ test('style', function() {
         equal(container.find('div').css('width'), '200px', container.find('div')[0].outerHTML)
         equal(container.find('div').css('height'), '100px', 'height')
         equal(container.find('div').text(), '200, 100', 'text')
+    }
+    bindThenCheck(data, tpl, task, expected)
+})
+
+test('bs-style', function() {
+    var tpl = '<div bs-style="width: {{width}}px; height: {{height}}px; background-color: green;">{{width}}, {{height}}</div>'
+    var data = {
+        width: 100,
+        height: 50
+    }
+    var task = function() {
+        data.width = 200
+        data.height = 100
+    }
+    var expected = function(container) {
+        equal(container.find('div').attr('bs-style'), 'width: 200px; height: 100px; background-color: green;', container.find('div').attr('bs-style'))
+        equal(container.find('div').text(), '200, 100', container.find('div').text())
     }
     bindThenCheck(data, tpl, task, expected)
 })

@@ -108,32 +108,45 @@
 <a href="./loop.html" type="button" class="btn btn-default">Loop</a>
 <a href="./how.html" type="button" class="btn btn-default">工作原理</a></p>
 <h2 id="-">开始</h2>
-<pre><code>// HTML 模板
-var tpl = &#39;{{title}}&#39;
-// 数据对象
-var data = {
-  title: &#39;foo&#39;
-}
-// 执行双向绑定
-BiSheng.bind(data, tpl, function(content){
-  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-  $(&#39;div.container&#39;).append(content)
-});
-// 改变数据 data.title，对应的文档区域会更新
-data.title = &#39;bar&#39;</code></pre>
+<ol>
+<li><p>下载 BiSheng.js</p>
+<pre><code> bower install bishengjs</code></pre>
+</li>
+<li><p>引入 BiSheng.js</p>
+<pre><code> &lt;script src=&quot;./bower_components/bishengjs/dist/bisheng.js&quot;&gt;&lt;/script&gt;</code></pre>
+</li>
+<li><p>使用</p>
+<pre><code> // HTML 模板
+ var tpl = &#39;{{title}}&#39;
+ // 数据对象
+ var data = {
+   title: &#39;foo&#39;
+ }
+ // 执行双向绑定
+ BiSheng.bind(data, tpl, function(content){
+   // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+   $(&#39;div.container&#39;).append(content)
+ });
+ // 改变数据 data.title，对应的文档区域会更新
+ data.title = &#39;bar&#39;</code></pre>
+</li>
+</ol>
 <h2 id="-">示例</h2>
 <p><div id="samples"></div></p>
 <script src="./samples.js"></script>
 
 <p><strong>更多示例：</strong></p>
 <ul>
-<li><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit 测试用例</a></li>
 <li><a href="../demo/todo/index.html">TodoMVC</a></li>
 <li><a href="../demo/loop.html">监听数据对象的属性</a></li>
 <li><a href="../demo/expression.html">监听表达式 {{}}</a></li>
 <li><a href="../demo/attribute.html">监听 DOM 节点的属性</a></li>
 <li><a href="../demo/block.html">监听逻辑块</a></li>
 <li><a href="../demo/form.html">监听表单元素</a></li>
+</ul>
+<p><strong>测试用例</strong>：</p>
+<ul>
+<li><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit 测试用例</a></li>
 </ul>
 <h2 id="-">感谢</h2>
 <p>感谢以下框架给 BiSheng.js 的启发：</p>
