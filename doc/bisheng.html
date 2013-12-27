@@ -98,7 +98,7 @@ var data = {
 BiSheng.bind(data, tpl, function(content){
   // 然后在回调函数中将绑定后的 DOM 元素插入文档中
   $(&#39;div.container&#39;).append(content)
-})
+});
 // 改变数据 data.title，对应的文档区域会更新
 data.title = &#39;bar&#39;</code></pre>
 <h2 id="bisheng-unbind-data-tpl-">BiSheng.unbind(data, tpl)</h2>
@@ -125,11 +125,11 @@ var data = {
 BiSheng.bind(data, tpl, function(content){
   // 然后在回调函数中将绑定后的 DOM 元素插入文档中
   $(&#39;div.container&#39;).append(content)
-})
+});
 // 改变数据 data.title，对应的文档区域会更新
 data.title = &#39;bar&#39;
 // 解除双向绑定
-BiSheng.unbind(data, tpl)
+BiSheng.unbind(data, tpl);
 // 改变数据 data.title，对应的文档区域不会更新
 data.title = &#39;foo&#39;</code></pre>
 <script>
@@ -147,8 +147,10 @@ data.title = &#39;foo&#39;</code></pre>
 
   <footer class="container">
     <hr>
-    <p>
-      by
+    <p class="pull-left">
+      <a href="https://github.com/nuysoft/bisheng">GitHub</a>
+    </p>
+    <p class="pull-right">
       <a href="http://nuysoft.com/about.html">nuysoft</a>
     </p>
   </footer>

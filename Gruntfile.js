@@ -109,7 +109,7 @@ module.exports = function(grunt) {
         },
         watch: {
             dev: {
-                files: ['<%= jshint.files %>', 'src/fix/*', 'doc/*.md', 'doc/template.html'],
+                files: ['<%= jshint.files %>', 'src/fix/*'], // , 'doc/*.md', 'doc/template.html'
                 tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown'] // 'nodeunit'
             },
             doc: {
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'connect', 'watch:dev']) // , 'nodeunit'
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'connect', 'watch']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown', 'connect', 'watch:doc'])
     grunt.registerTask('travis', ['jshint', 'qunit']) // grunt travis --verbose
 };

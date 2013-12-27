@@ -135,18 +135,24 @@
 <p><div id="samples"></div></p>
 <script src="./samples.js"></script>
 
-<p><strong>更多示例：</strong></p>
+<p><div class="row">
+  <div class="col-md-6">
+<strong>更多示例：</strong></p>
 <ul>
 <li><a href="../demo/todo/index.html">TodoMVC</a></li>
 <li><a href="../demo/loop.html">监听数据对象的属性</a></li>
 <li><a href="../demo/expression.html">监听表达式 {{}}</a></li>
 <li><a href="../demo/attribute.html">监听 DOM 节点的属性</a></li>
 <li><a href="../demo/block.html">监听逻辑块</a></li>
-<li><a href="../demo/form.html">监听表单元素</a></li>
-</ul>
-<p><strong>测试用例</strong>：</p>
-<ul>
-<li><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit 测试用例</a></li>
+<li><p><a href="../demo/form.html">监听表单元素</a>
+</div>
+<div class="col-md-6">
+<strong>测试用例</strong>：</p>
+</li>
+<li><p><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit 测试用例</a>
+</div>
+</div><!-- /row--></p>
+</li>
 </ul>
 <h2 id="-">感谢</h2>
 <p>感谢以下框架给 BiSheng.js 的启发：</p>
@@ -173,8 +179,10 @@
 
   <footer class="container">
     <hr>
-    <p>
-      by
+    <p class="pull-left">
+      <a href="https://github.com/nuysoft/bisheng">GitHub</a>
+    </p>
+    <p class="pull-right">
       <a href="http://nuysoft.com/about.html">nuysoft</a>
     </p>
   </footer>

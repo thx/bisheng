@@ -27,7 +27,7 @@
     BiSheng.bind(data, tpl, function(content){
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
-    })
+    });
     // 改变数据 data.title，对应的文档区域会更新
     data.title = 'bar'
 
@@ -58,11 +58,11 @@
     BiSheng.bind(data, tpl, function(content){
       // 然后在回调函数中将绑定后的 DOM 元素插入文档中
       $('div.container').append(content)
-    })
+    });
     // 改变数据 data.title，对应的文档区域会更新
     data.title = 'bar'
     // 解除双向绑定
-    BiSheng.unbind(data, tpl)
+    BiSheng.unbind(data, tpl);
     // 改变数据 data.title，对应的文档区域不会更新
     data.title = 'foo'
 

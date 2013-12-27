@@ -69,6 +69,8 @@
 <div id="samples"></div>
 <script src="./samples.js"></script>
 
+<div class="row">
+  <div class="col-md-6">
 **更多示例：**
 
 * [TodoMVC](../demo/todo/index.html)
@@ -77,10 +79,13 @@
 * [监听 DOM 节点的属性](../demo/attribute.html)
 * [监听逻辑块](../demo/block.html)
 * [监听表单元素](../demo/form.html)
-
+  </div>
+  <div class="col-md-6">
 **测试用例**：
 
 * [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
+  </div>
+</div><!-- /row-->
 
 ## 感谢
 
