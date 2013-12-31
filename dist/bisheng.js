@@ -1,4 +1,4 @@
-/*! BiSheng.js 2013-12-27 05:06:30 PM CST */
+/*! BiSheng.js 2013-12-31 05:19:22 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -817,7 +817,7 @@
             }(), function(index, attributeNode) {
                 if (!attributeNode.specified) return;
                 var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema;
-                if (nodeName === "style") {
+                if (nodeName === "style" || nodeName === "bs-style") {
                     restyle.exec("");
                     while (stylema = restyle.exec(nodeValue)) {
                         reph.exec("");
@@ -841,6 +841,9 @@
                 if (attributes.length) {
                     nodeValue = nodeValue.replace(reph, "");
                     attributeNode.nodeValue = nodeValue;
+                    if (nodeName === "bs-style") {
+                        $(node).attr("style", nodeValue);
+                    }
                     $(attributes).each(function(index, elem) {
                         var slot = Locator.parse(elem, "slot");
                         if (slot === "start") $(node).before(elem);
@@ -1082,6 +1085,7 @@
                 $target.removeClass("" + oldValue).addClass("" + value);
                 break;
 
+              case "bs-style":
               case "style":
                 $target.css(Locator.parse(path, "css"), value);
                 break;
@@ -1122,12 +1126,24 @@
             var target = Locator.parseTarget(locator);
             var endLocator = target.length ? target[target.length - 1].nextSibling : locator.nextSibling;
             /*
-                优化渲染过程
+                优化渲染过程：
                 1. 移除多余的旧节点
                 2. 逐个比较节点类型、节点值、节点内容。
             */
+            // 如果新内容是空，则移除所有旧节点
+            if (content.length === 0) {
+                $(target).remove();
+                return;
+            }
             // 移除旧节点中多余的
-            if (content.length < target.length) $(target.splice(content.length)).remove();
+            /*
+                Fixes Bug
+                在 IE8 中调用 array.splice(index , howMany[, element1[, ...[, elementN]]]) 必须传入参数 howMany。
+                https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+            */
+            if (content.length < target.length) {
+                $(target.splice(content.length, target.length - content.length)).remove();
+            }
             content.each(function(index, element) {
                 // 新正节点
                 if (!target[index]) {
@@ -1263,6 +1279,8 @@
                     if (location.href.indexOf("highlight") > -1) Flush.highlight(event, data);
                 });
             }, true);
+            // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
+            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/, "$1bs-style$3");
             // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl);
             AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {});

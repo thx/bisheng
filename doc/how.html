@@ -91,7 +91,7 @@
 <p>这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 <a href="http://angularjs.org/">AngularJS</a> 和 <a href="http://emberjs.com/">EmberJS</a>，结构借鉴了 <a href="http://addyosmani.com/largescalejavascript/">Patterns For Large-Scale JavaScript Application Architecture</a>（<a href="http://nuysoft.com/2013/08/13/large-scale-javascript/">中文翻译</a>）。</p>
 <h2 id="-">我是谁，以及我为什么写这个主题？</h2>
 <p>我目前是 <a href="http://www.alimama.com/">阿里妈妈</a> 的一名 JavaScript 开发人员，负责 <a href="http://zuanshi.taobao.com">钻石展位广告管理系统</a> 和 <a href="http://dmp.taobao.com/">DMP 数据营销系统</a>的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。</p>
-<p>已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 <a href="https://github.com/nuysoft/bisheng">BiSheng.js</a>，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。</p>
+<p>已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 <a href="https://github.com/thx/bisheng">BiSheng.js</a>，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。</p>
 <p>BiSheng.js 的名称源自“<a href="http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&amp;fromid=64860&amp;type=syn">毕昇</a>”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。</p>
 <h2 id="-140-">可以用 140 个字概述这篇文章吗？</h2>
 <p>如果你时间不够，下面是这篇文章的摘要，只有一条 tweet 的长度：</p>
@@ -181,7 +181,7 @@
 <h3 id="-">小结</h3>
 <p>前面以 <code>{{title}}</code> 为例阐述了绑定过程。这尚是最简单的情况，事实上内部的实现比示例要复杂和繁琐许多，不过处理的步骤是一样的。</p>
 <h2 id="-">源码导读</h2>
-<p><strong>代码的结构</strong>按照职责来设计，见下表；<strong>打包后的文件</strong>在 <a href="https://github.com/nuysoft/bisheng/tree/master/dist/">dist/</a> 目录下；<strong>测试用例</strong>在 <a href="https://github.com/nuysoft/bisheng/tree/master/src/">test/</a> 目录下，基本覆盖了目前已实现的功能。</p>
+<p><strong>代码的结构</strong>按照职责来设计，见下表；<strong>打包后的文件</strong>在 <a href="https://github.com/thx/bisheng/tree/master/dist/">dist/</a> 目录下；<strong>测试用例</strong>在 <a href="https://github.com/thx/bisheng/tree/master/src/">test/</a> 目录下，基本覆盖了目前已实现的功能。</p>
 <table>
 <thead>
 <tr>
@@ -191,31 +191,31 @@
 </thead>
 <tbody>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/ast.js">src/ast.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/ast.js">src/ast.js</a></td>
 <td>修改语法树，插入定位符。</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/bisheng.js">src/bisheng.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/bisheng.js">src/bisheng.js</a></td>
 <td>双向数据绑定的入口；</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/expose.js">src/expose.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/expose.js">src/expose.js</a></td>
 <td>模块化，适配主流加载器。</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/flush.js">src/flush.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/flush.js">src/flush.js</a></td>
 <td>更新 DOM 元素。</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/locator.js">src/locator.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/locator.js">src/locator.js</a></td>
 <td>生成定位符，解析、更新定位符的属性。</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/loop.js">src/loop.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/loop.js">src/loop.js</a></td>
 <td>属性监听工具。</td>
 </tr>
 <tr>
-<td><a href="https://github.com/nuysoft/bisheng/tree/master/src/scan.js">src/scan.js</a></td>
+<td><a href="https://github.com/thx/bisheng/tree/master/src/scan.js">src/scan.js</a></td>
 <td>扫描 DOM 元素，解析定位符。</td>
 </tr>
 </tbody>
@@ -261,7 +261,7 @@ API 文档：已覆盖目前的公开 API。
   <footer class="container">
     <hr>
     <p class="pull-left">
-      <a href="https://github.com/nuysoft/bisheng">GitHub</a>
+      <a href="https://github.com/thx/bisheng">GitHub</a>
     </p>
     <p class="pull-right">
       <a href="http://nuysoft.com/about.html">nuysoft</a>

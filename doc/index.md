@@ -1,10 +1,10 @@
 # BiSheng.js
 ---
 
-[![Build Status](https://api.travis-ci.org/nuysoft/bisheng.png?branch=master)](http://travis-ci.org/nuysoft/bisheng)
+[![Build Status](https://api.travis-ci.org/thx/bisheng.png?branch=master)](http://travis-ci.org/thx/bisheng)
 <!-- [![GitHub version](https://badge.fury.io/gh/nuysoft%2Fbisheng.png)](http://badge.fury.io/gh/nuysoft%2Fbisheng) -->
 <!-- [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs) -->
-[![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/nuysoft/bisheng/counters/views-24h.png)](https://github.com/nuysoft/bisheng/)
+[![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png)](https://github.com/thx/bisheng/)
 
 纯粹的数据双向绑定库。
 
@@ -21,7 +21,7 @@
     </a> - <i>10kB, Minified</i>
 </p>
 <p>
-    <a href="https://github.com/nuysoft/bisheng" class="btn btn-default w250">
+    <a href="https://github.com/thx/bisheng" class="btn btn-default w250">
         从 Github 获取最新版本
     </a> - <i>Unreleased</i>
 </p>
@@ -71,6 +71,7 @@
 
 <div class="row">
   <div class="col-md-6">
+
 **更多示例：**
 
 * [TodoMVC](../demo/todo/index.html)
@@ -79,11 +80,14 @@
 * [监听 DOM 节点的属性](../demo/attribute.html)
 * [监听逻辑块](../demo/block.html)
 * [监听表单元素](../demo/form.html)
+
   </div>
   <div class="col-md-6">
+
 **测试用例**：
 
 * [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
+
   </div>
 </div><!-- /row-->
 

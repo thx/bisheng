@@ -154,6 +154,7 @@ if (typeof module === 'object' && module.exports) {
                 case 'class':
                     $target.removeClass('' + oldValue).addClass('' + value)
                     break
+                case 'bs-style':
                 case 'style':
                     $target.css(Locator.parse(path, 'css'), value)
                     break
@@ -198,13 +199,25 @@ if (typeof module === 'object' && module.exports) {
             var endLocator = target.length ? target[target.length - 1].nextSibling : locator.nextSibling
 
             /*
-                优化渲染过程
+                优化渲染过程：
                 1. 移除多余的旧节点
                 2. 逐个比较节点类型、节点值、节点内容。
             */
 
+            // 如果新内容是空，则移除所有旧节点
+            if (content.length === 0) {
+                $(target).remove()
+                return
+            }
             // 移除旧节点中多余的
-            if (content.length < target.length) $(target.splice(content.length)).remove()
+            /*
+                Fixes Bug
+                在 IE8 中调用 array.splice(index , howMany[, element1[, ...[, elementN]]]) 必须传入参数 howMany。
+                https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+            */
+            if (content.length < target.length) {
+                $(target.splice(content.length, target.length - content.length)).remove()
+            }
 
             content.each(function(index, element) {
                 // 新正节点

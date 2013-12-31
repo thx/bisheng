@@ -72,6 +72,9 @@
                 })
             }, true)
 
+            // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
+            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/, '$1bs-style$3')
+
             // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl)
             AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {})

@@ -84,7 +84,7 @@
                         nodeValue = attributeNode.nodeValue,
                         ma, stylema;
 
-                    if (nodeName === 'style') {
+                    if (nodeName === 'style' || nodeName === 'bs-style') {
                         restyle.exec('')
                         while ((stylema = restyle.exec(nodeValue))) {
                             reph.exec('')
@@ -114,6 +114,10 @@
                     if (attributes.length) {
                         nodeValue = nodeValue.replace(reph, '')
                         attributeNode.nodeValue = nodeValue
+
+                        if (nodeName === 'bs-style') {
+                            $(node).attr('style', nodeValue)
+                        }
 
                         $(attributes).each(function(index, elem) {
                             var slot = Locator.parse(elem, 'slot')

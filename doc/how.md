@@ -32,7 +32,7 @@ BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。�
 
 [钻石展位广告管理系统]: http://zuanshi.taobao.com
 [DMP 数据营销系统]: http://dmp.taobao.com/
-[BiSheng.js]: https://github.com/nuysoft/bisheng
+[BiSheng.js]: https://github.com/thx/bisheng
 [毕昇]: http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&fromid=64860&type=syn
 
 ## 可以用 140 个字概述这篇文章吗？
@@ -192,16 +192,16 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 [src/loop.js]     | 属性监听工具。
 [src/scan.js]     | 扫描 DOM 元素，解析定位符。
 
-[src/ast.js]: https://github.com/nuysoft/bisheng/tree/master/src/ast.js
-[src/bisheng.js]: https://github.com/nuysoft/bisheng/tree/master/src/bisheng.js
-[src/expose.js]: https://github.com/nuysoft/bisheng/tree/master/src/expose.js
-[src/flush.js]: https://github.com/nuysoft/bisheng/tree/master/src/flush.js
-[src/locator.js]: https://github.com/nuysoft/bisheng/tree/master/src/locator.js
-[src/loop.js]: https://github.com/nuysoft/bisheng/tree/master/src/loop.js
-[src/scan.js]: https://github.com/nuysoft/bisheng/tree/master/src/scan.js
+[src/ast.js]: https://github.com/thx/bisheng/tree/master/src/ast.js
+[src/bisheng.js]: https://github.com/thx/bisheng/tree/master/src/bisheng.js
+[src/expose.js]: https://github.com/thx/bisheng/tree/master/src/expose.js
+[src/flush.js]: https://github.com/thx/bisheng/tree/master/src/flush.js
+[src/locator.js]: https://github.com/thx/bisheng/tree/master/src/locator.js
+[src/loop.js]: https://github.com/thx/bisheng/tree/master/src/loop.js
+[src/scan.js]: https://github.com/thx/bisheng/tree/master/src/scan.js
 
-[dist/]: https://github.com/nuysoft/bisheng/tree/master/dist/
-[test/]: https://github.com/nuysoft/bisheng/tree/master/src/
+[dist/]: https://github.com/thx/bisheng/tree/master/dist/
+[test/]: https://github.com/thx/bisheng/tree/master/src/
 <!-- 注释行数大约占总行数的 40～50%。 -->
 
 *TODO*
