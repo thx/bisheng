@@ -82,7 +82,8 @@
             ) {
                 if (force || !locator.getAttribute('type')) {
                     for (var key in attrs) {
-                        locator.setAttribute(key, attrs[key])
+                        $(locator).attr(key, attrs[key]) // IE6 不支持 setAttribute
+                        // locator.setAttribute(key, attrs[key])
                     }
                 }
             }

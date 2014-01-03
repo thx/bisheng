@@ -85,7 +85,8 @@
 <ul>
 <li>参数 data：必选。待绑定的对象或数组。</li>
 <li>参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。</li>
-<li>参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。</li>
+<li>参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。</li>
+<li>参数 content：数组，其中包含了转换后的 DOM 元素。</li>
 </ul>
 <p><strong>使用示例</strong>如下所示：</p>
 <pre><code>// HTML 模板
@@ -111,8 +112,8 @@ data.title = &#39;bar&#39;</code></pre>
 </ul>
 <p><strong>参数的含义和默认值</strong>如下所示：</p>
 <ul>
-<li>参数 data：必选。待接触绑定的对象或数组。</li>
-<li>参数 tpl：可选。待接触绑绑定的 HTML 模板。</li>
+<li>参数 data：必选。待解除绑定的对象或数组。</li>
+<li>参数 tpl：可选。待解除绑绑定的 HTML 模板。</li>
 </ul>
 <p><strong>使用示例</strong>如下所示：</p>
 <pre><code>// HTML 模板

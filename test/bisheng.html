@@ -20,21 +20,19 @@
       if (window.console && console.time) console.timeEnd('BiSheng.js Test Suite')
     })
   </script>
+  <!-- 单个功能测试 -->
   <script type="text/javascript" src="loop.js"></script>
   <script type="text/javascript" src="ast.js"></script>
   <script type="text/javascript" src="locator.js"></script>
-  <script type="text/javascript" src="bisheng.js"></script>
+  <!-- 集成测试 -->
+  <script type="text/javascript" src="bind_then_check.js"></script>
   <script type="text/javascript" src="expression.js"></script>
   <script type="text/javascript" src="attribute.js"></script>
   <script type="text/javascript" src="block.js"></script>
   <script type="text/javascript" src="form.js"></script>
-  <style type="text/css">
-    .container {
-      margin: 8px 0px;
-      float: left;
-      width: 50%;
-    }
-  </style>
+  <!-- 钻石展位测试 -->
+  <script type="text/javascript" src="zuanshi.js"></script>
+  
 </head>
 <body>
   <div id="qunit"></div>
@@ -49,7 +47,14 @@
   <div id="qunit-testrunner-toolbar">
     <a href="https://github.com/thx/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a>
   </div>
-
+  
+  <style type="text/css">
+    .container {
+      margin: 8px 0px;
+      float: left;
+      width: 50%;
+    }
+  </style>
   <div class="container"></div>
   <div class="container"></div>
   <!-- <div class="container"></div>

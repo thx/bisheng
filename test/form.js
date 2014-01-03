@@ -12,12 +12,12 @@ test('input, data => value', function() {
         data.first = 123
     }
     var expected = function(container) {
-        equal('123', container.find('input').val())
-        equal('123', container.find('p:eq(1)').text())
+        equal(container.find('input').val(), '123')
+        equal(container.find('p:eq(1)').text(), '123')
     }
     var before = function(container) {
-        equal('first', container.find('input').val())
-        equal('first', container.find('p:eq(1)').text())
+        equal(container.find('input').val(), 'first')
+        equal(container.find('p:eq(1)').text(), 'first')
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -162,12 +162,12 @@ test('checkbox, checked, data => dom, false => true', function() {
         data.checkboxChecked = true
     }
     var expected = function(container) {
-        equal(true, container.find('input').prop('checked'))
-        equal('Ok.', $.trim(container.find('p').text()))
+        equal(container.find('input').prop('checked'), true)
+        equal($.trim(container.find('p').text()), 'Ok.')
     }
     var before = function(container) {
-        equal(false, container.find('input').prop('checked'))
-        equal('Your must agree it!', $.trim(container.find('p').text()))
+        equal(container.find('input').prop('checked'), false)
+        equal($.trim(container.find('p').text()), 'Your must agree it!')
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -304,17 +304,17 @@ test('radio, checked, data => dom', function() {
         data.radioChecked2 = true
     }
     var expected = function(container) {
-        equal(false, container.find('input:eq(0)').prop('checked'))
-        equal(true, container.find('input:eq(1)').prop('checked'))
+        equal(container.find('input:eq(0)').prop('checked'), false)
+        equal(container.find('input:eq(1)').prop('checked'), true)
     }
     var before = function(container) {
-        equal(true, container.find('input:eq(0)').prop('checked'))
-        equal(false, container.find('input:eq(1)').prop('checked'))
+        equal(container.find('input:eq(0)').prop('checked'), true)
+        equal(container.find('input:eq(1)').prop('checked'), false)
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
 
-test('radio, checked, doom => data', function() {
+test('radio, checked, dom => data', function() {
     var tpl = Mock.heredoc(function() {
         /*
 <form>

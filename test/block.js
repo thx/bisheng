@@ -131,13 +131,15 @@ test('with-helper, {} > {}', function() {
     }
     var expected = function(container) {
         equal('123', $.trim(container.find('h1').text()))
-        equal('intro: 456', container.find('.intro').text())
-        equal('body: 789', container.find('.body').text())
+        var intro = container.find('.intro').text()
+        ok(/intro:\s?456/.test(intro), intro)
+        var body = container.find('.body').text()
+        ok(/body:\s?789/.test(body), body)
     }
     var before = function(container) {
         equal('title', $.trim(container.find('h1').text()))
-        equal('intro: intro', container.find('.intro').text())
-        equal('body: body', container.find('.body').text())
+        equal(container.find('.intro').text(), 'intro: intro')
+        equal(container.find('.body').text(), 'body: body')
     }
     bindThenCheck(data, tpl, task, expected, before)
 })

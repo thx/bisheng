@@ -80,16 +80,24 @@
 <!-- [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs) -->
 <a href="https://github.com/thx/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a></p>
 <p>纯粹的数据双向绑定库。</p>
+<h2 id="-">浏览器支持</h2>
+<ul>
+<li>Internet Explorer：6+</li>
+<li>Chrome, Firefox, Opera：前一个或当前版本</li>
+<li>Safari：5.1+</li>
+</ul>
+<!-- IE：IE6 IE8 IE9 IE10 IE11 -->
+
 <h2 id="-">下载</h2>
 <p>
     <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
-    </a> - <i>43kB, Uncompressed</i>
+    </a> - <i><span id="uncompressed">?</span>kB, Uncompressed</i>
 </p>
 <p>
     <a href="../dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
-    </a> - <i>10kB, Minified</i>
+    </a> - <i><span id="minified">?</span>kB, Minified</i>
 </p>
 <p>
     <a href="https://github.com/thx/bisheng" class="btn btn-default w250">
@@ -97,11 +105,27 @@
     </a> - <i>Unreleased</i>
 </p>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=watch&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=fork&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=fork&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe>
+
+<script type="text/javascript">
+    function size(file, target) {
+        $.ajax({
+            type: 'head',
+            url: file
+        }).success(function(_, __, jqXHR) {
+            var size = jqXHR.getResponseHeader('Content-Length')
+            size = parseInt(size / 1024, 10)
+            $(target).html(size)
+        })
+    }
+    size('/dist/bisheng.js', '#uncompressed')
+    size('/dist/bisheng-min.js','#minified')
+
+</script>
 
 <h2 id="api-">API &amp; 文档</h2>
 <p><a href="./bisheng.html" type="button" class="btn btn-success">BiSheng</a>
@@ -168,6 +192,7 @@
 <li><a href="http://knockoutjs.com/">Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern</a></li>
 <li><a href="https://github.com/derickbailey/backbone.modelbinding/">backbone.modelbinding — Awesome model binding for Backbone.js</a></li>
 <li><a href="https://github.com/RubyLouvre/avalon">RubyLouvre/avalon — 迷你简单易用的MVVM框架</a></li>
+<li><a href="https://github.com/shepherdwind/bidi">shepherdwind/bidi - MVVM for KISSY</a></li>
 </ol>
 </div>
       <div class="col-md-3">

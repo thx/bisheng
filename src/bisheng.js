@@ -14,7 +14,7 @@
 
     expose(factory, function() {
         // Browser globals
-        window.BiSheng = factory()
+        window.BS = window.BiSheng = factory()
     })
 
 }(function() {
@@ -23,39 +23,40 @@
     /*
         ## BiSheng
 
-        双向数据绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
+        双向绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
     */
     var BiSheng = {
         version: '0.1.0',
 
         /*
-            ### BiSheng.bind(data, tpl, callback(content))
+## BiSheng.bind(data, tpl, callback(content))
 
-            执行模板和数据的双向绑定。
+在模板和数据之间执行双向绑定。
 
-            * BiSheng.bind(data, tpl, callback(content))
+* BiSheng.bind(data, tpl, callback(content))
 
-            **参数的含义和默认值**如下所示：
+**参数的含义和默认值**如下所示：
 
-            * 参数 data：必选。待绑定的对象或数组。
-            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。
+* 参数 data：必选。待绑定的对象或数组。
+* 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+* 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+* 参数 content：数组，其中包含了转换后的 DOM 元素。
 
-            **使用示例**如下所示：
+**使用示例**如下所示：
 
-                // HTML 模板
-                var tpl = '{{title}}'
-                // 数据对象
-                var data = {
-                  title: 'foo'
-                }
-                // 执行双向绑定
-                BiSheng.bind(data, tpl, function(content){
-                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-                  $('div.container').append(content)
-                })
-                // 改变数据 data.title，对应的文档区域会更新
-                data.title = 'bar'
+    // HTML 模板
+    var tpl = '{{title}}'
+    // 数据对象
+    var data = {
+      title: 'foo'
+    }
+    // 执行双向绑定
+    BiSheng.bind(data, tpl, function(content){
+      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+      $('div.container').append(content)
+    });
+    // 改变数据 data.title，对应的文档区域会更新
+    data.title = 'bar'
 
         */
         bind: function bind(data, tpl, callback) {
@@ -73,7 +74,8 @@
             }, true)
 
             // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
-            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/, '$1bs-style$3')
+            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/g, '$1bs-style$3')
+                .replace(/(<input.*?)(checked)(=.*?>)/g, '$1bs-checked$3')
 
             // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl)
@@ -86,16 +88,15 @@
             // 扫描占位符，定位 Expression 和 Block
             var content = $('<div>' + html + '</div>')
             if (content.length) Scanner.scan(content[0], data)
-            content = content.contents()
+            content = content.contents().get()
 
             /*
-                返回什么呢
-                如果传入了 callback()，则返回 data，因为 callback() 的作用在于处理 content；
-                如果 callback() 有返回值，则作为 bind() 的返回值返回，即优先返回 callback() 的返回值；
+                返回什么呢？
+                如果 callback() 有返回值，则作为 BiSheng.bind() 的返回值返回，即优先返回 callback() 的返回值；
                 如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
 
             */
-            if (callback) return callback.call(data, content) || data
+            if (callback) return callback.call(data, content) || content
             return content
         },
 

@@ -8,17 +8,25 @@
 
 纯粹的数据双向绑定库。
 
+## 浏览器支持
+
+* Internet Explorer：6+
+* Chrome, Firefox, Opera：前一个或当前版本
+* Safari：5.1+
+
+<!-- IE：IE6 IE8 IE9 IE10 IE11 -->
+
 ## 下载
 
 <p>
     <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
-    </a> - <i>43kB, Uncompressed</i>
+    </a> - <i><span id="uncompressed">?</span>kB, Uncompressed</i>
 </p>
 <p>
     <a href="../dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
-    </a> - <i>10kB, Minified</i>
+    </a> - <i><span id="minified">?</span>kB, Minified</i>
 </p>
 <p>
     <a href="https://github.com/thx/bisheng" class="btn btn-default w250">
@@ -26,11 +34,27 @@
     </a> - <i>Unreleased</i>
 </p>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=watch&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
 
-<iframe src="http://ghbtns.com/github-btn.html?user=nuysoft&repo=bisheng&type=fork&count=true&size=large"
+<iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=fork&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe>
+
+<script type="text/javascript">
+    function size(file, target) {
+        $.ajax({
+            type: 'head',
+            url: file
+        }).success(function(_, __, jqXHR) {
+            var size = jqXHR.getResponseHeader('Content-Length')
+            size = parseInt(size / 1024, 10)
+            $(target).html(size)
+        })
+    }
+    size('/dist/bisheng.js', '#uncompressed')
+    size('/dist/bisheng-min.js','#minified')
+   
+</script>
 
 ## API & 文档
 
@@ -103,3 +127,4 @@
 6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
 7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
 8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
+9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)

@@ -278,7 +278,7 @@
             for (name in obj) {
                 value = obj[name]
                 // if (/Object|Array/.test(value.constructor.name)) {
-                if (value !== undefined) {
+                if (value !== undefined && value !== null) {
                     if (value.constructor === Object || value.constructor === Array) {
                         value = clone(value, autoboxing, path.concat(name))
                     } else {
@@ -425,9 +425,13 @@
                     continue
                 }
 
-                if (value === undefined) continue
-                if (oldValue[name] === undefined) continue
-                if (value.constructor !== (oldValue[name]).constructor) continue
+                if (value === undefined ||
+                    value === null ||
+                    oldValue[name] === undefined ||
+                    oldValue[name] === null ||
+                    value.constructor !== (oldValue[name]).constructor) {
+                    continue
+                }
 
                 // IE 不支持 constructor.name
                 // /Object|Array/.test(value.constructor.name)
@@ -458,7 +462,9 @@
                 if (value === undefined && oldValue[name] === undefined) continue
 
                 if (value === undefined ||
+                    value === null ||
                     oldValue[name] === undefined ||
+                    oldValue[name] === null ||
                     value.constructor !== (oldValue[name]).constructor) {
                     result.push({
                         type: TYPES.UPDATE,

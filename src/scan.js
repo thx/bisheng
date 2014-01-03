@@ -74,17 +74,28 @@
                 function() {
                     var re = []
                     var all = node.attributes
-                    for (var i = 0; i < all.length; i++) re.push(all[i])
+                    for (var i = 0; i < all.length; i++) {
+                        /*
+                            Fixes bug:
+                            在 IE6 中，input.attributeNode('value').specified 为 false，导致取不到 value 属性。
+                            所以，增加了对 nodeValue 的判断。
+                        */
+                        if (all[i].specified || all[i].nodeValue) re.push(all[i])
+                    }
                     return re
                 }(),
                 function(index, attributeNode) {
-                    if (!attributeNode.specified) return
 
                     var nodeName = attributeNode.nodeName,
                         nodeValue = attributeNode.nodeValue,
                         ma, stylema;
 
-                    if (nodeName === 'style' || nodeName === 'bs-style') {
+                    nodeName = nodeName.toLowerCase()
+                    nodeName = nodeName === 'bs-style' && 'style' ||
+                        nodeName === 'bs-checked' && 'checked' ||
+                        nodeName
+
+                    if (nodeName === 'style') {
                         restyle.exec('')
                         while ((stylema = restyle.exec(nodeValue))) {
                             reph.exec('')
@@ -92,7 +103,7 @@
                                 attributes.push(
                                     Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
                                         type: 'attribute',
-                                        name: attributeNode.nodeName.toLowerCase(),
+                                        name: nodeName,
                                         css: $.trim(stylema[1])
                                     })
                                 )
@@ -103,9 +114,13 @@
                         reph.exec('')
                         while ((ma = reph.exec(nodeValue))) {
                             attributes.push(
-                                Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
+                                /*
+                                    Fixes bug:
+                                    在 IE6 中，占位符中的空格依然是 `%20`，需要手动转义。
+                                */
+                                Locator.update($('<div>' + decodeURIComponent(ma[1]) + '</div>').contents()[0], {
                                     type: 'attribute',
-                                    name: attributeNode.nodeName.toLowerCase()
+                                    name: nodeName
                                 }, true)
                             )
                         }
@@ -115,9 +130,8 @@
                         nodeValue = nodeValue.replace(reph, '')
                         attributeNode.nodeValue = nodeValue
 
-                        if (nodeName === 'bs-style') {
-                            $(node).attr('style', nodeValue)
-                        }
+                        if (nodeName === 'style') $(node).attr('style', nodeValue)
+                        if (nodeName === 'checked' && nodeValue === 'true') $(node).attr('checked', 'checked')
 
                         $(attributes).each(function(index, elem) {
                             var slot = Locator.parse(elem, 'slot')

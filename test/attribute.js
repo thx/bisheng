@@ -34,7 +34,7 @@ test('class', function() {
 
 /*
     IE 不支持非法的样式值（这里指插入了定位符），导致无法扫描到需监听的样式。
-    需要把 style 写作 bs-style
+    在 BiSheng.js 内部，会先把 style 替换为 bs-style，待渲染、扫描之后，再改回 style。
 */
 test('style', function() {
 	var tpl = '<div style="width: {{width}}px; height: {{height}}px; background-color: green;">{{width}}, {{height}}</div>'
@@ -49,7 +49,9 @@ test('style', function() {
 	var expected = function(container) {
 		equal(container.find('div').css('width'), '200px', container.find('div')[0].outerHTML)
 		equal(container.find('div').css('height'), '100px', 'height')
-		equal(container.find('div').text(), '200, 100', 'text')
+
+		var content = container.find('div').text()
+		ok(/200,\s?100/.test(content), 'text') // IE 会自动忽略前导空白符
 
 		var color = container.find('div').css('backgroundColor')
 		ok(color === 'rgb(0, 128, 0)' || color === 'green', 'background-color')
@@ -66,7 +68,8 @@ test('part', function() {
 		data.id = 456
 	}
 	var expected = function(container) {
-		equal('/testcase/456', container.find('a').attr('href'), tpl)
+		var href = container.find('a').attr('href')
+		ok(/\/testcase\/456$/.test(href), href)
 		equal('456', container.find('a').text(), tpl)
 	}
 	bindThenCheck(data, tpl, task, expected)

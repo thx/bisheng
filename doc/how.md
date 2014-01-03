@@ -123,7 +123,9 @@ BiSheng.js 也选择了 Handlebars.js 作为它支持的第一款模板引擎，
 
 ## 执行绑定
 
-BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/bisheng.html)，用于在模板和数据之间执行双向绑定。绑定的关键步骤共有 5 步：
+BiSheng.js 提供了方法 `BiSheng.bind(data, tpl, callback(content))`，用于在模板和数据之间执行双向绑定，文档请访问 [HTML](/doc/bisheng.html) 或 [Markdown](/doc/bisheng.md)。
+
+`BiSheng.bind()` 绑定的关键步骤共有 5 步：
 
 1. 修改语法树，插入定位符。
 2. 渲染模板和定位符。
@@ -131,7 +133,21 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 4. 建立数据到 DOM 元素的连接。
 5. 建立 DOM 元素到数据的连接。
 
-下面以模板 `{{title}}` 为来说明 `BiSheng.bind()` 的绑定过程。
+下面以模板 `{{title}}` 为来说明 `BiSheng.bind()` 的绑定过程。绑定代码如下：
+
+      // HTML 模板
+      var tpl = '{{title}}'
+      // 数据对象
+      var data = {
+        title: '注意，title 的值在这里'
+      }
+      // 执行双向绑定
+      BiSheng.bind(data, tpl, function(content){
+        // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+        $('div.container').append(content)
+      });
+      // 改变数据 data.title，对应的文档区域会更新
+      data.title = 'bar'
 
 ### 1. 修改语法树，插入定位符
 
@@ -185,11 +201,11 @@ BiSheng.js 提供了方法 [`BiSheng.bind(data, tpl, callback(content))`](/doc/b
 源文件            | 职责 & 功能
 ----------------- | -------------------------------------
 [src/ast.js]      | 修改语法树，插入定位符。
-[src/bisheng.js]  | 双向数据绑定的入口；
+[src/bisheng.js]  | 双向数据绑定的入口。
 [src/expose.js]   | 模块化，适配主流加载器。
 [src/flush.js]    | 更新 DOM 元素。
 [src/locator.js]  | 生成定位符，解析、更新定位符的属性。
-[src/loop.js]     | 属性监听工具。
+[src/loop.js]     | 数据属性监听工具。
 [src/scan.js]     | 扫描 DOM 元素，解析定位符。
 
 [src/ast.js]: https://github.com/thx/bisheng/tree/master/src/ast.js
@@ -226,11 +242,14 @@ API 文档：已覆盖目前的公开 API。
 1. 支持 [KISSY XTempalte](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)
 2. √ 定位符由 script 改为注释节点。
 3. 从修改语法树、扫描语法树、更新数据、更新视图等环节，优化性能。
-4. 解决兼容性问题（IE）
+4. √ 解决兼容性问题（IE）
 
 *TODO*
 
 ## 扩展阅读
+
+* [MVVM for KISSY](http://yunpan.taobao.com/share/link/746RBbA94) by 翰文
+* [前端MVVM的应用](http://vdisk.weibo.com/s/aMO9PyIQCnLOF/1375154475) by 司徒正美
 
 *TODO*
 

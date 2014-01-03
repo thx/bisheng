@@ -40,7 +40,7 @@
 
         var blockHelperMissing = Handlebars.helpers.blockHelperMissing
         Handlebars.registerHelper('blockHelperMissing', function(context, options) {
-            return blockHelperMissing.call(this, context !== undefined ? context.valueOf() : context, options)
+            return blockHelperMissing.call(this, (context !== undefined && context !== null) ? context.valueOf() : context, options)
         })
 
         Handlebars.registerHelper('$lastest', function(items, options) {

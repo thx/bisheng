@@ -13,8 +13,10 @@ function bindThenCheck(data, tpl, task, expected, before, empty) {
         container.each(function(index, item) {
             expected($(item))
         })
-        if (empty !== false) container.empty()
-        BiSheng.unbind(data)
+        if (empty !== false) {
+            container.empty()
+            BiSheng.unbind(data)
+        }
         start()
     })
     task(container)

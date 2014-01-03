@@ -1,4 +1,4 @@
-/*! BiSheng.js 2013-12-31 05:19:22 PM CST */
+/*! BiSheng.js 2014-01-03 01:28:27 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -261,7 +261,7 @@
             for (name in obj) {
                 value = obj[name];
                 // if (/Object|Array/.test(value.constructor.name)) {
-                if (value !== undefined) {
+                if (value !== undefined && value !== null) {
                     if (value.constructor === Object || value.constructor === Array) {
                         value = clone(value, autoboxing, path.concat(name));
                     } else {
@@ -397,9 +397,9 @@
                     });
                     continue;
                 }
-                if (value === undefined) continue;
-                if (oldValue[name] === undefined) continue;
-                if (value.constructor !== oldValue[name].constructor) continue;
+                if (value === undefined || value === null || oldValue[name] === undefined || oldValue[name] === null || value.constructor !== oldValue[name].constructor) {
+                    continue;
+                }
                 // IE 不支持 constructor.name
                 // /Object|Array/.test(value.constructor.name)
                 // http://stackoverflow.com/questions/332422/how-do-i-get-the-name-of-an-objects-type-in-javascript
@@ -421,7 +421,7 @@
                 value = newValue[name];
                 if (!(name in oldValue)) continue;
                 if (value === undefined && oldValue[name] === undefined) continue;
-                if (value === undefined || oldValue[name] === undefined || value.constructor !== oldValue[name].constructor) {
+                if (value === undefined || value === null || oldValue[name] === undefined || oldValue[name] === null || value.constructor !== oldValue[name].constructor) {
                     result.push({
                         type: TYPES.UPDATE,
                         path: path.concat(name),
@@ -516,7 +516,7 @@
             if (locator.nodeName.toLowerCase() === "script" && locator.getAttribute("guid") && locator.getAttribute("slot") === "start") {
                 if (force || !locator.getAttribute("type")) {
                     for (var key in attrs) {
-                        locator.setAttribute(key, attrs[key]);
+                        $(locator).attr(key, attrs[key]);
                     }
                 }
             }
@@ -631,7 +631,7 @@
         });
         var blockHelperMissing = Handlebars.helpers.blockHelperMissing;
         Handlebars.registerHelper("blockHelperMissing", function(context, options) {
-            return blockHelperMissing.call(this, context !== undefined ? context.valueOf() : context, options);
+            return blockHelperMissing.call(this, context !== undefined && context !== null ? context.valueOf() : context, options);
         });
         Handlebars.registerHelper("$lastest", function(items, options) {
             return items && items.$path || this && this.$path;
@@ -812,19 +812,27 @@
             function() {
                 var re = [];
                 var all = node.attributes;
-                for (var i = 0; i < all.length; i++) re.push(all[i]);
+                for (var i = 0; i < all.length; i++) {
+                    /*
+                            Fixes bug:
+                            在 IE6 中，input.attributeNode('value').specified 为 false，导致取不到 value 属性。
+                            所以，增加了对 nodeValue 的判断。
+                        */
+                    if (all[i].specified || all[i].nodeValue) re.push(all[i]);
+                }
                 return re;
             }(), function(index, attributeNode) {
-                if (!attributeNode.specified) return;
                 var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema;
-                if (nodeName === "style" || nodeName === "bs-style") {
+                nodeName = nodeName.toLowerCase();
+                nodeName = nodeName === "bs-style" && "style" || nodeName === "bs-checked" && "checked" || nodeName;
+                if (nodeName === "style") {
                     restyle.exec("");
                     while (stylema = restyle.exec(nodeValue)) {
                         reph.exec("");
                         while (ma = reph.exec(stylema[2])) {
                             attributes.push(Locator.update($("<div>" + ma[1] + "</div>").contents()[0], {
                                 type: "attribute",
-                                name: attributeNode.nodeName.toLowerCase(),
+                                name: nodeName,
                                 css: $.trim(stylema[1])
                             }));
                         }
@@ -832,18 +840,21 @@
                 } else {
                     reph.exec("");
                     while (ma = reph.exec(nodeValue)) {
-                        attributes.push(Locator.update($("<div>" + ma[1] + "</div>").contents()[0], {
+                        attributes.push(/*
+                                    Fixes bug:
+                                    在 IE6 中，占位符中的空格依然是 `%20`，需要手动转义。
+                                */
+                        Locator.update($("<div>" + decodeURIComponent(ma[1]) + "</div>").contents()[0], {
                             type: "attribute",
-                            name: attributeNode.nodeName.toLowerCase()
+                            name: nodeName
                         }, true));
                     }
                 }
                 if (attributes.length) {
                     nodeValue = nodeValue.replace(reph, "");
                     attributeNode.nodeValue = nodeValue;
-                    if (nodeName === "bs-style") {
-                        $(node).attr("style", nodeValue);
-                    }
+                    if (nodeName === "style") $(node).attr("style", nodeValue);
+                    if (nodeName === "checked" && nodeValue === "true") $(node).attr("checked", "checked");
                     $(attributes).each(function(index, elem) {
                         var slot = Locator.parse(elem, "slot");
                         if (slot === "start") $(node).before(elem);
@@ -1232,38 +1243,39 @@
     /*
         ## BiSheng
 
-        双向数据绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
+        双向绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
     */
     var BiSheng = {
         version: "0.1.0",
         /*
-            ### BiSheng.bind(data, tpl, callback(content))
+## BiSheng.bind(data, tpl, callback(content))
 
-            执行模板和数据的双向绑定。
+在模板和数据之间执行双向绑定。
 
-            * BiSheng.bind(data, tpl, callback(content))
+* BiSheng.bind(data, tpl, callback(content))
 
-            **参数的含义和默认值**如下所示：
+**参数的含义和默认值**如下所示：
 
-            * 参数 data：必选。待绑定的对象或数组。
-            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。
+* 参数 data：必选。待绑定的对象或数组。
+* 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+* 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+* 参数 content：数组，其中包含了转换后的 DOM 元素。
 
-            **使用示例**如下所示：
+**使用示例**如下所示：
 
-                // HTML 模板
-                var tpl = '{{title}}'
-                // 数据对象
-                var data = {
-                  title: 'foo'
-                }
-                // 执行双向绑定
-                BiSheng.bind(data, tpl, function(content){
-                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-                  $('div.container').append(content)
-                })
-                // 改变数据 data.title，对应的文档区域会更新
-                data.title = 'bar'
+    // HTML 模板
+    var tpl = '{{title}}'
+    // 数据对象
+    var data = {
+      title: 'foo'
+    }
+    // 执行双向绑定
+    BiSheng.bind(data, tpl, function(content){
+      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+      $('div.container').append(content)
+    });
+    // 改变数据 data.title，对应的文档区域会更新
+    data.title = 'bar'
 
         */
         bind: function bind(data, tpl, callback) {
@@ -1280,7 +1292,7 @@
                 });
             }, true);
             // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
-            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/, "$1bs-style$3");
+            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/g, "$1bs-style$3").replace(/(<input.*?)(checked)(=.*?>)/g, "$1bs-checked$3");
             // 修改 AST，为 Expression 和 Block 插入占位符
             var ast = Handlebars.parse(tpl);
             AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {});
@@ -1290,15 +1302,14 @@
             // 扫描占位符，定位 Expression 和 Block
             var content = $("<div>" + html + "</div>");
             if (content.length) Scanner.scan(content[0], data);
-            content = content.contents();
+            content = content.contents().get();
             /*
-                返回什么呢
-                如果传入了 callback()，则返回 data，因为 callback() 的作用在于处理 content；
-                如果 callback() 有返回值，则作为 bind() 的返回值返回，即优先返回 callback() 的返回值；
+                返回什么呢？
+                如果 callback() 有返回值，则作为 BiSheng.bind() 的返回值返回，即优先返回 callback() 的返回值；
                 如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
 
             */
-            if (callback) return callback.call(data, content) || data;
+            if (callback) return callback.call(data, content) || content;
             return content;
         },
         /*
