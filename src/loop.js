@@ -133,7 +133,9 @@
                 var result = diff(data, shadow, fix ? [id] : [], fix)
                 if (result && result.length) {
                     fn(result, data, shadow)
+                    // setTimeout(function() {
                     shadow = clone(data, fix, [id])
+                    // }, 10)
                 }
             }
             task.data = data

@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-03 01:28:27 PM CST */
+/*! BiSheng.js 2014-01-06 07:32:35 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -129,6 +129,7 @@
                 var result = diff(data, shadow, fix ? [ id ] : [], fix);
                 if (result && result.length) {
                     fn(result, data, shadow);
+                    // setTimeout(function() {
                     shadow = clone(data, fix, [ id ]);
                 }
             }
@@ -687,7 +688,7 @@
                 var attrs = {
                     guid: guid,
                     slot: "",
-                    type: "",
+                    type: "text",
                     path: "{{$lastest " + prop + "}}",
                     isHelper: !!node.isHelper
                 };
@@ -834,7 +835,7 @@
                                 type: "attribute",
                                 name: nodeName,
                                 css: $.trim(stylema[1])
-                            }));
+                            }, true));
                         }
                     }
                 } else {
@@ -1038,8 +1039,10 @@
                 path: change.path.join(".")
             });
             var type;
-            if (paths.length === 0 && change.context instanceof Array) {
+            if ((change.type === "delete" || change.type === "add") && change.context instanceof Array) {
+                /*paths.length === 0 && */
                 change.path.pop();
+                change.type = "update";
                 change.context = change.getContext(change.root, change.path)();
                 handle(event, change, defined);
             }
@@ -1070,7 +1073,7 @@
                 } else {
                     content = change.value;
                 }
-                $("<div>" + content + "</div>").contents().insertAfter(locator).each(function(index, elem) {
+                HTML.convert(content).contents().insertAfter(locator).each(function(index, elem) {
                     event.target.push(elem);
                 });
                 $(target).remove();
@@ -1085,9 +1088,10 @@
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value;
             var oldValue = function() {
                 var oldValue;
-                change.context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue;
-                oldValue = ast ? Handlebars.compile(ast)(change.context) : change.oldValue;
-                change.context[change.path[change.path.length - 1]] = change.value;
+                var context = Loop.clone(change.context, true, change.path.slice(0, -1));
+                // TODO
+                context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue;
+                oldValue = ast ? Handlebars.compile(ast)(context) : change.oldValue;
                 return oldValue;
             }();
             name = Locator.parse(path, "name");
@@ -1131,7 +1135,7 @@
             var context = Loop.clone(change.context, true, change.path.slice(0, -1));
             // TODO
             var content = Handlebars.compile(ast)(context);
-            content = $("<div>" + content + "</div>");
+            content = HTML.convert(content);
             Scanner.scan(content[0], change.context);
             content = content.contents();
             var target = Locator.parseTarget(locator);
@@ -1239,6 +1243,45 @@
             highlight: highlight
         };
     }();
+    /*! src/html.js */
+    var HTML = {};
+    var rtagName = /<([\w:]+)/;
+    var wrapMap = {
+        option: [ 1, "<select multiple='multiple'>", "</select>" ],
+        thead: [ 1, "<table>", "</table>" ],
+        tr: [ 2, "<table><tbody>", "</tbody></table>" ],
+        td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+        _default: [ 1, "<div>", "</div>" ]
+    };
+    wrapMap.optgroup = wrapMap.option;
+    wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+    wrapMap.th = wrapMap.td;
+    HTML.wrap = function wrap(html) {};
+    HTML.convert = function convert(html) {
+        var tag = (rtagName.exec(html) || [ "", "" ])[1].toLowerCase();
+        var wrap = wrapMap[tag] || wrapMap._default;
+        var depth = wrap[0];
+        var div = document.createElement("div");
+        div.innerHTML = wrap[1] + html + wrap[2];
+        while (depth--) {
+            div = div.lastChild;
+        }
+        return $(div);
+    };
+    HTML.table = function table(html) {
+        return html.replace(/(<table.*?>)([\w\W]*?)(<\/table>)/g, function($0) {
+            return $0.replace(/(>)([\w\W]*?)(<)/g, function(_, $1, $2, $3) {
+                if ($2.indexOf("&lt;") > -1) {
+                    var re = "";
+                    HTML.convert($2).contents().each(function(index, node) {
+                        re += node.nodeValue;
+                    });
+                    return $1 + re + $3;
+                }
+                return $1 + $2 + $3;
+            });
+        });
+    };
     /*! src/bisheng.js */
     /*
         ## BiSheng
@@ -1248,34 +1291,34 @@
     var BiSheng = {
         version: "0.1.0",
         /*
-## BiSheng.bind(data, tpl, callback(content))
+            ## BiSheng.bind(data, tpl, callback(content))
 
-在模板和数据之间执行双向绑定。
+            在模板和数据之间执行双向绑定。
 
-* BiSheng.bind(data, tpl, callback(content))
+            * BiSheng.bind(data, tpl, callback(content))
 
-**参数的含义和默认值**如下所示：
+            **参数的含义和默认值**如下所示：
 
-* 参数 data：必选。待绑定的对象或数组。
-* 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-* 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
-* 参数 content：数组，其中包含了转换后的 DOM 元素。
+            * 参数 data：必选。待绑定的对象或数组。
+            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+            * 参数 content：数组，其中包含了转换后的 DOM 元素。
 
-**使用示例**如下所示：
+            **使用示例**如下所示：
 
-    // HTML 模板
-    var tpl = '{{title}}'
-    // 数据对象
-    var data = {
-      title: 'foo'
-    }
-    // 执行双向绑定
-    BiSheng.bind(data, tpl, function(content){
-      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-      $('div.container').append(content)
-    });
-    // 改变数据 data.title，对应的文档区域会更新
-    data.title = 'bar'
+                // HTML 模板
+                var tpl = '{{title}}'
+                // 数据对象
+                var data = {
+                  title: 'foo'
+                }
+                // 执行双向绑定
+                BiSheng.bind(data, tpl, function(content){
+                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                  $('div.container').append(content)
+                });
+                // 改变数据 data.title，对应的文档区域会更新
+                data.title = 'bar'
 
         */
         bind: function bind(data, tpl, callback) {
@@ -1299,8 +1342,10 @@
             // 渲染 HTML
             var compiled = Handlebars.compile(ast);
             var html = compiled(clone);
+            // 提前解析 table 中的定位符
+            html = HTML.table(html);
             // 扫描占位符，定位 Expression 和 Block
-            var content = $("<div>" + html + "</div>");
+            var content = $(HTML.convert(html));
             if (content.length) Scanner.scan(content[0], data);
             content = content.contents().get();
             /*

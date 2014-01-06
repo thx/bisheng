@@ -49,6 +49,7 @@ module.exports = function(grunt) {
                     'src/ast.js',
                     'src/scan.js',
                     'src/flush.js',
+                    'src/html.js',
                     'src/bisheng.js',
 
                     'src/fix/suffix.js'
@@ -63,7 +64,7 @@ module.exports = function(grunt) {
             all: ['test/nodeuinit/watch.js']
         },
         qunit: {
-            files: ['test/*.html']
+            files: ['test/*.html', '!test/table.html']
         },
         uglify: {
             options: {

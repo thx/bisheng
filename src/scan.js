@@ -105,7 +105,7 @@
                                         type: 'attribute',
                                         name: nodeName,
                                         css: $.trim(stylema[1])
-                                    })
+                                    }, true)
                                 )
                             }
                         }

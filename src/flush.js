@@ -8,6 +8,7 @@
 /* global Loop */
 /* global Locator */
 /* global Scanner */
+/* global HTML */
 
 // CommonJS
 if (typeof module === 'object' && module.exports) {
@@ -87,8 +88,9 @@ if (typeof module === 'object' && module.exports) {
             })
             var type
 
-            if (paths.length === 0 && change.context instanceof Array) {
+            if ((change.type === 'delete' || change.type === 'add') && change.context instanceof Array) { /*paths.length === 0 && */
                 change.path.pop()
+                change.type = 'update'
                 change.context = change.getContext(change.root, change.path)()
                 handle(event, change, defined)
             }
@@ -124,7 +126,7 @@ if (typeof module === 'object' && module.exports) {
                     content = change.value
                 }
 
-                $('<div>' + content + '</div>').contents()
+                HTML.convert(content).contents()
                     .insertAfter(locator)
                     .each(function(index, elem) {
                         event.target.push(elem)
@@ -143,9 +145,9 @@ if (typeof module === 'object' && module.exports) {
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value
             var oldValue = function() {
                 var oldValue
-                change.context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue
-                oldValue = ast ? Handlebars.compile(ast)(change.context) : change.oldValue
-                change.context[change.path[change.path.length - 1]] = change.value
+                var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
+                context[change.path[change.path.length - 1]] = change.oldValue !== undefined ? change.oldValue.valueOf() : change.oldValue
+                oldValue = ast ? Handlebars.compile(ast)(context) : change.oldValue
                 return oldValue
             }()
 
@@ -191,7 +193,7 @@ if (typeof module === 'object' && module.exports) {
             var context = Loop.clone(change.context, true, change.path.slice(0, -1)) // TODO
             var content = Handlebars.compile(ast)(context)
 
-            content = $('<div>' + content + '</div>')
+            content = HTML.convert(content)
             Scanner.scan(content[0], change.context)
             content = content.contents()
 

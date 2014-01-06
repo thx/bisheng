@@ -104,7 +104,7 @@
                 var attrs = {
                     guid: guid,
                     slot: '',
-                    type: '',
+                    type: 'text',
                     path: '{{$lastest ' + prop + '}}',
                     isHelper: !! node.isHelper
                 }

@@ -9,6 +9,7 @@
 /* global AST */
 /* global Scanner */
 /* global Flush */
+/* global HTML */
 
 (function(factory) {
 
@@ -29,34 +30,34 @@
         version: '0.1.0',
 
         /*
-## BiSheng.bind(data, tpl, callback(content))
+            ## BiSheng.bind(data, tpl, callback(content))
 
-在模板和数据之间执行双向绑定。
+            在模板和数据之间执行双向绑定。
 
-* BiSheng.bind(data, tpl, callback(content))
+            * BiSheng.bind(data, tpl, callback(content))
 
-**参数的含义和默认值**如下所示：
+            **参数的含义和默认值**如下所示：
 
-* 参数 data：必选。待绑定的对象或数组。
-* 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-* 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
-* 参数 content：数组，其中包含了转换后的 DOM 元素。
+            * 参数 data：必选。待绑定的对象或数组。
+            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+            * 参数 content：数组，其中包含了转换后的 DOM 元素。
 
-**使用示例**如下所示：
+            **使用示例**如下所示：
 
-    // HTML 模板
-    var tpl = '{{title}}'
-    // 数据对象
-    var data = {
-      title: 'foo'
-    }
-    // 执行双向绑定
-    BiSheng.bind(data, tpl, function(content){
-      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-      $('div.container').append(content)
-    });
-    // 改变数据 data.title，对应的文档区域会更新
-    data.title = 'bar'
+                // HTML 模板
+                var tpl = '{{title}}'
+                // 数据对象
+                var data = {
+                  title: 'foo'
+                }
+                // 执行双向绑定
+                BiSheng.bind(data, tpl, function(content){
+                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                  $('div.container').append(content)
+                });
+                // 改变数据 data.title，对应的文档区域会更新
+                data.title = 'bar'
 
         */
         bind: function bind(data, tpl, callback) {
@@ -85,8 +86,11 @@
             var compiled = Handlebars.compile(ast)
             var html = compiled(clone)
 
+            // 提前解析 table 中的定位符
+            html = HTML.table(html)
+
             // 扫描占位符，定位 Expression 和 Block
-            var content = $('<div>' + html + '</div>')
+            var content = $(HTML.convert(html))
             if (content.length) Scanner.scan(content[0], data)
             content = content.contents().get()
 

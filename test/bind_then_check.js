@@ -9,7 +9,7 @@ function bindThenCheck(data, tpl, task, expected, before, empty) {
             before && before($(item))
         })
     })
-    BiSheng.Loop.watch(data, function( /*changes*/ ) {
+    BiSheng.Loop.watch(data, function(/*changes*/) {
         container.each(function(index, item) {
             expected($(item))
         })
