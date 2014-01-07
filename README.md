@@ -17,7 +17,7 @@ BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。�
 ## API & 文档
 
 * [BiSheng](doc/bisheng.md)
-* [Loop](doc/loop.md)
+* [简介](doc/what.md)
 * [工作原理](doc/how.md)
 
 ## 开始
