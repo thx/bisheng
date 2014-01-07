@@ -133,21 +133,21 @@ BiSheng.js 提供了方法 `BiSheng.bind(data, tpl, callback(content))`，用于
 4. 建立数据到 DOM 元素的连接。
 5. 建立 DOM 元素到数据的连接。
 
-下面以模板 `{{title}}` 为来说明 `BiSheng.bind()` 的绑定过程。绑定代码如下：
+下面以模板 `{{title}}` 为例来说明 `BiSheng.bind()` 的绑定过程。绑定代码如下：
 
-      // HTML 模板
-      var tpl = '{{title}}'
-      // 数据对象
-      var data = {
-        title: '注意，title 的值在这里'
-      }
-      // 执行双向绑定
-      BiSheng.bind(data, tpl, function(content){
-        // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-        $('div.container').append(content)
-      });
-      // 改变数据 data.title，对应的文档区域会更新
-      data.title = 'bar'
+    // HTML 模板
+    var tpl = '{{title}}'
+    // 数据对象
+    var data = {
+      title: '注意，title 的值在这里'
+    }
+    // 执行双向绑定
+    BiSheng.bind(data, tpl, function(content){
+      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+      $('div.container').append(content)
+    });
+    // 改变数据 data.title，对应的文档区域会更新
+    data.title = 'bar'
 
 ### 1. 修改语法树，插入定位符
 

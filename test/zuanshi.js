@@ -295,3 +295,89 @@ test('sidebar.html, permission', function() {
 
 })()
 
+test('plan_handle.html, ', function() {
+    var tpl = Mock.heredoc(function() {
+        /*
+<div class="plan">
+    <style scoped>
+        .plan img { max-width: 70%; max-height: 50px; }
+    </style>
+    <h3>计划信息</h3>
+    <input type="text" name="transId" value="{{transId}}" data-value="{{transId}}">
+    <input type="text" name="adzoneId" value="{{adzoneId}}">
+    <input type="text" name="transName" value="{{transName}}">
+    {{#setting}}
+    <a class="setting">
+        {{#more}}更多设置{{/more}}
+        {{#edit}}编辑设置{{/edit}}
+        {{#close}}关闭设置{{/close}}
+    </a>
+    {{/setting}}
+    <h3>创意列表 boards</h3>
+    <ul class="boards">
+        {{#each boards}}
+        <li>
+            <span>{{boardName}}</span> <!-- Mock { boardName: '@WORD(5)' }-->
+            <a href="{{boardPoster}}">
+                <img src="{{boardPoster}}"> <!-- Mock { boardPoster: '@DATAIMAGE' }-->
+            </a>
+        </li>
+        {{/each}}
+    </ul>
+    <div class="target target-scene" style="display: {{#permission}}{{^_256}}none{{/_256}}{{/permission}};">
+        <h3>场景定向 permission._256</h3>
+        <ul>
+            {{#each scenes}}
+            <li>
+                <span>{{name}}</span> <!-- Mock { name: '@WORD(5)' }-->
+                <input value="{{premium}}"> <!-- Mock { premium: '@FLOAT' }-->
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="target target-group" style="display: {{#permission}}{{^_8}}none{{/_8}}{{/permission}};">
+        <h3>群体定向 permission._8</h3>
+        <ul>
+            {{#each groups}}
+            <li>
+                <span>{{name}}</span> <!-- Mock { name: '@WORD(5)' }-->
+                <input value="{{premium}}"> <!-- Mock { premium: '@FLOAT' }-->
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <div class="valid {{^message}}hide{{/message}}">{{message}}</div> <!-- Mock { 'message': '' } -->
+</div>
+        */
+    })
+    var data = Mock.tpl(tpl)
+    BiSheng.watch(data, function(changes) {
+        $.each(changes, function(index, change) {
+            var path = change.path.slice(1, change.path.length)
+            if (path[0] === 'setting' && change.value === true) {
+                for (var key in data.setting) {
+                    if (key !== path[1]) data.setting[key] = false
+                }
+            }
+        })
+    })
+    data.setting = {
+        more: true,
+        edit: false,
+        close: false
+    }
+    data.permission = {
+        _256: true,
+        _8: true
+    }
+    window.data = data
+    var task = function() {
+        data.transId = Random.integer()
+    }
+    var expected = function(container) {
+        equal(container.find('input[name=transId]').val(), data.transId, data.transId)
+    }
+    var before = function(container) {}
+    bindThenCheck(data, tpl, task, expected, before)
+})

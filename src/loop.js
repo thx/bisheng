@@ -56,7 +56,8 @@
             UPDATE: 'update'
         };
 
-        var tasks = [];
+        var tasks = []
+        tasks.__index = 0
         var timerId;
 
         function letMeSee() {
@@ -125,22 +126,25 @@
                     }
                 ]
         */
-        function watch(data, fn, fix) {
+        function watch(data, fn, autoboxing, binding) { /* fix: autoboxing, path */
             var id = guid++;
-            var shadow = clone(data, fix, [id]);
+            var shadow = clone(data, autoboxing, [id]);
 
             function task() {
-                var result = diff(data, shadow, fix ? [id] : [], fix)
+                var result = diff(data, shadow, autoboxing ? [id] : [], autoboxing)
                 if (result && result.length) {
                     fn(result, data, shadow)
-                    // setTimeout(function() {
-                    shadow = clone(data, fix, [id])
-                    // }, 10)
+                    shadow = clone(data, autoboxing, [id])
                 }
             }
             task.data = data
 
             tasks.push(task)
+
+            // TODO 普通静听函数在前，通过 BiSheng.bind() 绑定的监听函数在后。
+            // if (binding) tasks.push(task)
+            // else tasks.splice(tasks.__index++, 0, task)
+            
             return shadow
         }
 
@@ -198,7 +202,10 @@
 
             function remove(compare) {
                 for (var index = 0; index < tasks.length; index++) {
-                    if (compare(tasks[index])) tasks.splice(index--, 1)
+                    if (compare(tasks[index])) {
+                        if (index < tasks.__index) tasks.__index--
+                        tasks.splice(index--, 1)
+                    }
                 }
             }
 

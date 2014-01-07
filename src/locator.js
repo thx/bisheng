@@ -155,7 +155,7 @@
                         for (var key in attrs) {
                             json[key] = attrs[key]
                         }
-                        locator.nodeValue = JSON.stringify(json)
+                        locator.nodeValue = ' ' + JSON.stringify(json) + ' '
                     }
                 }
             }

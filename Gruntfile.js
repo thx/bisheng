@@ -64,7 +64,7 @@ module.exports = function(grunt) {
             all: ['test/nodeuinit/watch.js']
         },
         qunit: {
-            files: ['test/*.html', '!test/table.html']
+            files: ['test/*.html', '!test/table.html', '!test/crox.html']
         },
         uglify: {
             options: {
@@ -111,11 +111,15 @@ module.exports = function(grunt) {
         watch: {
             dev: {
                 files: ['<%= jshint.files %>', 'src/fix/*'], // , 'doc/*.md', 'doc/template.html'
-                tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown'] // 'nodeunit'
+                tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver'] // 'nodeunit'
             },
-            doc: {
-                files: ['doc/*.md', 'doc/template.html'],
+            markdown: {
+                files: ['doc/*.md', 'doc/template.html', '!doc/what.md'],
                 tasks: ['markdown']
+            },
+            cleaver: {
+                files: ['doc/what.md'],
+                tasks: ['cleaver']
             }
         },
         markdown: {
@@ -125,7 +129,16 @@ module.exports = function(grunt) {
             doc: {
                 expand: true,
                 cwd: 'doc/',
-                src: ['*.md'],
+                src: ['*.md', '!what.md'],
+                dest: 'doc/',
+                ext: '.html'
+            }
+        },
+        cleaver: {
+            doc: {
+                expand: true,
+                cwd: 'doc/',
+                src: ['what.md'],
                 dest: 'doc/',
                 ext: '.html'
             }
@@ -140,8 +153,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
+    grunt.loadNpmTasks('grunt-cleaver')
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'connect', 'watch']) // , 'nodeunit'
-    grunt.registerTask('doc', ['markdown', 'connect', 'watch:doc'])
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver', 'connect', 'watch']) // , 'nodeunit'
+    grunt.registerTask('doc', ['markdown', 'cleaver', 'connect', 'watch'])
     grunt.registerTask('travis', ['jshint', 'qunit']) // grunt travis --verbose
 };

@@ -59,7 +59,8 @@
 ## API & 文档
 
 <a href="./bisheng.html" type="button" class="btn btn-success">BiSheng</a>
-<a href="./loop.html" type="button" class="btn btn-default">Loop</a>
+<!-- <a href="./loop.html" type="button" class="btn btn-default">Loop</a> -->
+<a href="./what.html" type="button" class="btn btn-default">简介</a>
 <a href="./how.html" type="button" class="btn btn-default">工作原理</a>
 
 ## 开始

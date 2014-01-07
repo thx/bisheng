@@ -8,16 +8,18 @@ function bindThenCheck(data, tpl, task, expected, before, empty) {
         container.each(function(index, item) {
             before && before($(item))
         })
-    })
-    BiSheng.Loop.watch(data, function(/*changes*/) {
-        container.each(function(index, item) {
+    }, container)
+    var started = false
+    BiSheng.Loop.watch(data, function( /*changes*/ ) {
+        if (!started) container.each(function(index, item) {
             expected($(item))
         })
         if (empty !== false) {
             container.empty()
             BiSheng.unbind(data)
         }
-        start()
+        if (!started) start()
+        started = true
     })
     task(container)
 }

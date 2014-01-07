@@ -156,20 +156,20 @@
 <li>建立数据到 DOM 元素的连接。</li>
 <li>建立 DOM 元素到数据的连接。</li>
 </ol>
-<p>下面以模板 <code>{{title}}</code> 为来说明 <code>BiSheng.bind()</code> 的绑定过程。绑定代码如下：</p>
-<pre><code>  // HTML 模板
-  var tpl = &#39;{{title}}&#39;
-  // 数据对象
-  var data = {
-    title: &#39;注意，title 的值在这里&#39;
-  }
-  // 执行双向绑定
-  BiSheng.bind(data, tpl, function(content){
-    // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-    $(&#39;div.container&#39;).append(content)
-  });
-  // 改变数据 data.title，对应的文档区域会更新
-  data.title = &#39;bar&#39;</code></pre>
+<p>下面以模板 <code>{{title}}</code> 为例来说明 <code>BiSheng.bind()</code> 的绑定过程。绑定代码如下：</p>
+<pre><code>// HTML 模板
+var tpl = &#39;{{title}}&#39;
+// 数据对象
+var data = {
+  title: &#39;注意，title 的值在这里&#39;
+}
+// 执行双向绑定
+BiSheng.bind(data, tpl, function(content){
+  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+  $(&#39;div.container&#39;).append(content)
+});
+// 改变数据 data.title，对应的文档区域会更新
+data.title = &#39;bar&#39;</code></pre>
 <h3 id="1-">1. 修改语法树，插入定位符</h3>
 <p><code>BiSheng.bind()</code> 首先在 <code>{{title}}</code> 的前后插入两个转义后的定位符，在转义之前是：</p>
 <pre><code>&lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;{{$lastest title}}&quot; isHelper=&quot;false&quot;&gt;&lt;/script&gt;

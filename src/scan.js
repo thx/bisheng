@@ -93,6 +93,7 @@
                     nodeName = nodeName.toLowerCase()
                     nodeName = nodeName === 'bs-style' && 'style' ||
                         nodeName === 'bs-checked' && 'checked' ||
+                        nodeName === 'bs-src' && 'src' ||
                         nodeName
 
                     if (nodeName === 'style') {
@@ -132,6 +133,7 @@
 
                         if (nodeName === 'style') $(node).attr('style', nodeValue)
                         if (nodeName === 'checked' && nodeValue === 'true') $(node).attr('checked', 'checked')
+                        if (nodeName === 'src') $(node).attr('src', nodeValue)
 
                         $(attributes).each(function(index, elem) {
                             var slot = Locator.parse(elem, 'slot')
@@ -162,7 +164,7 @@
                     target = Locator.parseTarget(locator)[0];
 
                 // TODO 为什么不触发 change 事件？
-                $(target).on('change keyup', function(event) {
+                $(target).on('change.bisheng keyup.bisheng', function(event) {
                     updateValue(data, path, event.target)
                 })
             })
@@ -188,7 +190,7 @@
                     $(target).prop('checked', true)
                 }
 
-                $(target).on('change', function(event, firing) {
+                $(target).on('change.bisheng', function(event, firing) {
                     // radio：点击其中一个后，需要同步更新同名的其他 radio
                     if (!firing && event.target.type === 'radio') {
                         $('input:radio[name="' + event.target.name + '"]')

@@ -79,13 +79,13 @@ if (typeof module === 'object' && module.exports) {
 
 
         */
-        function handle(event, change, defined) {
+        function handle(event, change, defined, context) {
             // var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
             // var paths = $(selector)
             var paths = Locator.find({
                 slot: 'start',
                 path: change.path.join('.')
-            })
+            }, context || document.body)
             var type
 
             if ((change.type === 'delete' || change.type === 'add') && change.context instanceof Array) { /*paths.length === 0 && */

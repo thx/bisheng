@@ -22,7 +22,8 @@
     "grunt-contrib-qunit": "~0.3.0",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.2.7",
-    "jsdifflib": "~1.1.0"
+    "jsdifflib": "~1.1.0",
+    "grunt-cleaver": "~0.2.1"
   },
   "repository": {
     "type": "git",
@@ -32,8 +33,10 @@
   "scripts": {
     "test": "grunt travis --verbose"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/thx/bisheng/blob/master/README.md"
-  }]
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/thx/bisheng/blob/master/README.md"
+    }
+  ]
 }

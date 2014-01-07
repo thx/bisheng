@@ -1,0 +1,777 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>BiSheng.js</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+#wrapper {
+  width: 850px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+}
+
+.slide {
+  width: auto;
+  height: 540px;
+  padding: 30px;
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.controls .arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.controls .prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.controls .next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.controls .prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.controls .next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+.slide h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+.slide h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+.slide h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+.slide ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.slide .author h1.name {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.slide .author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.1s ease-out;
+  -moz-transition: width 0.1s ease-out;
+  -o-transition: width 0.1s ease-out;
+  transition: width 0.1s ease-out;
+}
+
+@media (max-width: 850px) {
+  #wrapper {
+    width: auto;
+  }
+
+  body {
+    font-size: 70%;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .slide h1 {
+    margin-top: 120px;
+  }
+
+  .controls .prev, .controls .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .controls .next, .controls .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  #wrapper {
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  .slide {
+    padding: 10px;
+    height: 340px;
+  }
+
+  .slide h1 {
+    margin-top: 50px;
+  }
+
+  .slide ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  #wrapper {
+    overflow: visible;
+    height: 100%;
+    margin-top: 0;
+  }
+
+  .slide {
+    border: 1px solid #222;
+    margin-bottom: 40px;
+    height: 3.5in;
+  }
+
+  .slide:nth-child(odd) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+<div id="wrapper">
+    <section class="slide"><h1 id="bisheng-js">BiSheng.js</h1>
+<h2 id="-">　</h2>
+<h2 id="-">纯粹的数据双向绑定库</h2>
+</section>
+    <section class="slide"><h3 id="-">毕昇</h3>
+<p style="text-align: center;">
+    <img src="image/bisheng.jpg" height="200">
+    <img src="image/he.png" height="200">
+</p>
+
+<p style="text-align: center;">
+    单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，
+</p>
+<p style="text-align: center;">
+    故名 <code>BiSheng.js</code>。
+</p></section>
+    <section class="slide"><h3 id="-">目录</h3>
+<ul>
+<li>特性</li>
+<li>浏览器支持</li>
+<li>API</li>
+<li>示例</li>
+<li>工作原理</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-">特性</h3>
+<ul>
+<li>表达式 <br> <code>{{foo}}</code></li>
+<li>逻辑块 <br> <code>{{#with story}}{{{intro}}}{{/with}}</code></li>
+<li>属性 <br> <code>&lt;span title=&quot;{{title}}&quot;&gt;{{title}}&lt;/span&gt;</code></li>
+<li>表单 <br> <code>&lt;input class=&quot;form-control&quot; value=&quot;{{first}}&quot;&gt;</code></li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-">特性</h3>
+<p>现在只支持 <a href="http://handlebarsjs.com/">Handlebars.js</a>。</p>
+<p>下一步支持 <a href="gitlab.alibaba-inc.com/thx/crox">CROX</a>、<a href="http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html">KISSY XTemplate</a>。</p>
+</section>
+    <section class="slide"><h3 id="-">浏览器支持</h3>
+<ul>
+<li><p>Internet Explorer</p>
+<p>  6+</p>
+</li>
+<li><p>Chrome, Safari, Firefox, Opera</p>
+<p>  前一个和当前版本（TODO）</p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="api">API</h3>
+<ul>
+<li><p>BiSheng.bind(data, tpl, callback)</p>
+<p>  在模板和数据之间执行双向绑定。</p>
+</li>
+<li><p>BiSheng.unbind(data, tpl)</p>
+<p>  解除数据和模板之间的双向绑定。</p>
+</li>
+</ul>
+<p>详细说明：<a href="bisheng.html">HTML</a>，<a href="bisheng.md">Markdown</a>。</p>
+</section>
+    <section class="slide"><h3 id="-">示例</h3>
+<pre><code>// HTML 模板
+var tpl = &#39;{{title}}&#39;
+// 数据对象
+var data = {
+  title: &#39;foo&#39;
+}
+// 执行双向绑定
+BiSheng.bind(data, tpl, function(content){
+  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+  $(&#39;div.container&#39;).append(content)
+});
+
+// 改变数据 data.title，对应的文档区域会更新
+data.title = &#39;bar&#39;
+
+// 解除双向绑定
+BiSheng.unbind(data, tpl);
+
+// 改变数据 data.title，对应的文档区域不会更新
+data.title = &#39;foo&#39;</code></pre>
+</section>
+    <section class="slide"><h3 id="api">API</h3>
+<ul>
+<li><p>BiSheng.watch(data, fn(changes))</p>
+<p>  为所有属性添加监听函数。</p>
+</li>
+<li><p>BiSheng.unwatch(data, fn)</p>
+<p>  移除监听函数。</p>
+</li>
+</ul>
+<p>详细说明：<a href="bisheng.html">HTML</a>，<a href="bisheng.md">Markdown</a>。</p>
+</section>
+    <section class="slide"><h3 id="-">示例</h3>
+<pre><code>var data = { foo: &#39;foo&#39; }
+BiSheng.watch(data, function(changes){
+    console.log(JSON.stringify(changes, null, 4))
+})
+
+data.foo = &#39;bar&#39;
+// =&gt; 见下一页
+
+setTimeout(function(){
+    BiSheng.unwatch(data)
+    data.foo = &#39;foo&#39;
+    // =&gt; 
+}, 1000)</code></pre>
+</section>
+    <section class="slide"><h3 id="-">示例</h3>
+<pre><code>// =&gt;
+[
+    {
+        &quot;type&quot;: &quot;update&quot;,
+        &quot;path&quot;: [
+            3,
+            &quot;foo&quot;
+        ],
+        &quot;value&quot;: &quot;bar&quot;,
+        &quot;oldValue&quot;: &quot;foo&quot;,
+        &quot;root&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        },
+        &quot;context&quot;: {
+            &quot;foo&quot;: &quot;bar&quot;
+        }
+    }
+]</code></pre>
+</section>
+    <section class="slide"><h3 id="-">工作原理</h3>
+<ol>
+<li>修改语法树，插入定位符。</li>
+<li>渲染模板和定位符。</li>
+<li>解析定位符。</li>
+<li>建立数据到 DOM 元素的连接。</li>
+<li>建立 DOM 元素到数据的连接。</li>
+</ol>
+<p>详细说明：<a href="how.html">HTML</a>，<a href="how.md">Markdown</a>。</p>
+</section>
+    <section class="slide"><h4 id="-title-">以模板 <code>{{title}}</code> 为例</h4>
+<pre><code>// HTML 模板
+var tpl = &#39;{{title}}&#39;
+// 数据对象
+var data = {
+  title: &#39;注意，title 的值在这里&#39;
+}
+// 执行双向绑定
+BiSheng.bind(data, tpl, function(content){
+  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+  $(&#39;div.container&#39;).append(content)
+});
+// 改变数据 data.title，对应的文档区域会更新
+data.title = &#39;bar&#39;</code></pre>
+</section>
+    <section class="slide"><h4 id="1-">1. 修改语法树，插入定位符</h4>
+<pre><code>&lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;{{$lastest title}}&quot; isHelper=&quot;false&quot;&gt;&lt;/script&gt;
+&lt;script guid=&quot;1&quot; slot=&quot;end&quot;&gt;&lt;/script&gt;</code></pre>
+<p></p>
+
+<pre><code>Handlebars.registerHelper(&#39;$lastest&#39;, function(items, options) {
+    return items &amp;&amp; items.$path || this &amp;&amp; this.$path
+})</code></pre>
+</section>
+    <section class="slide"><h4 id="2-">2. 渲染模板和定位符</h4>
+<pre><code>Handlebars.compile(ast)(data)</code></pre>
+<p></p>
+
+<pre><code>&amp;lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;1.title&quot; isHelper=&quot;false&quot;&amp;gt;&amp;lt;/script&amp;gt;
+注意，title 的值在这里&amp;lt;
+script guid=&quot;1&quot; slot=&quot;end&quot;&amp;gt;&amp;lt;/script&amp;gt;</code></pre>
+</section>
+    <section class="slide"><h4 id="3-dom-">3. 扫描 DOM 元素，解析定位符</h4>
+<pre><code>&lt;script guid=&quot;1&quot; slot=&quot;start&quot; type=&quot;&quot; path=&quot;1.title&quot; isHelper=&quot;false&quot;&gt;&lt;/script&gt;
+注意，title 的值在这里
+&lt;script guid=&quot;1&quot; slot=&quot;end&quot;&gt;&lt;/script&gt;</code></pre>
+</section>
+    <section class="slide"><h4 id="4-dom-">4. 建立数据到 DOM 元素的连接</h4>
+<pre><code>script[slot=&quot;start&quot;][path=&quot;1.title&quot;]</code></pre>
+</section>
+    <section class="slide"><h4 id="5-dom-">5. 建立 DOM 元素到数据的连接</h4>
+<pre><code>$(target).on(&#39;change.bisheng keyup.bisheng&#39;, function(event) {
+    updateValue(data, path, event.target)
+})</code></pre>
+</section>
+    <section class="slide"><h3 id="-">目录</h3>
+<ul>
+<li>特性</li>
+<li>浏览器支持</li>
+<li>API</li>
+<li>示例</li>
+<li>工作原理</li>
+</ul>
+<p><style type="text/css">
+    pre {
+        padding: 0px;
+    }
+</style></p>
+<p><link rel="stylesheet" href="../bower_components/highlightjs/styles/rainbow.css"></p>
+<script src="../bower_components/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script></section>
+    <section class="slide"><div class="author">
+  <h1 class="name">墨智</h1>
+    <h3 class="url">
+      <a href="http://nuysoft.com">http://nuysoft.com</a>
+    </h3>
+    <h3 class="email">
+      <a href="mailto:mozhi.gyy@alibaba-inc.com">mozhi.gyy@alibaba-inc.com</a>
+    </h3>
+</div>
+</section>
+</div>
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Takes the last slide and places it at the front.
+ */
+function goBack() {
+  var wrapper = document.querySelector('#wrapper');
+  var lastSlide = wrapper.lastChild;
+  while (lastSlide !== null && lastSlide.nodeType !== 1) {
+    lastSlide = lastSlide.previousSibling;
+  }
+
+  wrapper.removeChild(lastSlide);
+  wrapper.insertBefore(lastSlide, wrapper.firstChild);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Takes the first slide and places it at the end.
+ */
+function goForward() {
+  var wrapper = document.querySelector('#wrapper');
+  var firstSlide = wrapper.firstChild;
+  while (firstSlide !== null && firstSlide.nodeType !== 1) {
+    firstSlide = firstSlide.nextSibling;
+  }
+
+  wrapper.removeChild(firstSlide);
+  wrapper.appendChild(firstSlide);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPage());
+}
+
+/**
+ * Returns the current page number of the presentation.
+ */
+function currentPage() {
+  return document.querySelector('#wrapper .slide').dataset.page;
+}
+
+/**
+ * Returns a NodeList of each .slide element.
+ */
+function allSlides() {
+  return document.querySelectorAll('#wrapper .slide');
+}
+
+/**
+ * Give each slide a "page" data attribute.
+ */
+function setPageNumbers() {
+  var wrapper = document.querySelector('#wrapper');
+  var pages   = wrapper.querySelectorAll('section');
+  var page;
+
+  for (var i = 0; i < pages.length; ++i) {
+    page = pages[i];
+    page.dataset.page = i;
+  }
+}
+
+/**
+ * Set the current progress indicator.
+ */
+function setCurrentProgress() {
+  var wrapper = document.querySelector('#wrapper');
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var pagesNumber    = wrapper.querySelectorAll('section').length;
+    var currentNumber  = parseInt(currentPage(), 10);
+    var currentPercent = pagesNumber === 1 ? 100 : 100 * currentNumber / (pagesNumber - 1);
+    progressBar.style.width = currentPercent.toString() + '%';
+  }
+}
+
+/**
+ * Go to the specified page of content.
+ */
+function goToPage(page) {
+  // Try to find the target slide.
+  var targetSlide = document.querySelector('#wrapper .slide[data-page="' + page + '"]');
+
+  // If it actually exists, go forward until we find it.
+  if (targetSlide) {
+    var numSlides = allSlides().length;
+
+    for (var i = 0; currentPage() !== page && i < numSlides; i++) {
+      goForward();
+    }
+  }
+}
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var currentPageLinks = document.querySelector('.slide').querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    allLinks[i].removeAttribute('tabindex');
+  }
+}
+
+window.onload = function () {
+
+  // Give each slide a "page" data attribute.
+  setPageNumbers();
+
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    goToPage(page);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, enter, PgDn - FORWARD
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      goBack();
+    } else if (kc === 38 || kc === 39 || kc === 13 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      goForward();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      goForward();
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      goBack();
+    };
+  }
+
+};
+
+
+  </script>
+</body>
+</html>
