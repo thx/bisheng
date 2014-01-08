@@ -138,13 +138,14 @@
                 }
             }
             task.data = data
+            if (fn && fn.tpl) task.tpl = fn.tpl
 
             tasks.push(task)
 
             // TODO 普通静听函数在前，通过 BiSheng.bind() 绑定的监听函数在后。
             // if (binding) tasks.push(task)
             // else tasks.splice(tasks.__index++, 0, task)
-            
+
             return shadow
         }
 
@@ -505,6 +506,7 @@
 
         // expose
         return {
+            tasks: tasks,
             TYPES: TYPES,
             watch: watch,
             unwatch: unwatch,

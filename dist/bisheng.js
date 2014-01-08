@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-07 06:26:21 PM CST */
+/*! BiSheng.js 2014-01-08 11:08:18 AM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -135,6 +135,7 @@
                 }
             }
             task.data = data;
+            if (fn && fn.tpl) task.tpl = fn.tpl;
             tasks.push(task);
             // TODO 普通静听函数在前，通过 BiSheng.bind() 绑定的监听函数在后。
             // if (binding) tasks.push(task)
@@ -456,6 +457,7 @@
         }
         // expose
         return {
+            tasks: tasks,
             TYPES: TYPES,
             watch: watch,
             unwatch: unwatch,
@@ -1330,8 +1332,8 @@
 
         */
         bind: function bind(data, tpl, callback, context) {
-            // 为所有属性添加监听函数
-            var clone = Loop.watch(data, function(changes) {
+            // 属性监听函数
+            function task(changes) {
                 $.each(changes, function(_, change) {
                     var event = {
                         target: []
@@ -1340,7 +1342,10 @@
                     if (location.href.indexOf("scrollIntoView") > -1) Flush.scrollIntoView(event, data);
                     if (location.href.indexOf("highlight") > -1) Flush.highlight(event, data);
                 });
-            }, true, true);
+            }
+            task.tpl = tpl;
+            // 为所有属性添加监听函数
+            var clone = Loop.watch(data, task, true, true);
             // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
             tpl = tpl.replace(/(<.*?)(style)(=.*?>)/g, "$1bs-style$3").replace(/(<input.*?)(checked)(=.*?>)/g, "$1bs-checked$3").replace(/(<img.*?)(src)(=.*?>)/g, "$1bs-src$3");
             // 修改 AST，为 Expression 和 Block 插入占位符
@@ -1360,9 +1365,7 @@
                 如果 callback() 有返回值，则作为 BiSheng.bind() 的返回值返回，即优先返回 callback() 的返回值；
                 如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
             */
-            var re;
-            if (callback) re = callback.call(data, content);
-            return re || content;
+            return callback ? callback.call(data, content) || content : content;
         },
         /*
             ### BiSheng.unbind(data, tpl)
@@ -1401,7 +1404,16 @@
 
         */
         unbind: function unbind(data, tpl) {
-            Loop.unwatch(data);
+            if (!tpl) {
+                Loop.unwatch(data);
+            } else {
+                for (var index = 0, fn; index < Loop.tasks.length; index++) {
+                    fn = Loop.tasks[index];
+                    if (fn.data === data && fn.tpl === tpl) {
+                        Loop.tasks.splice(index--, 1);
+                    }
+                }
+            }
             return this;
         },
         /*

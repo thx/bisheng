@@ -36,6 +36,7 @@ controls: true
 * 浏览器支持
 * API
 * 示例
+* 开发方式
 * 工作原理
 
 --
@@ -164,6 +165,18 @@ controls: true
     ]
 
 --
+### 开发方式
+
+* 事件驱动编程 & 运行
+* 数据驱动编程 & 运行
+
+> 数据要比编程逻辑更容易驾驭。——《Unix 编程艺术》
+
+<!-- 所以接下来，如果要在复杂数据和复杂代码中选择一个，宁愿选择前者。更进一步：在设计中，你应该主动将代码的复杂度转移到数据之中去。 -->
+
+<http://localhost:5000/test/bisheng.html?noglobals=true&notrycatch=true&testNumber=66>
+
+--
 ### 工作原理
 
 1. 修改语法树，插入定位符。
@@ -247,7 +260,10 @@ controls: true
 * 浏览器支持
 * API
 * 示例
+* 开发方式
 * 工作原理
+
+> 只做一件事，并做好。——《Unix 编程艺术》
 
 <style type="text/css">
     pre {
