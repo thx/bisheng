@@ -227,8 +227,8 @@ controls: true
 <p></p>
     
     &lt;script guid="1" slot="start" type="" path="1.title" isHelper="false"&gt;&lt;/script&gt;
-    注意，title 的值在这里&lt;
-    script guid="1" slot="end"&gt;&lt;/script&gt;
+    注意，title 的值在这里
+    &lt;script guid="1" slot="end"&gt;&lt;/script&gt;
 
 --
 
