@@ -196,7 +196,7 @@ BiSheng.js 提供了方法 `BiSheng.bind(data, tpl, callback(content))`，用于
 
 ## 源码导读
 
-**代码的结构**按照职责来设计，见下表；**打包后的文件**在 [dist/] 目录下；**测试用例**在 [test/] 目录下，基本覆盖了目前已实现的功能。
+**代码的结构**按照职责来设计，见下表；**打包后的文件**在 [dist/] 目录下；**API 和文档**在 [doc/] 目录下；**测试用例**在 [test/] 目录下，基本覆盖了目前已实现的功能。
 
 源文件            | 职责 & 功能
 ----------------- | -------------------------------------
@@ -217,7 +217,8 @@ BiSheng.js 提供了方法 `BiSheng.bind(data, tpl, callback(content))`，用于
 [src/scan.js]: https://github.com/thx/bisheng/tree/master/src/scan.js
 
 [dist/]: https://github.com/thx/bisheng/tree/master/dist/
-[test/]: https://github.com/thx/bisheng/tree/master/src/
+[doc/]: https://github.com/thx/bisheng/tree/master/doc/
+[test/]: https://github.com/thx/bisheng/tree/master/test/
 <!-- 注释行数大约占总行数的 40～50%。 -->
 
 *TODO*
