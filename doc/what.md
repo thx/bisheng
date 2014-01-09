@@ -31,7 +31,7 @@ controls: true
 
 ### 目录
 
-* 特性
+* 应用场景
 * 浏览器支持
 * API
 * 示例
@@ -40,7 +40,7 @@ controls: true
 
 --
 
-### 特性
+### 应用场景
 
 * 表达式 <br> `{{foo}}`
 * 逻辑块 <br> `{{#with story}}{{{intro}}}{{/with}}`
@@ -49,7 +49,7 @@ controls: true
 
 --
 
-### 特性
+### 应用场景
 
 现在只支持 [Handlebars.js]。
 
@@ -255,7 +255,7 @@ controls: true
 
 ### 目录
 
-* 特性
+* 应用场景
 * 浏览器支持
 * API
 * 示例
