@@ -11,8 +11,7 @@
 ## 浏览器支持
 
 * Internet Explorer：6+
-* Chrome, Firefox, Opera：前一个或当前版本
-* Safari：5.1+
+* Chrome, Safari, Firefox, Opera：前一个或当前版本
 
 <!-- IE：IE6 IE8 IE9 IE10 IE11 -->
 

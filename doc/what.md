@@ -2,7 +2,6 @@ title: BiSheng.js
 author:
   name: 墨智
   email: mozhi.gyy@alibaba-inc.com
-  url: http://nuysoft.com
 output: what.html
 controls: true
 
