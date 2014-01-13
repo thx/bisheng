@@ -117,7 +117,7 @@
 
 ## 感谢
 
-感谢以下框架给 BiSheng.js 的启发：
+感谢以下框架和文章给 BiSheng.js 的启发：
 
 1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
 2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)
@@ -128,3 +128,4 @@
 7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
 8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
 9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
+10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)

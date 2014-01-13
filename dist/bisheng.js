@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-08 02:57:22 PM CST */
+/*! BiSheng.js 2014-01-09 07:05:35 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */

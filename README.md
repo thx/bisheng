@@ -46,6 +46,34 @@ BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。�
         // 改变数据 data.title，对应的文档区域会更新
         data.title = 'bar'
 
+## 目录
+
+**代码的结构**按照职责来设计，见下表；**打包后的文件**在 [dist/] 目录下；**API 和文档**在 [doc/] 目录下；**测试用例**在 [test/] 目录下，基本覆盖了目前已实现的功能。
+
+源文件            | 职责 & 功能
+----------------- | -------------------------------------
+[src/ast.js]      | 修改语法树，插入定位符。
+[src/bisheng.js]  | 双向绑定的入口。
+[src/expose.js]   | 模块化，适配主流加载器。
+[src/flush.js]    | 更新 DOM 元素。
+[src/html.js]     | 转换 HTML 字符串为 DOM 元素。
+[src/locator.js]  | 生成定位符，解析、更新定位符的属性。
+[src/loop.js]     | 数据属性监听工具。
+[src/scan.js]     | 扫描 DOM 元素，解析定位符。
+
+[src/ast.js]: https://github.com/thx/bisheng/tree/master/src/ast.js
+[src/bisheng.js]: https://github.com/thx/bisheng/tree/master/src/bisheng.js
+[src/expose.js]: https://github.com/thx/bisheng/tree/master/src/expose.js
+[src/flush.js]: https://github.com/thx/bisheng/tree/master/src/flush.js
+[src/html.js]: https://github.com/thx/bisheng/tree/master/src/html.js
+[src/locator.js]: https://github.com/thx/bisheng/tree/master/src/locator.js
+[src/loop.js]: https://github.com/thx/bisheng/tree/master/src/loop.js
+[src/scan.js]: https://github.com/thx/bisheng/tree/master/src/scan.js
+
+[dist/]: https://github.com/thx/bisheng/tree/master/dist/
+[doc/]: https://github.com/thx/bisheng/tree/master/doc/
+[test/]: https://github.com/thx/bisheng/tree/master/test/
+
 ## 更多演示
 
     grunt 
