@@ -7,6 +7,8 @@ controls: true
 
 --
 
+<!-- TODO 借用结构 https://speakerdeck.com/zcbenz/node-webkit-app-runtime-based-on-chromium-and-node-dot-js -->
+
 # BiSheng.js
 ## 　
 ## 纯粹的数据双向绑定库
@@ -29,7 +31,7 @@ controls: true
 
 --
 
-### 目录
+### 内容
 
 * 应用场景
 * 浏览器支持
@@ -169,7 +171,7 @@ controls: true
 * 事件驱动编程 & 运行
 * 数据驱动编程 & 运行
 
-> 数据要比编程逻辑更容易驾驭。——《Unix 编程艺术》
+数据要比事件更容易驾驭。
 
 <!-- 所以接下来，如果要在复杂数据和复杂代码中选择一个，宁愿选择前者。更进一步：在设计中，你应该主动将代码的复杂度转移到数据之中去。 -->
 
