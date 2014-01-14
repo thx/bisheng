@@ -123,13 +123,23 @@ module.exports = function(grunt) {
             }
         },
         markdown: {
-            options: {
-                template: 'doc/template.html'
-            },
-            doc: {
+            index: {
+                options: {
+                    template: 'doc/template_index.html'
+                },
                 expand: true,
                 cwd: 'doc/',
-                src: ['*.md', '!what.md'],
+                src: ['index.md'],
+                dest: 'doc/',
+                ext: '.html'
+            },
+            doc: {
+                options: {
+                    template: 'doc/template.html'
+                },
+                expand: true,
+                cwd: 'doc/',
+                src: ['*.md', '!index.md', '!what.md'],
                 dest: 'doc/',
                 ext: '.html'
             }
