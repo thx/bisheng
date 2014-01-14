@@ -92,8 +92,8 @@
 
                     nodeName = nodeName.toLowerCase()
                     nodeName = nodeName === 'bs-style' && 'style' ||
-                        nodeName === 'bs-checked' && 'checked' ||
                         nodeName === 'bs-src' && 'src' ||
+                        nodeName === 'bs-checked' && 'checked' ||
                         nodeName
 
                     if (nodeName === 'style') {
@@ -131,10 +131,6 @@
                         nodeValue = nodeValue.replace(reph, '')
                         attributeNode.nodeValue = nodeValue
 
-                        if (nodeName === 'style') $(node).attr('style', nodeValue)
-                        if (nodeName === 'checked' && nodeValue === 'true') $(node).attr('checked', 'checked')
-                        if (nodeName === 'src') $(node).attr('src', nodeValue)
-
                         $(attributes).each(function(index, elem) {
                             var slot = Locator.parse(elem, 'slot')
                             if (slot === 'start') $(node).before(elem)
@@ -142,6 +138,10 @@
                         })
 
                     }
+
+                    if (nodeName === 'style') $(node).attr('style', nodeValue)
+                    if (nodeName === 'src') $(node).attr('src', nodeValue)
+                    if (nodeName === 'checked' && nodeValue === 'true') $(node).attr('checked', 'checked')
                 }
             )
         }
