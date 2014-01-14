@@ -126,7 +126,7 @@
                     }
                 ]
         */
-        function watch(data, fn, autoboxing, binding) { /* fix: autoboxing, path */
+        function watch(data, fn, autoboxing, binding) { /* autoboxing: autoboxing, path */
             var id = guid++;
             var shadow = clone(data, autoboxing, [id]);
 
