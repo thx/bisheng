@@ -3,7 +3,7 @@ $(function() {
     var structure = $(
         Mock.heredoc(function() {
             /*!
-<div class="tc">
+<div class="col-md-6 tc">
     <div class="panel panel-default">
         <div class="panel-heading"></div>
         <div class="panel-body result"></div>
@@ -38,18 +38,40 @@ $(function() {
             /*
             <div class="form-group">
                 <label for="first">First Name:</label>
-                <input class="form-control" id="first" placeholder="Enter first name" value="{{first}}">
+                <input class="form-control" placeholder="Enter first name" value="{{first}}">
                 <label for="last">Last Name:</label>
-                <input class="form-control" id="last" placeholder="Enter last name" value="{{last}}">
+                <input class="form-control" placeholder="Enter last name" value="{{last}}">
             </div>
             <p>Hello {{first}} {{last}}!</p>
             */
         })
         var data = {
-            first: '',
-            last: ''
+            first: 'Zhi',
+            last: 'Mo'
         }
-        doit(data, tpl, '自动更新 Handlebars 模板')
+        doit(data, tpl, 'Auto-updating Handlebars Templates') // 自动更新 Handlebars 模板
+    })();
+
+    (function attribute_src() {
+        // return
+        var tpl = Mock.heredoc(function() {
+            /*
+            <div>
+                <p style="text-align: center;">
+                    <img src="https://1.gravatar.com/avatar/{{md5}}?s=128">
+                </p>
+                <input class="form-control" placeholder="Enter email" value="{{email}}" style="text-align: center;">
+            </div>
+            */
+        })
+        var data = {
+            md5: md5('nuy.bishengjs@gmail.com'),
+            email: 'nuy.bishengjs@gmail.com'
+        }
+        BiSheng.watch(data, 'email', function(change) {
+            data.md5 = md5(change.value)
+        })
+        doit(data, tpl, 'Retrieve a Gravatar Image Dynamically') // Retrieve a gravatar image dynamically from any e-mail address
     })();
 
 
