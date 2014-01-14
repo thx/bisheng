@@ -158,34 +158,49 @@
         },
 
         /*
-            ## BiSheng.watch(data, fn(changes))
+            ## BiSheng.watch(data, properties, fn(change))
 
-            为所有属性添加监听函数。
+            为一个或一组或所有属性添加监听函数。
             <!--Attach default handler function to all properties.-->
 
-            * BiSheng.watch(data, fn(changes))
+            * **BiSheng.watch(data, fn(changes))**
+            * **BiSheng.watch(data, property, fn(change))**
+            * **BiSheng.watch(data, properties, fn(change))**
 
             **参数的含义和默认值**如下所示：
 
-            * 参数 data：必选。待监听的对象或数组。
-            * 参数 fn：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：
+            * **参数 data**：必选。指向待监听的对象或数组。
+            * **参数 property**：可选。字符串，表示待监听的单个属性。
+            * **参数 properties**：可选。字符串数组，表示待监听的多个属性。
+            * **参数 fn**：必选。监听函数，当属性发生变化时被执行。
                 
-                    [
+                * 参数 change 是一个对象，格式为：
+
                         {
-                            type: 'add',
-                            path: [guid,,],
-                            value: newValue
-                        },{
-                            type: 'delete',
-                            path: [guid,,],
-                            value: newValue
-                        }, {
-                            type: 'update',
-                            path: [guid,,],
-                            value: value,
+                            type: 'add/delete/update',
+                            path: [,,],
+                            value: newValue,
                             oldValue: oldValue
                         }
-                    ]
+
+                * 参数 changes 是一个数组，格式为：
+                
+                        [
+                            {
+                                type: 'add',
+                                path: [,,],
+                                value: newValue
+                            },{
+                                type: 'delete',
+                                path: [,,],
+                                value: newValue
+                            }, {
+                                type: 'update',
+                                path: [,,],
+                                value: value,
+                                oldValue: oldValue
+                            }
+                        ]
 
             **使用示例**如下所示：
 
@@ -214,8 +229,26 @@
                     }
                 ]
         */
-        watch: function(data, fn) {
-            Loop.watch(data, fn, true)
+        watch: function(data, properties, fn) {
+            // BiSheng.watch(data, properties, fn(changes))
+            if (arguments.length > 2) {
+                properties = properties.constructor !== Array ? [properties] : properties
+
+                var propertiesMap = {}, index, change
+                for (index = 0; index < properties.length; index++) {
+                    propertiesMap[properties[index]] = true
+                }
+
+                Loop.watch(data, function(changes) {
+                    for (index = 0, change; index < changes.length; index++) {
+                        change = changes[index]
+                        if (propertiesMap[change.path]) fn.call(data, change)
+                    }
+                })
+
+            } else {
+                Loop.watch(data, properties, true)
+            }
             return this
         },
 
