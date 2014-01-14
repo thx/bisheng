@@ -2,35 +2,33 @@
 ---
 
 [![Build Status](https://api.travis-ci.org/thx/bisheng.png?branch=master)](http://travis-ci.org/thx/bisheng)
-<!-- [![GitHub version](https://badge.fury.io/gh/nuysoft%2Fbisheng.png)](http://badge.fury.io/gh/nuysoft%2Fbisheng) -->
-<!-- [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs) -->
 [![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png)](https://github.com/thx/bisheng/)
 
-纯粹的数据双向绑定库。
+BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
-## 浏览器支持
+<!-- 双向数据绑定工具库。 -->
 
-* Internet Explorer：6+
-* Chrome, Safari, Firefox, Opera：前一个或当前版本
+## Downloads
 
-<!-- IE：IE6 IE8 IE9 IE10 IE11 -->
-
-## 下载
+> Right-click, and use "Save As".
 
 <p>
     <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
-    </a> - <i><span id="uncompressed">?</span>kB, Uncompressed</i>
+    </a> - 
+    <i><span id="uncompressed">?</span>kB, Full source, tons of comments</i>
 </p>
 <p>
     <a href="../dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
-    </a> - <i><span id="minified">?</span>kB, Minified</i>
+    </a> - 
+    <i><span id="minified">?</span>kB, Packed and gzipped (<a href="../dist/bisheng-min.map">Source Map</a>)</i>
 </p>
 <p>
-    <a href="https://github.com/thx/bisheng" class="btn btn-default w250">
-        从 Github 获取最新版本
-    </a> - <i>Unreleased</i>
+    <a href="https://raw2.github.com/thx/bisheng/master/dist/bisheng.js" class="btn btn-default w250">
+        Edge Version (master)
+    </a> - 
+    <i>Unreleased, use at your own risk</i>
 </p>
 
 <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large"
@@ -52,27 +50,73 @@
     }
     size('/dist/bisheng.js', '#uncompressed')
     size('/dist/bisheng-min.js','#minified')
-   
 </script>
+  
+## API
 
-## API & 文档
-
-<a href="./bisheng.html" type="button" class="btn btn-success">BiSheng</a>
+* [BiSheng API](./bisheng.html)
+<!-- <a href="./bisheng.html" type="button" class="btn btn-success">BiSheng</a> -->
 <!-- <a href="./loop.html" type="button" class="btn btn-default">Loop</a> -->
-<a href="./what.html" type="button" class="btn btn-default">简介</a>
-<a href="./how.html" type="button" class="btn btn-default">工作原理</a>
 
-## 开始
+## Guides
 
-1. 下载 BiSheng.js
+* [What is BiSheng.js](./what.html)
+* [How BiSheng.js works](./how.html)
+* Why BiSheng.js (TODO)
+<!-- * [Why BiSheng.js](./why.html) -->
+
+<!-- 
+<a href="./what.html" type="button" class="btn btn-default">What is BiSheng.js</a>
+<a href="./how.html" type="button" class="btn btn-default">How BiSheng.js works</a>
+<a href="./why.html" type="button" class="btn btn-default">Why BiSheng.js</a>
+ -->
+
+## Browser Support
+
+<table>
+    <tr>
+        <td>
+            <img width="32" src="./image/Browsers_MIN/Png/IE.png">
+        </td>
+        <td>
+            <img width="32" src="./image/Browsers_MIN/Png/Chrome.png">
+            <img width="32" src="./image/Browsers_MIN/Png/Safari.png">
+            <img width="32" src="./image/Browsers_MIN/Png/Firefox.png">
+            <img width="32" src="./image/Browsers_MIN/Png/Opera.png">
+        </td>
+    </tr>
+    <tr>
+        <td>6+</td>
+        <td>(Current - 1) or Current</td>
+    </tr>
+</table>
+
+
+
+
+<!--
+* Internet Explorer：6+
+* Chrome, Safari, Firefox, Opera：前一个或当前版本
+-->
+<!-- IE：IE6 IE8 IE9 IE10 IE11 -->
+
+## Examples
+
+<div id="samples" class="row"></div>
+<script src="../bower_components/js-md5/js/md5.min.js"></script>
+<script src="./samples.js"></script>
+
+## Getting started
+
+1. Install BiSheng.js
 
         bower install bishengjs
 
-2. 引入 BiSheng.js
+2. Reference BiSheng.js
 
         <script src="./bower_components/bishengjs/dist/bisheng.js"></script>
 
-3. 使用
+3. Use `BiSheng.bind()`
 
         // HTML 模板
         var tpl = '{{title}}'
@@ -88,34 +132,29 @@
         // 改变数据 data.title，对应的文档区域会更新
         data.title = 'bar'
 
-## 示例
-
-<div id="samples"></div>
-<script src="./samples.js"></script>
-
-<div class="row">
-  <div class="col-md-6">
-
-**更多示例：**
+## More Examples
 
 * [TodoMVC](../demo/todo/index.html)
-* [监听数据对象的属性](../demo/loop.html)
-* [监听表达式 {{}}](../demo/expression.html)
-* [监听 DOM 节点的属性](../demo/attribute.html)
-* [监听逻辑块](../demo/block.html)
-* [监听表单元素](../demo/form.html)
+* [Watch Properties of Data Object](../demo/loop.html)
+* [Watch Expressions `{{}}`](../demo/expression.html)
+* [Watch Attributes of DOM](../demo/attribute.html)
+* [Watch Block](../demo/block.html)
+* [Wach Form Elements](../demo/form.html)
 
-  </div>
-  <div class="col-md-6">
+<!-- 监听数据对象的属性 -->
+<!-- 监听表达式 -->
+<!-- 监听 DOM 节点的属性 -->
+<!-- 监听逻辑块 -->
+<!-- 监听表单元素 -->
 
-**测试用例**：
+## Unit Testing
 
-* [QUnit 测试用例](../test/bisheng.html?noglobals=true&notrycatch=true)
+* [QUnit](../test/bisheng.html?noglobals=true&notrycatch=true)
 
-  </div>
-</div><!-- /row-->
+<!-- 
+## Thanks
 
-## 感谢
+Thanks to the following articles and frameworks for giving BiSheng.js this inspiration:
 
 感谢以下框架和文章给 BiSheng.js 的启发：
 
@@ -129,3 +168,4 @@
 8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
 9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
 10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)
+ -->
