@@ -94,20 +94,6 @@
 <li><strong>参数 callback(content)</strong>：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。</li>
 <li><strong>参数 content</strong>：数组，其中包含了转换后的 DOM 元素。</li>
 </ul>
-<p><strong>使用示例</strong>如下所示：</p>
-<pre><code>// HTML 模板
-var tpl = &#39;{{title}}&#39;
-// 数据对象
-var data = {
-  title: &#39;foo&#39;
-}
-// 执行双向绑定
-BiSheng.bind(data, tpl, function(content){
-  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-  $(&#39;div.container&#39;).append(content)
-});
-// 改变数据 data.title，对应的文档区域会更新
-data.title = &#39;bar&#39;</code></pre>
 <h2 id="bisheng-unbind-data-tpl-">BiSheng.unbind(data, tpl)</h2>
 <p>解除数据和模板之间的双向绑定。</p>
 <ul>
@@ -141,59 +127,50 @@ data.title = &#39;bar&#39;
 BiSheng.unbind(data, tpl);
 // 改变数据 data.title，对应的文档区域不会更新
 data.title = &#39;foo&#39;</code></pre>
-<h2 id="bisheng-watch-data-fn-changes-">BiSheng.watch(data, fn(changes))</h2>
-<p>为所有属性添加监听函数。
+<h2 id="bisheng-watch-data-properties-fn-change-">BiSheng.watch(data, properties, fn(change))</h2>
+<p>为一个或一组或所有属性添加监听函数。
 <!--Attach default handler function to all properties.--></p>
 <ul>
 <li><strong>BiSheng.watch(data, fn(changes))</strong></li>
+<li><strong>BiSheng.watch(data, property, fn(change))</strong></li>
+<li><strong>BiSheng.watch(data, properties, fn(change))</strong></li>
 </ul>
 <p><strong>参数的含义和默认值</strong>如下所示：</p>
 <ul>
-<li><strong>参数 data</strong>：必选。待监听的对象或数组。</li>
-<li><p><strong>参数 fn</strong>：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：</p>
+<li><strong>参数 data</strong>：必选。指向待监听的对象或数组。</li>
+<li><strong>参数 property</strong>：可选。字符串，表示待监听的单个属性。</li>
+<li><strong>参数 properties</strong>：可选。字符串数组，表示待监听的多个属性。</li>
+<li><p><strong>参数 fn</strong>：必选。监听函数，当属性发生变化时被执行。</p>
+<ul>
+<li><p>参数 change 是一个对象，格式为：</p>
+<pre><code>  {
+      type: &#39;add/delete/update&#39;,
+      path: [,,],
+      value: newValue,
+      oldValue: oldValue
+  }</code></pre>
+</li>
+<li><p>参数 changes 是一个数组，格式为：</p>
 <pre><code>  [
       {
           type: &#39;add&#39;,
-          path: [guid,,],
+          path: [,,],
           value: newValue
       },{
           type: &#39;delete&#39;,
-          path: [guid,,],
+          path: [,,],
           value: newValue
       }, {
           type: &#39;update&#39;,
-          path: [guid,,],
+          path: [,,],
           value: value,
           oldValue: oldValue
       }
   ]</code></pre>
 </li>
 </ul>
-<p><strong>使用示例</strong>如下所示：</p>
-<pre><code>var data = { foo: &#39;foo&#39; }
-BiSheng.watch(data, function(changes){
-    console.log(JSON.stringify(changes, null, 4))
-})
-data.foo = &#39;bar&#39;
-
-// =&gt;
-[
-    {
-        &quot;type&quot;: &quot;update&quot;,
-        &quot;path&quot;: [
-            6,
-            &quot;foo&quot;
-        ],
-        &quot;value&quot;: &quot;bar&quot;,
-        &quot;oldValue&quot;: &quot;foo&quot;,
-        &quot;root&quot;: {
-            &quot;foo&quot;: &quot;bar&quot;
-        },
-        &quot;context&quot;: {
-            &quot;foo&quot;: &quot;bar&quot;
-        }
-    }
-]</code></pre>
+</li>
+</ul>
 <h2 id="bisheng-unwatch-data-fn-">BiSheng.unwatch(data, fn)</h2>
 <p>移除监听函数。</p>
 <ul>

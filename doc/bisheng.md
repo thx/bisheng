@@ -20,22 +20,6 @@
 * **参数 callback(content)**：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
 * **参数 content**：数组，其中包含了转换后的 DOM 元素。
 
-**使用示例**如下所示：
-
-    // HTML 模板
-    var tpl = '{{title}}'
-    // 数据对象
-    var data = {
-      title: 'foo'
-    }
-    // 执行双向绑定
-    BiSheng.bind(data, tpl, function(content){
-      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-      $('div.container').append(content)
-    });
-    // 改变数据 data.title，对应的文档区域会更新
-    data.title = 'bar'
-
 ## BiSheng.unbind(data, tpl)
 
 解除数据和模板之间的双向绑定。
@@ -74,61 +58,49 @@
     // 改变数据 data.title，对应的文档区域不会更新
     data.title = 'foo'
 
-## BiSheng.watch(data, fn(changes))
+## BiSheng.watch(data, properties, fn(change))
 
-为所有属性添加监听函数。
+为一个或一组或所有属性添加监听函数。
 <!--Attach default handler function to all properties.-->
 
 * **BiSheng.watch(data, fn(changes))**
+* **BiSheng.watch(data, property, fn(change))**
+* **BiSheng.watch(data, properties, fn(change))**
 
 **参数的含义和默认值**如下所示：
 
-* **参数 data**：必选。待监听的对象或数组。
-* **参数 fn**：必选。监听函数，当属性发生变化时被执行，参数 changes 的格式为：
+* **参数 data**：必选。指向待监听的对象或数组。
+* **参数 property**：可选。字符串，表示待监听的单个属性。
+* **参数 properties**：可选。字符串数组，表示待监听的多个属性。
+* **参数 fn**：必选。监听函数，当属性发生变化时被执行。
     
-        [
+    * 参数 change 是一个对象，格式为：
+
             {
-                type: 'add',
-                path: [guid,,],
-                value: newValue
-            },{
-                type: 'delete',
-                path: [guid,,],
-                value: newValue
-            }, {
-                type: 'update',
-                path: [guid,,],
-                value: value,
+                type: 'add/delete/update',
+                path: [,,],
+                value: newValue,
                 oldValue: oldValue
             }
-        ]
 
-**使用示例**如下所示：
-
-    var data = { foo: 'foo' }
-    BiSheng.watch(data, function(changes){
-        console.log(JSON.stringify(changes, null, 4))
-    })
-    data.foo = 'bar'
-
-    // =>
-    [
-        {
-            "type": "update",
-            "path": [
-                6,
-                "foo"
-            ],
-            "value": "bar",
-            "oldValue": "foo",
-            "root": {
-                "foo": "bar"
-            },
-            "context": {
-                "foo": "bar"
-            }
-        }
-    ]
+    * 参数 changes 是一个数组，格式为：
+    
+            [
+                {
+                    type: 'add',
+                    path: [,,],
+                    value: newValue
+                },{
+                    type: 'delete',
+                    path: [,,],
+                    value: newValue
+                }, {
+                    type: 'update',
+                    path: [,,],
+                    value: value,
+                    oldValue: oldValue
+                }
+            ]
 
 ## BiSheng.unwatch(data, fn)
 
