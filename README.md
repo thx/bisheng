@@ -2,7 +2,7 @@ BiSheng.js（毕昇）
 ====
 
 [![Build Status](https://api.travis-ci.org/thx/bisheng.png?branch=master)](http://travis-ci.org/thx/bisheng)
-[![GitHub version](https://badge.fury.io/gh/nuysoft%2Fbisheng.png)](http://badge.fury.io/gh/nuysoft%2Fbisheng)
+[![GitHub version](https://badge.fury.io/gh/thx%2Fbisheng.png)](http://badge.fury.io/gh/thx%2Fbisheng)
 [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs)
 [![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png)](https://github.com/thx/bisheng/)
 
@@ -10,7 +10,7 @@ BiSheng.js（毕昇）
 
 纯粹的数据双向绑定库。
 
-BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。
+BiSheng.js 的名称源自活字印刷术的发明者“[毕昇]”。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。
 
 [毕昇]: http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&fromid=64860&type=syn
 
@@ -20,7 +20,7 @@ BiSheng.js 的名称源自“[毕昇]”，他是活字印刷术的发明者。�
 * [简介](doc/what.md)
 * [工作原理](doc/how.md)
 
-## 开始
+## 快速开始
 
 1. 下载 BiSheng.js
 
