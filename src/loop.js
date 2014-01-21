@@ -8,14 +8,14 @@
     * <https://github.com/jdarling/Object.observe>
     
     TODO
-        √expose
-        Xget: event get
-        Xset: event set, change
-        Xlastest
-        √array
-        √Reserved: shadow path
-        √自动装箱 autoboxing，√拆箱 unboxing
-        X$data X$watchers √$blocks √$helpers √$path
+        √ expose
+        X get: event get
+        X set: event set, change
+        X lastest
+        √ array
+        √ Reserved: shadow path
+        √ 自动装箱 autoboxing，√ 拆箱 unboxing
+        X $data X $watchers √ $blocks √ $helpers √ $path
 */
 
 "use strict";
@@ -32,6 +32,35 @@
 
 }(function() {
     // BEGIN(BROWSER)
+
+    // 运行模式
+
+    var AUTO = false;
+
+    function auto(bool) {
+        if (bool === undefined) return AUTO
+
+        AUTO = !! bool
+        if (AUTO) timerId = setTimeout(letMeSee, 50)
+        else clearTimeout(timerId)
+    }
+
+    // 执行任务
+
+    var tasks = []
+    var timerId;
+    tasks.__index = 0 // TODO 记录双向绑定任务的插入位置
+
+    function letMeSee() {
+        clearTimeout(timerId)
+        for (var i = 0; i < tasks.length; i++) {
+            tasks[i] && tasks[i]()
+        }
+        if (AUTO) timerId = setTimeout(letMeSee, 50)
+    }
+    if (AUTO) timerId = setTimeout(letMeSee, 50)
+
+
 
     /*
         # Loop
@@ -55,19 +84,6 @@
             DELETE: 'delete',
             UPDATE: 'update'
         };
-
-        var tasks = []
-        tasks.__index = 0
-        var timerId;
-
-        function letMeSee() {
-            clearTimeout(timerId)
-            for (var i = 0; i < tasks.length; i++) {
-                tasks[i] && tasks[i]()
-            }
-            timerId = setTimeout(letMeSee, 50)
-        }
-        timerId = setTimeout(letMeSee, 50)
 
         /*
             ## Loop.watch(data, fn(changes))
@@ -138,6 +154,7 @@
                 }
             }
             task.data = data
+            task.callback = fn
             if (fn && fn.tpl) task.tpl = fn.tpl
 
             tasks.push(task)
@@ -211,16 +228,18 @@
             }
 
             // Loop.unwatch(data, fn)
-            if (typeof fn === 'function') {
+            if (data && typeof fn === 'function') {
                 remove(function(task) {
-                    return task === fn && task.data === data
+                    return task.callback === fn && task.data === data
                 })
             }
 
-            // Loop.unwatch(fn)
-            if (typeof data === 'function') {
+            // Loop.unwatch(fn), Loop.unwatch(undefined, fn)
+            if (typeof data === 'function' || !data && typeof fn === 'function') {
+                fn = data || fn
                 remove(function(task) {
-                    return task === fn
+                    return task.callback === fn ||
+                        task.callback.guid && task.callback.guid === fn.guid
                 })
             }
 
@@ -427,11 +446,17 @@
                 value = newValue[name]
 
                 if (!(name in oldValue)) {
-                    result.push({
-                        type: type || TYPES.ADD,
-                        path: path.concat(name),
-                        value: newValue[name]
-                    })
+                    result.push(
+                        type ? {
+                            type: type, // TYPES.DELETE
+                            path: path.concat(name),
+                            value: undefined,
+                            oldValue: newValue[name]
+                        } : {
+                            type: TYPES.ADD,
+                            path: path.concat(name),
+                            value: newValue[name]
+                        })
                     continue
                 }
 
@@ -506,6 +531,7 @@
 
         // expose
         return {
+            auto: auto,
             tasks: tasks,
             TYPES: TYPES,
             watch: watch,

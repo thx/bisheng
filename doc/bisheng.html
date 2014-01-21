@@ -73,13 +73,13 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-md-9"><h1 id="bisheng">BiSheng</h1>
+      <div class="col-sm-9"><h1 id="bisheng">BiSheng</h1>
 <hr>
 <p>双向绑定的入口对象，含有 4 个方法：</p>
 <ul>
 <li>BiSheng.bind(data, tpl, callback)</li>
 <li>BiSheng.unbind(data, tpl)</li>
-<li>BiSheng.watch(data, fn(changes))</li>
+<li>BiSheng.watch(data, properties, fn(change))</li>
 <li>BiSheng.unwatch(data, fn)</li>
 </ul>
 <h2 id="bisheng-bind-data-tpl-callback-content-">BiSheng.bind(data, tpl, callback(content))</h2>
@@ -222,7 +222,7 @@ setTimeout(function(){
 <script>
     $('div.catalog ul').addClass('pre')
 </script></div>
-      <div class="col-md-3">
+      <div class="col-sm-3">
         <div class="panel panel-default" style="position: fixed; margin-top: 75px;">
           <div class="panel-heading">目录</div>
           <div class="panel-body catalog"></div>

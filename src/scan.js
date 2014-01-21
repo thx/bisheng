@@ -3,6 +3,7 @@
 /* global window: true */
 /* global expose */
 /* global $: true */
+/* global Loop */
 /* global Locator */
 
 (function(factory) {
@@ -166,6 +167,7 @@
                 // TODO 为什么不触发 change 事件？
                 $(target).on('change.bisheng keyup.bisheng', function(event) {
                     updateValue(data, path, event.target)
+                    if (!Loop.auto()) Loop.letMeSee()
                 })
             })
 
@@ -195,9 +197,10 @@
                     if (!firing && event.target.type === 'radio') {
                         $('input:radio[name="' + event.target.name + '"]')
                             .not(event.target)
-                            .trigger('change', firing = true)
+                            .trigger('change.bisheng', firing = true)
                     }
                     updateChecked(data, path, event.target)
+                    if (!Loop.auto()) Loop.letMeSee()
                 })
             })
         }

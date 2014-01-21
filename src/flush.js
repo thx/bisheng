@@ -80,8 +80,6 @@ if (typeof module === 'object' && module.exports) {
 
         */
         function handle(event, change, defined, context) {
-            // var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
-            // var paths = $(selector)
             var paths = Locator.find({
                 slot: 'start',
                 path: change.path.join('.')
@@ -288,10 +286,8 @@ if (typeof module === 'object' && module.exports) {
                     */
                     case 3:
                         $(item).wrap('<span>').parent().addClass('transition highlight')
-                        // $(item.parentNode).addClass('transition highlight')
                         setTimeout(function() {
                             $(item).unwrap('<span>').removeClass('transition highlight')
-                            // $(item.parentNode).removeClass('highlight')
                         }, 500)
                         break
                     case 1:

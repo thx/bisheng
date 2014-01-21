@@ -62,13 +62,15 @@ BiSheng.js 对模板引擎要求：
 
     if(property)
     ==>
-    if(property.valueOf())
+    if(property && property.valueOf())
 
 ## 问题 & 难点
 
 1. CORX 的语法树以位置来约定含义，有些晦涩。
 2. 其他待讨论如何解决。
 
+## @三冰
 
+<http://jser.net/kstar/>
 
 

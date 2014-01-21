@@ -1,12 +1,18 @@
 # BiSheng.js
 ---
 
+<!-- TODO http://startbootstrap.com/templates/modern-business/index.html -->
+
 [![Build Status](https://api.travis-ci.org/thx/bisheng.png?branch=master)](http://travis-ci.org/thx/bisheng)
 [![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png)](https://github.com/thx/bisheng/)
 
 BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
 <!-- 双向数据绑定工具库。 -->
+
+<!-- 一款小巧轻便的数据双向绑定库，旨在帮助前端攻城师快速开发 Web 组件和应用。支持所有主流浏览器（包括 IE6），可以单独使用，也可以方便地集成到第三方框架。目前基于模板引擎 Handlebars.js 实现，可扩展支持其他基于语法树的模板引擎。 -->
+
+<!-- 改变开发方式 全浏览器支持 易扩展 易集成 -->
 
 ## Downloads
 
@@ -16,13 +22,13 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
     <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
     </a> - 
-    <i><span id="uncompressed">?</span>kB, Full source, tons of comments</i>
+    <i><span id="uncompressed">59</span>kB, Full source, tons of comments</i>
 </p>
 <p>
     <a href="../dist/bisheng-min.js" class="btn btn-primary w250">
         Production Version (0.1.0)
     </a> - 
-    <i><span id="minified">?</span>kB, Packed and gzipped (<a href="../dist/bisheng-min.map">Source Map</a>)</i>
+    <i><span id="minified">13</span>kB, Packed and gzipped (<a href="../dist/bisheng-min.map">Source Map</a>)</i>
 </p>
 <p>
     <a href="https://raw2.github.com/thx/bisheng/master/dist/bisheng.js" class="btn btn-default w250">
@@ -44,6 +50,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
             url: file
         }).success(function(_, __, jqXHR) {
             var size = jqXHR.getResponseHeader('Content-Length')
+            if(!size) return;
             size = parseInt(size / 1024, 10)
             $(target).html(size)
         })

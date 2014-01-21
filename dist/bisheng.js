@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-14 11:10:44 PM CST */
+/*! BiSheng.js 2014-01-16 01:58:50 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -33,6 +33,26 @@
     });
 })(function() {
     /*! src/loop.js */
+    // 运行模式
+    var AUTO = false;
+    function auto(bool) {
+        if (bool === undefined) return AUTO;
+        AUTO = !!bool;
+        if (AUTO) timerId = setTimeout(letMeSee, 50); else clearTimeout(timerId);
+    }
+    // 执行任务
+    var tasks = [];
+    var timerId;
+    tasks.__index = 0;
+    // TODO 记录双向绑定任务的插入位置
+    function letMeSee() {
+        clearTimeout(timerId);
+        for (var i = 0; i < tasks.length; i++) {
+            tasks[i] && tasks[i]();
+        }
+        if (AUTO) timerId = setTimeout(letMeSee, 50);
+    }
+    if (AUTO) timerId = setTimeout(letMeSee, 50);
     /*
         # Loop
 
@@ -55,17 +75,6 @@
             DELETE: "delete",
             UPDATE: "update"
         };
-        var tasks = [];
-        tasks.__index = 0;
-        var timerId;
-        function letMeSee() {
-            clearTimeout(timerId);
-            for (var i = 0; i < tasks.length; i++) {
-                tasks[i] && tasks[i]();
-            }
-            timerId = setTimeout(letMeSee, 50);
-        }
-        timerId = setTimeout(letMeSee, 50);
         /*
             ## Loop.watch(data, fn(changes))
 
@@ -135,6 +144,7 @@
                 }
             }
             task.data = data;
+            task.callback = fn;
             if (fn && fn.tpl) task.tpl = fn.tpl;
             tasks.push(task);
             // TODO 普通静听函数在前，通过 BiSheng.bind() 绑定的监听函数在后。
@@ -202,15 +212,16 @@
                 }
             }
             // Loop.unwatch(data, fn)
-            if (typeof fn === "function") {
+            if (data && typeof fn === "function") {
                 remove(function(task) {
-                    return task === fn && task.data === data;
+                    return task.callback === fn && task.data === data;
                 });
             }
-            // Loop.unwatch(fn)
-            if (typeof data === "function") {
+            // Loop.unwatch(fn), Loop.unwatch(undefined, fn)
+            if (typeof data === "function" || !data && typeof fn === "function") {
+                fn = data || fn;
                 remove(function(task) {
-                    return task === fn;
+                    return task.callback === fn || task.callback.guid && task.callback.guid === fn.guid;
                 });
             }
             // Loop.unwatch(data)
@@ -399,8 +410,14 @@
                 if (/\$guid|\$path|\$blocks|\$helpers/.test(name)) continue;
                 value = newValue[name];
                 if (!(name in oldValue)) {
-                    result.push({
-                        type: type || TYPES.ADD,
+                    result.push(type ? {
+                        type: type,
+                        // TYPES.DELETE
+                        path: path.concat(name),
+                        value: undefined,
+                        oldValue: newValue[name]
+                    } : {
+                        type: TYPES.ADD,
                         path: path.concat(name),
                         value: newValue[name]
                     });
@@ -457,6 +474,7 @@
         }
         // expose
         return {
+            auto: auto,
             tasks: tasks,
             TYPES: TYPES,
             watch: watch,
@@ -834,7 +852,7 @@
             }(), function(index, attributeNode) {
                 var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema;
                 nodeName = nodeName.toLowerCase();
-                nodeName = nodeName === "bs-style" && "style" || nodeName === "bs-checked" && "checked" || nodeName === "bs-src" && "src" || nodeName;
+                nodeName = nodeName === "bs-style" && "style" || nodeName === "bs-src" && "src" || nodeName === "bs-checked" && "checked" || nodeName;
                 if (nodeName === "style") {
                     restyle.exec("");
                     while (stylema = restyle.exec(nodeValue)) {
@@ -870,8 +888,8 @@
                     });
                 }
                 if (nodeName === "style") $(node).attr("style", nodeValue);
-                if (nodeName === "checked" && nodeValue === "true") $(node).attr("checked", "checked");
                 if (nodeName === "src") $(node).attr("src", nodeValue);
+                if (nodeName === "checked" && nodeValue === "true") $(node).attr("checked", "checked");
             });
         }
         // 扫描子节点
@@ -891,6 +909,7 @@
                 // TODO 为什么不触发 change 事件？
                 $(target).on("change.bisheng keyup.bisheng", function(event) {
                     updateValue(data, path, event.target);
+                    if (!Loop.auto()) Loop.letMeSee();
                 });
             });
             Locator.find({
@@ -913,9 +932,10 @@
                 $(target).on("change.bisheng", function(event, firing) {
                     // radio：点击其中一个后，需要同步更新同名的其他 radio
                     if (!firing && event.target.type === "radio") {
-                        $('input:radio[name="' + event.target.name + '"]').not(event.target).trigger("change", firing = true);
+                        $('input:radio[name="' + event.target.name + '"]').not(event.target).trigger("change.bisheng", firing = true);
                     }
                     updateChecked(data, path, event.target);
+                    if (!Loop.auto()) Loop.letMeSee();
                 });
             });
         }
@@ -1042,8 +1062,6 @@
 
         */
         function handle(event, change, defined, context) {
-            // var selector = 'script[slot="start"][path="' + change.path.join('.') + '"]'
-            // var paths = $(selector)
             var paths = Locator.find({
                 slot: "start",
                 path: change.path.join(".")
@@ -1232,7 +1250,6 @@
                     */
                     case 3:
                     $(item).wrap("<span>").parent().addClass("transition highlight");
-                    // $(item.parentNode).addClass('transition highlight')
                     setTimeout(function() {
                         $(item).unwrap("<span>").removeClass("transition highlight");
                     }, 500);
@@ -1298,270 +1315,373 @@
 
         双向绑定的入口对象，含有两个方法：BiSheng.bind(data, tpl, callback) 和 BiSheng.unbind(data)。
     */
-    var BiSheng = {
-        version: "0.1.0",
-        /*
-            ## BiSheng.bind(data, tpl, callback(content))
-
-            在模板和数据之间执行双向绑定。
-
-            * BiSheng.bind(data, tpl, callback(content))
-
-            **参数的含义和默认值**如下所示：
-
-            * 参数 data：必选。待绑定的对象或数组。
-            * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-            * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
-            * 参数 content：数组，其中包含了转换后的 DOM 元素。
-
-            **使用示例**如下所示：
-
-                // HTML 模板
-                var tpl = '{{title}}'
-                // 数据对象
-                var data = {
-                  title: 'foo'
-                }
-                // 执行双向绑定
-                BiSheng.bind(data, tpl, function(content){
-                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-                  $('div.container').append(content)
-                });
-                // 改变数据 data.title，对应的文档区域会更新
-                data.title = 'bar'
-
-        */
-        bind: function bind(data, tpl, callback, context) {
-            // 属性监听函数
-            function task(changes) {
-                $.each(changes, function(_, change) {
-                    var event = {
-                        target: []
-                    };
-                    Flush.handle(event, change, clone, context);
-                    if (location.href.indexOf("scrollIntoView") > -1) Flush.scrollIntoView(event, data);
-                    if (location.href.indexOf("highlight") > -1) Flush.highlight(event, data);
-                });
-            }
-            task.tpl = tpl;
-            // 为所有属性添加监听函数
-            var clone = Loop.watch(data, task, true, true);
-            // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
-            tpl = tpl.replace(/(<.*?)(style)(=.*?>)/g, "$1bs-style$3").replace(/(<input.*?)(checked)(=.*?>)/g, "$1bs-checked$3").replace(/(<img.*?)(src)(=.*?>)/g, "$1bs-src$3");
-            // 修改 AST，为 Expression 和 Block 插入占位符
-            var ast = Handlebars.parse(tpl);
-            AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {});
-            // 渲染 HTML
-            var compiled = Handlebars.compile(ast);
-            var html = compiled(clone);
-            // 提前解析 table 中的定位符
-            html = HTML.table(html);
-            // 扫描占位符，定位 Expression 和 Block
-            var content = $(HTML.convert(html));
-            if (content.length) Scanner.scan(content[0], data);
-            content = content.contents().get();
+    var BiSheng = function() {
+        var guid = 1;
+        return {
+            version: "0.1.0",
             /*
-                返回什么呢？
-                如果 callback() 有返回值，则作为 BiSheng.bind() 的返回值返回，即优先返回 callback() 的返回值；
-                如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
+                ## BiSheng.auto(bool)
+
+                设置运行模式为自动检测（true）或手动触发检测（false）。
+
+                BiSheng.js 初始化时，会默认执行 BiSheng.auto(false)，即默认设置为手动触发检测，此时，在更新数据时，需要手动调用 BiSheng.apply(fn)。
+                如果希望自动检测，则执行 执行 BiSheng.auto(true)。
             */
-            return callback ? callback.call(data, content) || content : content;
-        },
-        /*
-            ### BiSheng.unbind(data, tpl)
+            auto: function(bool) {
+                Loop.auto(bool);
+                return this;
+            },
+            /*
+                ## BiSheng.bind(data, tpl, callback(content))
 
-            解除数据和模板之间的双向绑定。
+                在模板和数据之间执行双向绑定。
 
-            * BiSheng.unbind(data, tpl)
-                解除数据 data 和模板 tpl 之间的双向绑定。
-            * BiSheng.unbind(data)
-                解除数据 data 与所有模板之间的双向绑定。
+                * BiSheng.bind(data, tpl, callback(content))
 
-            **参数的含义和默认值**如下所示：
+                **参数的含义和默认值**如下所示：
 
-            * 参数 data：必选。待接触绑定的对象或数组。
-            * 参数 tpl：可选。待接触绑绑定的 HTML 模板。
+                * 参数 data：必选。待绑定的对象或数组。
+                * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+                * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+                * 参数 content：数组，其中包含了转换后的 DOM 元素。
 
-            **使用示例**如下所示：
+                **使用示例**如下所示：
 
-                // HTML 模板
-                var tpl = '{{title}}'
-                // 数据对象
-                var data = {
-                  title: 'foo'
+                    // HTML 模板
+                    var tpl = '{{title}}'
+                    // 数据对象
+                    var data = {
+                      title: 'foo'
+                    }
+                    // 执行双向绑定
+                    BiSheng.bind(data, tpl, function(content){
+                      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                      $('div.container').append(content)
+                    });
+                    // 改变数据 data.title，对应的文档区域会更新
+                    data.title = 'bar'
+
+            */
+            bind: function bind(data, tpl, callback, context) {
+                // 属性监听函数
+                function task(changes) {
+                    $.each(changes, function(_, change) {
+                        var event = {
+                            target: []
+                        };
+                        Flush.handle(event, change, clone, context);
+                        if (location.href.indexOf("scrollIntoView") > -1) Flush.scrollIntoView(event, data);
+                        if (location.href.indexOf("highlight") > -1) Flush.highlight(event, data);
+                    });
                 }
-                // 执行双向绑定
-                BiSheng.bind(data, tpl, function(content){
-                  // 然后在回调函数中将绑定后的 DOM 元素插入文档中
-                  $('div.container').append(content)
-                })
-                // 改变数据 data.title，对应的文档区域会更新
-                data.title = 'bar'
-                // 解除双向绑定
-                BiSheng.unbind(data, tpl)
-                // 改变数据 data.title，对应的文档区域不会更新
-                data.title = 'foo'
+                task.tpl = tpl;
+                // 为所有属性添加监听函数
+                var clone = Loop.watch(data, task, true, true);
+                // 预处理 HTML 属性（IE 遇到非法的样式会丢弃）
+                tpl = tpl.replace(/(<.*?)(style)(=.*?>)/g, "$1bs-style$3").replace(/(<input.*?)(checked)(=.*?>)/g, "$1bs-checked$3").replace(/(<img.*?)(src)(=.*?>)/g, "$1bs-src$3");
+                // 修改 AST，为 Expression 和 Block 插入占位符
+                var ast = Handlebars.parse(tpl);
+                AST.handle(ast, undefined, undefined, clone.$blocks = {}, clone.$helpers = {});
+                // 渲染 HTML
+                var compiled = Handlebars.compile(ast);
+                var html = compiled(clone);
+                // 提前解析 table 中的定位符
+                html = HTML.table(html);
+                // 扫描占位符，定位 Expression 和 Block
+                var content = $(HTML.convert(html));
+                if (content.length) Scanner.scan(content[0], data);
+                content = content.contents().get();
+                /*
+                    返回什么呢？
+                    如果 callback() 有返回值，则作为 BiSheng.bind() 的返回值返回，即优先返回 callback() 的返回值；
+                    如果未传入 callback，则返回 content，因为不返回 content 的话，content 就会被丢弃。
+                */
+                return callback ? callback.call(data, content) || content : content;
+            },
+            /*
+                ### BiSheng.unbind(data, tpl)
 
-        */
-        unbind: function unbind(data, tpl) {
-            if (!tpl) {
-                Loop.unwatch(data);
-            } else {
-                for (var index = 0, fn; index < Loop.tasks.length; index++) {
-                    fn = Loop.tasks[index];
-                    if (fn.data === data && fn.tpl === tpl) {
-                        Loop.tasks.splice(index--, 1);
+                解除数据和模板之间的双向绑定。
+
+                * BiSheng.unbind(data, tpl)
+                    解除数据 data 和模板 tpl 之间的双向绑定。
+                * BiSheng.unbind(data)
+                    解除数据 data 与所有模板之间的双向绑定。
+
+                **参数的含义和默认值**如下所示：
+
+                * 参数 data：必选。待接触绑定的对象或数组。
+                * 参数 tpl：可选。待接触绑绑定的 HTML 模板。
+
+                **使用示例**如下所示：
+
+                    // HTML 模板
+                    var tpl = '{{title}}'
+                    // 数据对象
+                    var data = {
+                      title: 'foo'
+                    }
+                    // 执行双向绑定
+                    BiSheng.bind(data, tpl, function(content){
+                      // 然后在回调函数中将绑定后的 DOM 元素插入文档中
+                      $('div.container').append(content)
+                    })
+                    // 改变数据 data.title，对应的文档区域会更新
+                    data.title = 'bar'
+                    // 解除双向绑定
+                    BiSheng.unbind(data, tpl)
+                    // 改变数据 data.title，对应的文档区域不会更新
+                    data.title = 'foo'
+
+            */
+            unbind: function unbind(data, tpl) {
+                if (!tpl) {
+                    Loop.unwatch(data);
+                } else {
+                    for (var index = 0, fn; index < Loop.tasks.length; index++) {
+                        fn = Loop.tasks[index];
+                        if (fn.data === data && fn.tpl === tpl) {
+                            Loop.tasks.splice(index--, 1);
+                        }
                     }
                 }
-            }
-            return this;
-        },
-        /*
-            ## BiSheng.watch(data, properties, fn(change))
+                return this;
+            },
+            /*
+                ## BiSheng.watch(data, properties, fn(change))
 
-            为一个或一组或所有属性添加监听函数。
-            <!--Attach default handler function to all properties.-->
+                为一个或一组或所有属性添加监听函数。
+                <!--Attach default handler function to all properties.-->
 
-            * **BiSheng.watch(data, fn(changes))**
-            * **BiSheng.watch(data, property, fn(change))**
-            * **BiSheng.watch(data, properties, fn(change))**
+                * **BiSheng.watch(data, fn(changes))**
+                * **BiSheng.watch(data, property, fn(change))**
+                * **BiSheng.watch(data, properties, fn(change))**
 
-            **参数的含义和默认值**如下所示：
+                **参数的含义和默认值**如下所示：
 
-            * **参数 data**：必选。指向待监听的对象或数组。
-            * **参数 property**：可选。字符串，表示待监听的单个属性。
-            * **参数 properties**：可选。字符串数组，表示待监听的多个属性。
-            * **参数 fn**：必选。监听函数，当属性发生变化时被执行。
-                
-                * 参数 change 是一个对象，格式为：
+                * **参数 data**：必选。指向待监听的对象或数组。
+                * **参数 property**：可选。字符串，表示待监听的单个属性。
+                * **参数 properties**：可选。字符串数组，表示待监听的多个属性。
+                * **参数 fn**：必选。监听函数，当属性发生变化时被执行。
+                    
+                    * 参数 change 是一个对象，格式为：
 
-                        {
-                            type: 'add/delete/update',
-                            path: [,,],
-                            value: newValue,
-                            oldValue: oldValue
-                        }
-
-                * 参数 changes 是一个数组，格式为：
-                
-                        [
                             {
-                                type: 'add',
+                                type: 'add/delete/update',
                                 path: [,,],
-                                value: newValue
-                            },{
-                                type: 'delete',
-                                path: [,,],
-                                value: newValue
-                            }, {
-                                type: 'update',
-                                path: [,,],
-                                value: value,
+                                value: newValue,
                                 oldValue: oldValue
                             }
-                        ]
 
-            **使用示例**如下所示：
+                    * 参数 changes 是一个数组，格式为：
+                    
+                            [
+                                {
+                                    type: 'add',
+                                    path: [,,],
+                                    value: newValue
+                                },{
+                                    type: 'delete',
+                                    path: [,,],
+                                    value: newValue
+                                }, {
+                                    type: 'update',
+                                    path: [,,],
+                                    value: value,
+                                    oldValue: oldValue
+                                }
+                            ]
 
-                var data = { foo: 'foo' }
-                BiSheng.watch(data, function(changes){
-                    console.log(JSON.stringify(changes, null, 4))
-                })
-                data.foo = 'bar'
+                **使用示例**如下所示：
 
-                // =>
-                [
-                    {
-                        "type": "update",
-                        "path": [
-                            6,
-                            "foo"
-                        ],
-                        "value": "bar",
-                        "oldValue": "foo",
-                        "root": {
-                            "foo": "bar"
-                        },
-                        "context": {
-                            "foo": "bar"
+                    var data = { foo: 'foo' }
+                    BiSheng.watch(data, function(changes){
+                        console.log(JSON.stringify(changes, null, 4))
+                    })
+                    data.foo = 'bar'
+
+                    // =>
+                    [
+                        {
+                            "type": "update",
+                            "path": [
+                                6,
+                                "foo"
+                            ],
+                            "value": "bar",
+                            "oldValue": "foo",
+                            "root": {
+                                "foo": "bar"
+                            },
+                            "context": {
+                                "foo": "bar"
+                            }
                         }
-                    }
-                ]
-        */
-        watch: function(data, properties, fn) {
-            // BiSheng.watch(data, properties, fn(changes))
-            if (arguments.length > 2) {
-                properties = properties.constructor !== Array ? [ properties ] : properties;
+                    ]
+            */
+            watch: function(data, properties, fn) {
                 var propertiesMap = {}, index, change;
-                for (index = 0; index < properties.length; index++) {
-                    propertiesMap[properties[index]] = true;
-                }
-                Loop.watch(data, function(changes) {
-                    for (index = 0, change; index < changes.length; index++) {
-                        change = changes[index];
-                        if (propertiesMap[change.path]) fn.call(data, change);
+                function find(path) {
+                    for (var index = path.length; index > 0; index--) {
+                        if (propertiesMap[path.slice(0, index).join(".")]) return true;
                     }
-                });
-            } else {
-                Loop.watch(data, properties, true);
-            }
-            return this;
-        },
-        /*
-            ## BiSheng.unwatch(data, fn)
+                }
+                function callback(changes) {
+                    for (var index = 0; index < changes.length; index++) {
+                        change = changes[index];
+                        if (find(change.path)) fn.call(data, change);
+                    }
+                }
+                if (properties && arguments.length === 3) {
+                    // BiSheng.watch(data, properties, fn(changes))
+                    // BiSheng.watch(data, property, fn(change))
+                    properties = properties.constructor !== Array ? [ properties ] : properties;
+                    for (index = 0; index < properties.length; index++) {
+                        propertiesMap[properties[index]] = true;
+                    }
+                    fn.guid = fn.guid || guid++;
+                    callback.guid = fn.guid;
+                    callback.properties = properties;
+                    Loop.watch(data, callback);
+                } else {
+                    // BiSheng.watch(data, undefined, fn(changes))
+                    // BiSheng.watch(data, fn(changes))
+                    fn = properties || fn;
+                    fn.guid = fn.guid || guid++;
+                    // BiSheng.watch(data, fn(changes))
+                    Loop.watch(data, fn);
+                }
+                return this;
+            },
+            /*
+                ## BiSheng.unwatch(data, properties, fn)
 
-            移除监听函数。
+                移除监听函数。
 
-            * BiSheng.unwatch(data, fn)
-                移除对象（或数组） data 上绑定的监听函数 fn。
-            * BiSheng.unwatch(data)
-                移除对象（或数组） data 上绑定的所有监听函数。
-            * BiSheng.unwatch(fn)
-                全局移除监听函数 fn。
+                * **BiSheng.unwatch(data, properties, fn)**
+                    
+                    移除对象（或数组） data 上，绑定的用于监听属性 properties 的监听函数 fn。
+                
+                * **BiSheng.unwatch(data, properties)**
+                    
+                    移除对象（或数组） data 上，绑定的用于监听属性 properties 的所有监听函数。
 
-            **参数的含义和默认值**如下所示：
+                * **BiSheng.unwatch(data, fn)**
 
-            * 参数 data：可选。待移除监听函数的对象或数组。
-            * 参数 fn：可选。待移除的监听函数。
+                    移除对象（或数组） data 上绑定的监听函数 fn。
 
-            **使用示例**如下所示：
+                * **BiSheng.unwatch(data)**
 
-                var data = { foo: 'foo' }
-                BiSheng.watch(data, function(changes){
-                    console.log(JSON.stringify(changes, null, 4))
-                })
-                data.foo = 'bar'
-                // =>
-                [
-                    {
-                        "type": "update",
-                        "path": [
-                            3,
-                            "foo"
-                        ],
-                        "value": "bar",
-                        "oldValue": "foo",
-                        "root": {
-                            "foo": "bar"
-                        },
-                        "context": {
-                            "foo": "bar"
+                    移除对象（或数组） data 上绑定的所有监听函数。
+
+                * **BiSheng.unwatch(fn)**
+
+                    全局移除监听函数 fn。
+
+                **参数的含义和默认值**如下所示：
+
+                * **参数 data**：可选。指向待移除监听函数的对象或数组。
+                * **参数 properties**：可选。字符串，或字符串数组。表示待移除监听的属性。
+                * **参数 fn**：可选。待移除的监听函数。
+
+                **使用示例**如下所示：
+
+                    var data = { foo: 'foo' }
+                    BiSheng.watch(data, function(changes){
+                        console.log(JSON.stringify(changes, null, 4))
+                    })
+                    data.foo = 'bar'
+                    // =>
+                    [
+                        {
+                            "type": "update",
+                            "path": [
+                                3,
+                                "foo"
+                            ],
+                            "value": "bar",
+                            "oldValue": "foo",
+                            "root": {
+                                "foo": "bar"
+                            },
+                            "context": {
+                                "foo": "bar"
+                            }
+                        }
+                    ]
+                    
+                    setTimeout(function(){
+                        BiSheng.unwatch(data)
+                        data.foo = 'foo'
+                        // => 
+                    }, 1000)
+
+            */
+            unwatch: function(data, properties, fn) {
+                if (!data) return this;
+                // BiSheng.unwatch(fn)
+                if (arguments.length === 1 && typeof data === "function") {
+                    fn = data;
+                    data = properties = undefined;
+                }
+                // BiSheng.unwatch(data, fn) or BiSheng.unwatch(data, properties)
+                if (arguments.length === 2) {
+                    // BiSheng.unwatch(data, fn)
+                    if (typeof properties === "function") {
+                        fn = properties;
+                        properties = undefined;
+                    }
+                }
+                // BiSheng.unwatch(data, fn)
+                // BiSheng.unwatch(data)
+                // BiSheng.unwatch(fn)
+                if (!properties) {
+                    Loop.unwatch(data, fn);
+                    return this;
+                }
+                var i, j, k, task, found = false, tmp = [];
+                if (properties.constructor !== Array) {
+                    tmp = [ properties ];
+                } else {
+                    tmp = properties;
+                }
+                // properties = (properties.constructor !== Array ? [properties] : properties)
+                // 为什么这条语句改变了 properties 的值？
+                // BiSheng.unwatch(data, properties, fn)
+                // BiSheng.unwatch(data, properties)
+                for (i = 0; i < Loop.tasks.length; i++) {
+                    task = Loop.tasks[i];
+                    found = false;
+                    if (task.data !== data || !task.callback.properties) continue;
+                    if (fn && task.callback.guid !== fn.guid) continue;
+                    for (j = 0; j < tmp.length; j++) {
+                        for (k = 0; k < task.callback.properties.length; k++) {
+                            if (task.callback.properties[k] === tmp[j]) {
+                                // 删除匹配的属性，不再监听该属性
+                                task.callback.properties.splice(k--, 1);
+                                // 如果属性已全部删除，则删除监听函数
+                                if (!task.callback.properties.length) found = true;
+                            }
                         }
                     }
-                ]
+                    if (found) Loop.tasks.splice(i--, 1);
+                }
+                return this;
+            },
+            /*
+                ## BiSheng.apply(fn)
                 
-                setTimeout(function(){
-                    BiSheng.unwatch(data)
-                    data.foo = 'foo'
-                    // => 
-                }, 1000)
+                更新数据，然后检查数据的变化，并自动视图。
 
-        */
-        unwatch: function(data, fn) {
-            Loop.unwatch(data, fn);
-            return this;
-        }
-    };
+            */
+            apply: function(fn) {
+                fn();
+                BiSheng.Loop.letMeSee();
+                return this;
+            }
+        };
+    }();
+    // BiSheng.auto(false)
     /*! src/fix/suffix.js */
     BiSheng.Loop = Loop;
     BiSheng.Locators = Locators;

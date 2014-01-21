@@ -10,7 +10,7 @@ function doit(data, task, expected) {
     stop()
     BiSheng.Loop.watch(data, function(changes) {
         deepEqual(changes, expected, task)
-        BiSheng.Loop.watch(data)
+        BiSheng.Loop.unwatch(data)
         start()
     })
     task()
@@ -39,7 +39,8 @@ test('object delete', function() {
     var expected = [{
         type: 'delete',
         path: ['foo'],
-        value: 123
+        value: undefined,
+        oldValue: 123
     }]
     doit(data, task, expected)
 })
@@ -95,7 +96,8 @@ test('nested object delete', function() {
     var expected = [{
         type: 'delete',
         path: ['a', 'b', 'c', 'd'],
-        value: 123
+        value: undefined,
+        oldValue: 123
     }]
     doit(data, task, expected)
 })
@@ -143,7 +145,8 @@ test('array delete', function() {
     var expected = [{
         type: 'delete',
         path: ['0'],
-        value: 123
+        value: undefined,
+        oldValue: 123
     }]
     doit(data, task, expected)
 })
@@ -187,7 +190,8 @@ test('nested array delete', function() {
     var expected = [{
         type: 'delete',
         path: ['0', '0'],
-        value: 123
+        value: undefined,
+        oldValue: 123
     }]
     doit(data, task, expected)
 })

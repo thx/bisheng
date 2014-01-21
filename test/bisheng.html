@@ -10,7 +10,10 @@
   <script src="../bower_components/jquery/jquery.js"></script>
   <script src="../bower_components/handlebars/handlebars.js"></script>
   <script src="../bower_components/mockjs/dist/mock.js"></script>
-  <script type="text/javascript" src="../dist/bisheng.js"></script>
+  <script src="../dist/bisheng.js"></script>
+  <script>
+    BiSheng.auto(true) // 自动检测
+  </script>
   <!-- Load local tests. -->
   <script type="text/javascript">
     QUnit.begin(function(){
@@ -30,6 +33,8 @@
   <script type="text/javascript" src="attribute.js"></script>
   <script type="text/javascript" src="block.js"></script>
   <script type="text/javascript" src="form.js"></script>
+  <script type="text/javascript" src="watch.js"></script>
+  <script type="text/javascript" src="run_mode.js"></script>
   <!-- 钻石展位测试 -->
   <script type="text/javascript" src="zuanshi.js"></script>
   

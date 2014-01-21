@@ -4,7 +4,7 @@
 双向绑定的入口对象，含有 4 个方法：
 * BiSheng.bind(data, tpl, callback)
 * BiSheng.unbind(data, tpl)
-* BiSheng.watch(data, fn(changes))
+* BiSheng.watch(data, properties, fn(change))
 * BiSheng.unwatch(data, fn)
 
 ## BiSheng.bind(data, tpl, callback(content))

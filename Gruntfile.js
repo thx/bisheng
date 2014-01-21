@@ -1,6 +1,8 @@
 'use strict';
 
 var Mock = require('./bower_components/mockjs/dist/mock.js')
+
+// http://www.network-science.de/ascii/ doom
 console.log(Mock.heredoc(function() {
     /*
 ______   _   _____   _                                    _       
@@ -114,7 +116,7 @@ module.exports = function(grunt) {
                 tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver'] // 'nodeunit'
             },
             markdown: {
-                files: ['doc/*.md', 'doc/template.html', '!doc/what.md'],
+                files: ['doc/*.md', 'doc/template*.html', '!doc/what.md'],
                 tasks: ['markdown']
             },
             cleaver: {
@@ -152,6 +154,27 @@ module.exports = function(grunt) {
                 dest: 'doc/',
                 ext: '.html'
             }
+        },
+        copy: {
+            doc: {
+                files: [{
+                    expand: true,
+                    src: [
+                        'dist/**',
+                        'doc/**',
+                        'demo/**',
+                        'test/**',
+                        'bower_components/**',
+                        'node_modules/grunt-contrib-qunit/test/libs/**'
+                    ],
+                    dest: '../bishengjs.github.io/'
+                }, {
+                    expand: true,
+                    cwd: './',
+                    src: ['index.html', 'bishengjs.png'],
+                    dest: '../bishengjs.github.io/'
+                }]
+            },
         }
     })
 
@@ -164,8 +187,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-markdown')
     grunt.loadNpmTasks('grunt-cleaver')
+    grunt.loadNpmTasks('grunt-contrib-copy')
 
     grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver', 'connect', 'watch']) // , 'nodeunit'
-    grunt.registerTask('doc', ['markdown', 'cleaver', 'connect', 'watch'])
+    grunt.registerTask('doc', ['markdown', 'cleaver', 'copy', 'connect', 'watch'])
     grunt.registerTask('travis', ['jshint', 'qunit']) // grunt travis --verbose
 };

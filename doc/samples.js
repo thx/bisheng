@@ -3,7 +3,7 @@ $(function() {
     var structure = $(
         Mock.heredoc(function() {
             /*!
-<div class="col-md-6 tc">
+<div class="col-sm-6 tc">
     <div class="panel panel-default">
         <div class="panel-heading"></div>
         <div class="panel-body result"></div>
@@ -65,8 +65,8 @@ $(function() {
             */
         })
         var data = {
-            md5: md5('nuy.bishengjs@gmail.com'),
-            email: 'nuy.bishengjs@gmail.com'
+            md5: md5('nuysoft@gmail.com'),
+            email: 'nuysoft@gmail.com'
         }
         BiSheng.watch(data, 'email', function(change) {
             data.md5 = md5(change.value)
