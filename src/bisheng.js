@@ -40,8 +40,11 @@
                 如果希望自动检测，则执行 执行 BiSheng.auto(true)。
             */
             auto: function(bool) {
-                Loop.auto(bool)
-                return this
+                if (arguments.length) {
+                    Loop.auto(bool)
+                    return this
+                }
+                return Loop.auto()
             },
 
             /*

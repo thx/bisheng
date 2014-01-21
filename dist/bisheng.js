@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-16 01:58:50 PM CST */
+/*! BiSheng.js 2014-01-21 03:11:42 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -1328,8 +1328,11 @@
                 如果希望自动检测，则执行 执行 BiSheng.auto(true)。
             */
             auto: function(bool) {
-                Loop.auto(bool);
-                return this;
+                if (arguments.length) {
+                    Loop.auto(bool);
+                    return this;
+                }
+                return Loop.auto();
             },
             /*
                 ## BiSheng.bind(data, tpl, callback(content))
