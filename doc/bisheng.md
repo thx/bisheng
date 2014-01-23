@@ -1,11 +1,12 @@
 # BiSheng
 ---
 
-双向绑定的入口对象，含有 4 个方法：
+双向绑定的入口对象，含有 5 个方法：
 * BiSheng.bind(data, tpl, callback)
 * BiSheng.unbind(data, tpl)
 * BiSheng.watch(data, properties, fn(change))
 * BiSheng.unwatch(data, fn)
+* BiSheng.apply(fn)
 
 ## BiSheng.bind(data, tpl, callback(content))
 
@@ -155,6 +156,18 @@
         data.foo = 'foo'
         // => 
     }, 1000)
+
+## BiSheng.apply(fn)
+
+用于包裹对数据的操作。内部会检查数据的变化，并自动同步到视图。
+
+**使用示例**如下所示：
+
+    var data = { foo: 'foo' }
+    // ...
+    BiSheng.apply(function(){
+        data.foo = 'bar'
+    })
 
 <script>
     $('div.catalog ul').addClass('pre')

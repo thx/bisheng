@@ -189,7 +189,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-cleaver')
     grunt.loadNpmTasks('grunt-contrib-copy')
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver', 'connect', 'watch']) // , 'nodeunit'
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver', 'copy', 'connect', 'watch']) // , 'nodeunit'
     grunt.registerTask('doc', ['markdown', 'cleaver', 'copy', 'connect', 'watch'])
     grunt.registerTask('travis', ['jshint', 'qunit']) // grunt travis --verbose
 };

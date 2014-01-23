@@ -75,12 +75,13 @@
     <div class="row">
       <div class="col-sm-9"><h1 id="bisheng">BiSheng</h1>
 <hr>
-<p>双向绑定的入口对象，含有 4 个方法：</p>
+<p>双向绑定的入口对象，含有 5 个方法：</p>
 <ul>
 <li>BiSheng.bind(data, tpl, callback)</li>
 <li>BiSheng.unbind(data, tpl)</li>
 <li>BiSheng.watch(data, properties, fn(change))</li>
 <li>BiSheng.unwatch(data, fn)</li>
+<li>BiSheng.apply(fn)</li>
 </ul>
 <h2 id="bisheng-bind-data-tpl-callback-content-">BiSheng.bind(data, tpl, callback(content))</h2>
 <p>在模板和数据之间执行双向绑定。</p>
@@ -219,6 +220,14 @@ setTimeout(function(){
     data.foo = &#39;foo&#39;
     // =&gt; 
 }, 1000)</code></pre>
+<h2 id="bisheng-apply-fn-">BiSheng.apply(fn)</h2>
+<p>用于包裹对数据的操作。内部会检查数据的变化，并自动同步到视图。</p>
+<p><strong>使用示例</strong>如下所示：</p>
+<pre><code>var data = { foo: &#39;foo&#39; }
+// ...
+BiSheng.apply(function(){
+    data.foo = &#39;bar&#39;
+})</code></pre>
 <script>
     $('div.catalog ul').addClass('pre')
 </script></div>

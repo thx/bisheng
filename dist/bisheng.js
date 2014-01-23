@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-23 11:14:34 AM CST */
+/*! BiSheng.js 2014-01-23 03:59:21 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -1754,8 +1754,13 @@
             /*
                 ## BiSheng.apply(fn)
                 
-                更新数据，然后检查数据的变化，并自动视图。
+                用于包裹对数据的操作。内部会检查数据的变化，并自动同步到视图。
 
+                    var data = { foo: 'foo' }
+                    // ...
+                    BiSheng.apply(function(){
+                        data.foo = 'bar'
+                    })
             */
             apply: function(fn) {
                 fn();

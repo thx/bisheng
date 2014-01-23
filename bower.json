@@ -1,13 +1,7 @@
 {
   "name": "bisheng",
   "version": "0.0.1",
-  "homepage": "https://github.com/thx/bisheng",
-  "authors": [
-    "nuysoft <nuysoft@gmail.com>"
-  ],
-  "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
   "main": "dist/bisheng.js",
-  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -15,11 +9,14 @@
     "src",
     "test",
     "doc",
-    "demo"
+    "demo",
+    "Gruntfile.js",
+    "index.html",
+    "package.json",
   ],
   "dependencies": {
-    "handlebars": "~1.1.2",
-    "jquery": "~1.9.0"
+    "jquery": "~1.9.0",
+    "handlebars": "~1.1.2"
   },
   "devDependencies": {
     "mockjs": "*",

@@ -115,18 +115,22 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
 ## Getting started
 
-1. Install BiSheng.js
+1. Install BiSheng.js and dependencies:
 
+        npm install -g bower
         bower install bishengjs
 
-2. Reference BiSheng.js, jQuery and Handlebars.js
+2. Reference BiSheng.js, jQuery and Handlebars.js using a script tag:
         
         <script src="../bower_components/jquery/jquery.js"></script>
         <script src="../bower_components/handlebars/handlebars.js"></script>
-        <script src="./bower_components/bishengjs/dist/bisheng.js"></script>
+        <script src="../bower_components/bishengjs/dist/bisheng.js"></script>
 
-3. Use `BiSheng.bind()`
+3. Call `BiSheng.bind()`
 
+    <iframe width="100%" height="250" src="http://jsfiddle.net/zj2WF/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<!-- 
         // HTML 模板
         var tpl = '{{title}}'
         // 数据对象
@@ -139,14 +143,23 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
           $('div.container').append(content)
         });
         // 改变数据 data.title，对应的文档区域会更新
-        data.title = 'bar'
+        BiSheng.apply(function(){
+            data.title = 'bar'
+        })
+ -->
 
 ## Modular
 
 <!-- Use Module Loader  -->
 
-* **AMD ( RequireJS )** [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD), [Live Demo](), [Test Case](../test/expose_amd.html)
-        
+* **AMD ( RequireJS )** 
+
+    <iframe width="100%" height="360" src="http://jsfiddle.net/P28Ch/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<!-- 
+    [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD)
+ -->
+<!-- 
         // <script src="../bower_components/requirejs/require.js"></script>
 
         // Set the config for the BiSheng.js, jQuery, Handlebars.js
@@ -161,9 +174,16 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         require(['bisheng'], function(BiSheng){
             // code here
         })
+-->
 
-* **CMD ( SeaJS )** [Specifications](https://github.com/seajs/seajs/issues/242), [Live Demo](), [Test Case](../test/expose_cmd.html)
+* **CMD ( SeaJS )**
 
+    <iframe width="100%" height="420" src="http://jsfiddle.net/79E8T/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<!-- 
+    [Specifications](https://github.com/seajs/seajs/issues/242)
+ -->
+<!-- 
         // <script src="../bower_components/seajs/sea.js"></script>
 
         // Set the config for the BiSheng.js, jQuery, Handlebars.js
@@ -178,9 +198,16 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         seajs.use(['bisheng'], function(BiSheng){
             // code here
         })
+-->
 
-* **KMD ( KISSY )** [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html), [Live Demo](), [Test Case](../test/expose_kmd.html)
+* **KMD ( KISSY )** 
 
+    <iframe width="100%" height="420" src="http://jsfiddle.net/pLnBm/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<!-- 
+    [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html)
+ -->
+<!-- 
         // <script src="../bower_components/kissy/build/seed.js"></script>
 
         // Set the config for the BiSheng.js, jQuery, Handlebars.js
@@ -195,6 +222,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         KISSY.use(['bisheng'], function (S, BiSheng) {
             // code here
         })
+-->
 
 ## More Examples
 

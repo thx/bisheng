@@ -419,8 +419,15 @@
             /*
                 ## BiSheng.apply(fn)
                 
-                更新数据，然后检查数据的变化，并自动视图。
+                用于包裹对数据的操作。内部会检查数据的变化，并自动同步到视图。
 
+                **使用示例**如下所示：
+                
+                    var data = { foo: 'foo' }
+                    // ...
+                    BiSheng.apply(function(){
+                        data.foo = 'bar'
+                    })
             */
             apply: function(fn) {
                 fn()
