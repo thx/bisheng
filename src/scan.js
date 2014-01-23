@@ -2,7 +2,7 @@
 
 /* global window: true */
 /* global expose */
-/* global $: true */
+/* global jQuery: true */
 /* global Loop */
 /* global Locator */
 
@@ -51,7 +51,7 @@
         */
         function scanTexNode(node) {
             var content = node.textContent || node.innerText || node.nodeValue
-            $('<div>' + content + '</div>')
+            jQuery('<div>' + content + '</div>')
                 .contents()
                 .each(function(index, elem) {
                     Locator.update(elem, {
@@ -64,12 +64,37 @@
         /*
             扫描属性
         */
+
+        var AttributeHooks = {
+            'bs-style': {
+                name: 'style',
+                setup: function() {},
+                teardown: function(node, value) {
+                    jQuery(node).attr('style', value)
+                }
+            },
+            'bs-src': {
+                name: 'src',
+                setup: function() {},
+                teardown: function(node, value) {
+                    jQuery(node).attr('src', value)
+                }
+            },
+            'bs-checked': {
+                name: 'checked',
+                setup: function() {},
+                teardown: function(node, value) {
+                    if (value === 'true') jQuery(node).attr('checked', 'checked')
+                }
+            }
+        };
+
         function scanAttributes(node) {
             var reph = Locator.getLocatorRegExp()
             var restyle = /([^;]*?): ([^;]*)/ig
 
             var attributes = []
-            $.each(
+            jQuery.each(
                 // “Array.prototype.slice: 'this' is not a JavaScript object” error in IE8
                 // slice.call(node.attributes || [], 0)
                 function() {
@@ -89,13 +114,11 @@
 
                     var nodeName = attributeNode.nodeName,
                         nodeValue = attributeNode.nodeValue,
-                        ma, stylema;
+                        ma, stylema, hook;
 
                     nodeName = nodeName.toLowerCase()
-                    nodeName = nodeName === 'bs-style' && 'style' ||
-                        nodeName === 'bs-src' && 'src' ||
-                        nodeName === 'bs-checked' && 'checked' ||
-                        nodeName
+                    hook = AttributeHooks[nodeName]
+                    nodeName = hook ? hook.name : nodeName
 
                     if (nodeName === 'style') {
                         restyle.exec('')
@@ -103,10 +126,10 @@
                             reph.exec('')
                             while ((ma = reph.exec(stylema[2]))) {
                                 attributes.push(
-                                    Locator.update($('<div>' + ma[1] + '</div>').contents()[0], {
+                                    Locator.update(jQuery('<div>' + ma[1] + '</div>').contents()[0], {
                                         type: 'attribute',
                                         name: nodeName,
-                                        css: $.trim(stylema[1])
+                                        css: jQuery.trim(stylema[1])
                                     }, true)
                                 )
                             }
@@ -120,7 +143,7 @@
                                     Fixes bug:
                                     在 IE6 中，占位符中的空格依然是 `%20`，需要手动转义。
                                 */
-                                Locator.update($('<div>' + decodeURIComponent(ma[1]) + '</div>').contents()[0], {
+                                Locator.update(jQuery('<div>' + decodeURIComponent(ma[1]) + '</div>').contents()[0], {
                                     type: 'attribute',
                                     name: nodeName
                                 }, true)
@@ -132,24 +155,22 @@
                         nodeValue = nodeValue.replace(reph, '')
                         attributeNode.nodeValue = nodeValue
 
-                        $(attributes).each(function(index, elem) {
+                        jQuery(attributes).each(function(index, elem) {
                             var slot = Locator.parse(elem, 'slot')
-                            if (slot === 'start') $(node).before(elem)
-                            if (slot === 'end') $(node).after(elem)
+                            if (slot === 'start') jQuery(node).before(elem)
+                            if (slot === 'end') jQuery(node).after(elem)
                         })
 
                     }
 
-                    if (nodeName === 'style') $(node).attr('style', nodeValue)
-                    if (nodeName === 'src') $(node).attr('src', nodeValue)
-                    if (nodeName === 'checked' && nodeValue === 'true') $(node).attr('checked', 'checked')
+                    if (hook) hook.teardown(node, nodeValue)
                 }
             )
         }
 
         // 扫描子节点
         function scanChildNode(node) {
-            $(node.childNodes).each(function(index, childNode) {
+            jQuery(node.childNodes).each(function(index, childNode) {
                 scanNode(childNode)
             })
         }
@@ -165,7 +186,7 @@
                     target = Locator.parseTarget(locator)[0];
 
                 // TODO 为什么不触发 change 事件？
-                $(target).on('change.bisheng keyup.bisheng', function(event) {
+                jQuery(target).on('change.bisheng keyup.bisheng', function(event) {
                     updateValue(data, path, event.target)
                     if (!Loop.auto()) Loop.letMeSee()
                 })
@@ -185,17 +206,17 @@
                 }
                 // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
                 if (value === undefined || value.valueOf() === false || value.valueOf() === 'false') {
-                    $(target).prop('checked', false)
+                    jQuery(target).prop('checked', false)
                 }
                 if (value !== undefined &&
                     (value.valueOf() === true || value.valueOf() === 'true' || value.valueOf() === 'checked')) {
-                    $(target).prop('checked', true)
+                    jQuery(target).prop('checked', true)
                 }
 
-                $(target).on('change.bisheng', function(event, firing) {
+                jQuery(target).on('change.bisheng', function(event, firing) {
                     // radio：点击其中一个后，需要同步更新同名的其他 radio
                     if (!firing && event.target.type === 'radio') {
-                        $('input:radio[name="' + event.target.name + '"]')
+                        jQuery('input:radio[name="' + event.target.name + '"]')
                             .not(event.target)
                             .trigger('change.bisheng', firing = true)
                     }
@@ -213,7 +234,7 @@
                 data = data[path[index]]
             }
 
-            var $target = $(target),
+            var $target = jQuery(target),
                 value
             switch (target.nodeName.toLowerCase()) {
                 case 'input':
@@ -250,7 +271,7 @@
                 data = data[path[index]]
             }
 
-            var $target = $(target),
+            var $target = jQuery(target),
                 value, name
             switch (target.nodeName.toLowerCase()) {
                 case 'input':

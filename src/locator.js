@@ -1,7 +1,7 @@
 "use strict";
 
 /* global window */
-/* global $ */
+/* global jQuery */
 /* global expose */
 /* global Handlebars */
 /* global location */
@@ -67,11 +67,11 @@
             for (var key in attrs) {
                 selector += '[' + key + '="' + attrs[key] + '"]'
             }
-            return $(selector, context)
+            return jQuery(selector, context)
         },
         // Scanner 解析占位符
         parse: function parse(locator, attr) {
-            return $(locator).attr(attr)
+            return jQuery(locator).attr(attr)
         },
         // Scanner 更新占位符
         update: function update(locator, attrs, force) {
@@ -82,7 +82,7 @@
             ) {
                 if (force || !locator.getAttribute('type')) {
                     for (var key in attrs) {
-                        $(locator).attr(key, attrs[key]) // IE6 不支持 setAttribute
+                        jQuery(locator).attr(key, attrs[key]) // IE6 不支持 setAttribute
                         // locator.setAttribute(key, attrs[key])
                     }
                 }
@@ -91,12 +91,12 @@
         },
         // Flush 解析目标节点
         parseTarget: function parseTarget(locator) {
-            var guid = $(locator).attr('guid')
+            var guid = jQuery(locator).attr('guid')
             var target = [],
                 node = locator,
                 $node
             while ((node = node.nextSibling)) {
-                $node = $(node)
+                $node = jQuery(node)
                 if (node.nodeName.toLowerCase() === 'script' && $node.attr('guid')) {
                     if ($node.attr('guid') === guid && $node.attr('slot') === 'end') {
                         break
@@ -105,7 +105,7 @@
                     target.push(node)
                 }
             }
-            return $(target)
+            return jQuery(target)
         },
     }
 
@@ -123,7 +123,7 @@
         // Scanner 查找定位符
         find: function find(attrs, context) {
             // getJsonCommentsByProperty
-            return $(context).add('*', context).contents()
+            return jQuery(context).add('*', context).contents()
                 .filter(function() {
                     return this.nodeType === 8
                 })
@@ -174,7 +174,7 @@
                     target.push(node)
                 }
             }
-            return $(target)
+            return jQuery(target)
         }
     }
 

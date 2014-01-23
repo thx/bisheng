@@ -6,13 +6,13 @@ var Mock = require('./bower_components/mockjs/dist/mock.js')
 console.log(Mock.heredoc(function() {
     /*
 ______   _   _____   _                                    _       
-| ___ \ (_) /  ___| | |                                  (_)      
-| |_/ /  _  \ `--.  | |__     ___   _ __     __ _         _   ___ 
-| ___ \ | |  `--. \ | '_ \   / _ \ | '_ \   / _` |       | | / __|
-| |_/ / | | /\__/ / | | | | |  __/ | | | | | (_| |  _    | | \__ \
-\____/  |_| \____/  |_| |_|  \___| |_| |_|  \__, | (_)   | | |___/
-                                             __/ |      _/ |      
-                                            |___/      |__/       
+| ___ \ (_) /  ___| | |                                 (_)      
+| |_/ /  _  \ `--.  | |__     ___   _ __     __ _        _   ___ 
+| ___ \ | |  `--. \ | '_ \   / _ \ | '_ \   / _` |      | | / __|
+| |_/ / | | /\__/ / | | | | |  __/ | | | | | (_| |  _   | | \__ \
+\____/  |_| \____/  |_| |_|  \___| |_| |_|  \__, | (_)  | | |___/
+                                             __/ |     _/ |      
+                                            |___/     |__/       
      */
 }))
 
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
         },
         watch: {
             dev: {
-                files: ['<%= jshint.files %>', 'src/fix/*'], // , 'doc/*.md', 'doc/template.html'
+                files: ['<%= jshint.files %>', 'src/fix/*', 'test/*'], // , 'doc/*.md', 'doc/template.html'
                 tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver'] // 'nodeunit'
             },
             markdown: {

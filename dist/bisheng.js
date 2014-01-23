@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-21 03:11:42 PM CST */
+/*! BiSheng.js 2014-01-23 11:14:34 AM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -7,27 +7,85 @@
 
         模块化，适配主流加载器。
         Modular
+
+        * expose(id, dependencies, factory, globals)
+        * expose(id, factory, globals)
+        * expose(dependencies, factory, globals)
+        * expose(factory, globals)
+        * expose(factory)
     */
-    function expose(factory, globals) {
+    function expose(id, dependencies, factory, globals) {
+        var argsLen = arguments.length;
+        var args = [];
+        switch (argsLen) {
+          case 1:
+            // expose(factory)
+            factory = id;
+            id = dependencies = globals = undefined;
+            break;
+
+          case 2:
+            // expose(factory, globals)
+            factory = id;
+            globals = dependencies;
+            id = dependencies = undefined;
+            break;
+
+          case 3:
+            globals = factory;
+            factory = dependencies;
+            if (id instanceof Array) {
+                // expose(dependencies, factory, globals)
+                dependencies = id;
+                id = undefined;
+            } else {
+                // expose(id, factory, globals)
+                dependencies = undefined;
+            }
+            break;
+
+          default:        }
         if (typeof module === "object" && module.exports) {
             // CommonJS
             module.exports = factory();
         } else if (typeof define === "function" && define.amd) {
             // AMD modules
-            define(factory);
+            // define(id?, dependencies?, factory);
+            // https://github.com/amdjs/amdjs-api/wiki/AMD
+            if (id !== undefined) args.push(id);
+            if (id !== dependencies) args.push(dependencies);
+            args.push(factory);
+            define.apply(window, args);
         } else if (typeof define === "function" && define.cmd) {
             // CMD modules
-            define(factory);
+            // define(id?, deps?, factory)
+            // https://github.com/seajs/seajs/issues/242
+            if (id !== undefined) args.push(id);
+            if (id !== dependencies) args.push(dependencies);
+            args.push(factory);
+            define.apply(window, args);
         } else if (typeof KISSY != "undefined") {
             // For KISSY 1.4
-            KISSY.add(factory);
+            // http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html
+            window.define = function define(id, dependencies, factory) {
+                // KISSY.add(name?, factory?, deps)
+                KISSY.add(id, function() {
+                    var slice = [].slice;
+                    var args = slice.call(arguments, 1, arguments.length - 1);
+                    return factory.apply(window, args);
+                }, {
+                    requires: dependencies
+                });
+            };
+            window.define.kmd = {};
+            define(id, dependencies, factory);
         } else {
             // Browser globals
             if (globals) globals();
         }
     }
     /*! src/fix/prefix-2.js */
-    expose(factory, function() {
+    expose("bisheng", [ "jquery", "handlebars" ], factory, function() {
         // Browser globals
         window.BiSheng = factory();
     });
@@ -533,18 +591,18 @@
             for (var key in attrs) {
                 selector += "[" + key + '="' + attrs[key] + '"]';
             }
-            return $(selector, context);
+            return jQuery(selector, context);
         },
         // Scanner 解析占位符
         parse: function parse(locator, attr) {
-            return $(locator).attr(attr);
+            return jQuery(locator).attr(attr);
         },
         // Scanner 更新占位符
         update: function update(locator, attrs, force) {
             if (locator.nodeName.toLowerCase() === "script" && locator.getAttribute("guid") && locator.getAttribute("slot") === "start") {
                 if (force || !locator.getAttribute("type")) {
                     for (var key in attrs) {
-                        $(locator).attr(key, attrs[key]);
+                        jQuery(locator).attr(key, attrs[key]);
                     }
                 }
             }
@@ -552,10 +610,10 @@
         },
         // Flush 解析目标节点
         parseTarget: function parseTarget(locator) {
-            var guid = $(locator).attr("guid");
+            var guid = jQuery(locator).attr("guid");
             var target = [], node = locator, $node;
             while (node = node.nextSibling) {
-                $node = $(node);
+                $node = jQuery(node);
                 if (node.nodeName.toLowerCase() === "script" && $node.attr("guid")) {
                     if ($node.attr("guid") === guid && $node.attr("slot") === "end") {
                         break;
@@ -564,7 +622,7 @@
                     target.push(node);
                 }
             }
-            return $(target);
+            return jQuery(target);
         }
     };
     // comment 定位符
@@ -581,7 +639,7 @@
         // Scanner 查找定位符
         find: function find(attrs, context) {
             // getJsonCommentsByProperty
-            return $(context).add("*", context).contents().filter(function() {
+            return jQuery(context).add("*", context).contents().filter(function() {
                 return this.nodeType === 8;
             }).filter(function(index, item) {
                 /* jslint evil: true */
@@ -630,7 +688,7 @@
                     target.push(node);
                 }
             }
-            return $(target);
+            return jQuery(target);
         }
     };
     var Locators = [ ScriptLocator, JsonCommentLocator ];
@@ -822,7 +880,7 @@
         */
         function scanTexNode(node) {
             var content = node.textContent || node.innerText || node.nodeValue;
-            $("<div>" + content + "</div>").contents().each(function(index, elem) {
+            jQuery("<div>" + content + "</div>").contents().each(function(index, elem) {
                 Locator.update(elem, {
                     type: "text"
                 });
@@ -831,11 +889,34 @@
         /*
             扫描属性
         */
+        var AttributeHooks = {
+            "bs-style": {
+                name: "style",
+                setup: function() {},
+                teardown: function(node, value) {
+                    jQuery(node).attr("style", value);
+                }
+            },
+            "bs-src": {
+                name: "src",
+                setup: function() {},
+                teardown: function(node, value) {
+                    jQuery(node).attr("src", value);
+                }
+            },
+            "bs-checked": {
+                name: "checked",
+                setup: function() {},
+                teardown: function(node, value) {
+                    if (value === "true") jQuery(node).attr("checked", "checked");
+                }
+            }
+        };
         function scanAttributes(node) {
             var reph = Locator.getLocatorRegExp();
             var restyle = /([^;]*?): ([^;]*)/gi;
             var attributes = [];
-            $.each(// “Array.prototype.slice: 'this' is not a JavaScript object” error in IE8
+            jQuery.each(// “Array.prototype.slice: 'this' is not a JavaScript object” error in IE8
             // slice.call(node.attributes || [], 0)
             function() {
                 var re = [];
@@ -850,18 +931,19 @@
                 }
                 return re;
             }(), function(index, attributeNode) {
-                var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema;
+                var nodeName = attributeNode.nodeName, nodeValue = attributeNode.nodeValue, ma, stylema, hook;
                 nodeName = nodeName.toLowerCase();
-                nodeName = nodeName === "bs-style" && "style" || nodeName === "bs-src" && "src" || nodeName === "bs-checked" && "checked" || nodeName;
+                hook = AttributeHooks[nodeName];
+                nodeName = hook ? hook.name : nodeName;
                 if (nodeName === "style") {
                     restyle.exec("");
                     while (stylema = restyle.exec(nodeValue)) {
                         reph.exec("");
                         while (ma = reph.exec(stylema[2])) {
-                            attributes.push(Locator.update($("<div>" + ma[1] + "</div>").contents()[0], {
+                            attributes.push(Locator.update(jQuery("<div>" + ma[1] + "</div>").contents()[0], {
                                 type: "attribute",
                                 name: nodeName,
-                                css: $.trim(stylema[1])
+                                css: jQuery.trim(stylema[1])
                             }, true));
                         }
                     }
@@ -872,7 +954,7 @@
                                     Fixes bug:
                                     在 IE6 中，占位符中的空格依然是 `%20`，需要手动转义。
                                 */
-                        Locator.update($("<div>" + decodeURIComponent(ma[1]) + "</div>").contents()[0], {
+                        Locator.update(jQuery("<div>" + decodeURIComponent(ma[1]) + "</div>").contents()[0], {
                             type: "attribute",
                             name: nodeName
                         }, true));
@@ -881,20 +963,18 @@
                 if (attributes.length) {
                     nodeValue = nodeValue.replace(reph, "");
                     attributeNode.nodeValue = nodeValue;
-                    $(attributes).each(function(index, elem) {
+                    jQuery(attributes).each(function(index, elem) {
                         var slot = Locator.parse(elem, "slot");
-                        if (slot === "start") $(node).before(elem);
-                        if (slot === "end") $(node).after(elem);
+                        if (slot === "start") jQuery(node).before(elem);
+                        if (slot === "end") jQuery(node).after(elem);
                     });
                 }
-                if (nodeName === "style") $(node).attr("style", nodeValue);
-                if (nodeName === "src") $(node).attr("src", nodeValue);
-                if (nodeName === "checked" && nodeValue === "true") $(node).attr("checked", "checked");
+                if (hook) hook.teardown(node, nodeValue);
             });
         }
         // 扫描子节点
         function scanChildNode(node) {
-            $(node.childNodes).each(function(index, childNode) {
+            jQuery(node.childNodes).each(function(index, childNode) {
                 scanNode(childNode);
             });
         }
@@ -907,7 +987,7 @@
             }, node).each(function(index, locator) {
                 var path = Locator.parse(locator, "path").split("."), target = Locator.parseTarget(locator)[0];
                 // TODO 为什么不触发 change 事件？
-                $(target).on("change.bisheng keyup.bisheng", function(event) {
+                jQuery(target).on("change.bisheng keyup.bisheng", function(event) {
                     updateValue(data, path, event.target);
                     if (!Loop.auto()) Loop.letMeSee();
                 });
@@ -924,15 +1004,15 @@
                 }
                 // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
                 if (value === undefined || value.valueOf() === false || value.valueOf() === "false") {
-                    $(target).prop("checked", false);
+                    jQuery(target).prop("checked", false);
                 }
                 if (value !== undefined && (value.valueOf() === true || value.valueOf() === "true" || value.valueOf() === "checked")) {
-                    $(target).prop("checked", true);
+                    jQuery(target).prop("checked", true);
                 }
-                $(target).on("change.bisheng", function(event, firing) {
+                jQuery(target).on("change.bisheng", function(event, firing) {
                     // radio：点击其中一个后，需要同步更新同名的其他 radio
                     if (!firing && event.target.type === "radio") {
-                        $('input:radio[name="' + event.target.name + '"]').not(event.target).trigger("change.bisheng", firing = true);
+                        jQuery('input:radio[name="' + event.target.name + '"]').not(event.target).trigger("change.bisheng", firing = true);
                     }
                     updateChecked(data, path, event.target);
                     if (!Loop.auto()) Loop.letMeSee();
@@ -946,7 +1026,7 @@
             for (var index = 1; index < path.length - 1; index++) {
                 data = data[path[index]];
             }
-            var $target = $(target), value;
+            var $target = jQuery(target), value;
             switch (target.nodeName.toLowerCase()) {
               case "input":
                 switch (target.type) {
@@ -986,7 +1066,7 @@
             for (var index = 1; index < path.length - 1; index++) {
                 data = data[path[index]];
             }
-            var $target = $(target), value, name;
+            var $target = jQuery(target), value, name;
             switch (target.nodeName.toLowerCase()) {
               case "input":
                 switch (target.type) {
@@ -1104,14 +1184,14 @@
                 HTML.convert(content).contents().insertAfter(locator).each(function(index, elem) {
                     event.target.push(elem);
                 });
-                $(target).remove();
+                jQuery(target).remove();
             }
         };
         // 更新属性对应的 Expression
         handle.attribute = function attribute(path, event, change, defined) {
             var currentTarget, name, $target;
             event.target.push(currentTarget = Locator.parseTarget(path)[0]);
-            $target = $(currentTarget);
+            $target = jQuery(currentTarget);
             var ast = defined.$blocks[Locator.parse(path, "guid")];
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value;
             var oldValue = function() {
@@ -1175,7 +1255,7 @@
             */
             // 如果新内容是空，则移除所有旧节点
             if (content.length === 0) {
-                $(target).remove();
+                jQuery(target).remove();
                 return;
             }
             // 移除旧节点中多余的
@@ -1185,7 +1265,7 @@
                 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
             */
             if (content.length < target.length) {
-                $(target.splice(content.length, target.length - content.length)).remove();
+                jQuery(target.splice(content.length, target.length - content.length)).remove();
             }
             content.each(function(index, element) {
                 // 新正节点
@@ -1213,7 +1293,7 @@
                 }
                 // 同是 DOM 元素，则检测属性 outerHTML 是否相等，不相等则替换之
                 if (element.nodeType === 1) {
-                    // $(target[index]).removeClass('transition highlight')
+                    // jQuery(target[index]).removeClass('transition highlight')
                     if (element.outerHTML !== target[index].outerHTML) {
                         target[index].parentNode.insertBefore(element, target[index]);
                         target[index].parentNode.removeChild(target[index]);
@@ -1249,16 +1329,16 @@
                         如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
                     */
                     case 3:
-                    $(item).wrap("<span>").parent().addClass("transition highlight");
+                    jQuery(item).wrap("<span>").parent().addClass("transition highlight");
                     setTimeout(function() {
-                        $(item).unwrap("<span>").removeClass("transition highlight");
+                        jQuery(item).unwrap("<span>").removeClass("transition highlight");
                     }, 500);
                     break;
 
                   case 1:
-                    $(item).addClass("transition highlight");
+                    jQuery(item).addClass("transition highlight");
                     setTimeout(function() {
-                        $(item).removeClass("transition highlight");
+                        jQuery(item).removeClass("transition highlight");
                     }, 500);
                     break;
                 }
@@ -1293,7 +1373,7 @@
         while (depth--) {
             div = div.lastChild;
         }
-        return $(div);
+        return jQuery(div);
     };
     HTML.table = function table(html) {
         return html.replace(/(<table.*?>)([\w\W]*?)(<\/table>)/g, function($0) {
@@ -1368,7 +1448,7 @@
             bind: function bind(data, tpl, callback, context) {
                 // 属性监听函数
                 function task(changes) {
-                    $.each(changes, function(_, change) {
+                    jQuery.each(changes, function(_, change) {
                         var event = {
                             target: []
                         };
@@ -1391,7 +1471,7 @@
                 // 提前解析 table 中的定位符
                 html = HTML.table(html);
                 // 扫描占位符，定位 Expression 和 Block
-                var content = $(HTML.convert(html));
+                var content = jQuery(HTML.convert(html));
                 if (content.length) Scanner.scan(content[0], data);
                 content = content.contents().get();
                 /*

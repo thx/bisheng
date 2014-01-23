@@ -2,7 +2,7 @@
 
 /* global window: true */
 /* global document: true */
-/* global $: true */
+/* global jQuery: true */
 /* global Handlebars: true */
 /* global expose */
 /* global Loop */
@@ -129,7 +129,7 @@ if (typeof module === 'object' && module.exports) {
                     .each(function(index, elem) {
                         event.target.push(elem)
                     })
-                $(target).remove()
+                jQuery(target).remove()
             }
         }
 
@@ -137,7 +137,7 @@ if (typeof module === 'object' && module.exports) {
         handle.attribute = function attribute(path, event, change, defined) {
             var currentTarget, name, $target;
             event.target.push(currentTarget = Locator.parseTarget(path)[0])
-            $target = $(currentTarget)
+            $target = jQuery(currentTarget)
 
             var ast = defined.$blocks[Locator.parse(path, 'guid')]
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value
@@ -206,7 +206,7 @@ if (typeof module === 'object' && module.exports) {
 
             // 如果新内容是空，则移除所有旧节点
             if (content.length === 0) {
-                $(target).remove()
+                jQuery(target).remove()
                 return
             }
             // 移除旧节点中多余的
@@ -216,7 +216,7 @@ if (typeof module === 'object' && module.exports) {
                 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
             */
             if (content.length < target.length) {
-                $(target.splice(content.length, target.length - content.length)).remove()
+                jQuery(target.splice(content.length, target.length - content.length)).remove()
             }
 
             content.each(function(index, element) {
@@ -247,7 +247,7 @@ if (typeof module === 'object' && module.exports) {
                 }
                 // 同是 DOM 元素，则检测属性 outerHTML 是否相等，不相等则替换之
                 if (element.nodeType === 1) {
-                    // $(target[index]).removeClass('transition highlight')
+                    // jQuery(target[index]).removeClass('transition highlight')
                     if (element.outerHTML !== target[index].outerHTML) {
                         target[index].parentNode.insertBefore(element, target[index])
                         target[index].parentNode.removeChild(target[index])
@@ -285,15 +285,15 @@ if (typeof module === 'object' && module.exports) {
                         如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
                     */
                     case 3:
-                        $(item).wrap('<span>').parent().addClass('transition highlight')
+                        jQuery(item).wrap('<span>').parent().addClass('transition highlight')
                         setTimeout(function() {
-                            $(item).unwrap('<span>').removeClass('transition highlight')
+                            jQuery(item).unwrap('<span>').removeClass('transition highlight')
                         }, 500)
                         break
                     case 1:
-                        $(item).addClass('transition highlight')
+                        jQuery(item).addClass('transition highlight')
                         setTimeout(function() {
-                            $(item).removeClass('transition highlight')
+                            jQuery(item).removeClass('transition highlight')
                         }, 500)
                         break
                 }

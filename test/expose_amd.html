@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BiSheng.js Test Suite</title>
+  <!-- Load local QUnit. -->
+  <link rel="stylesheet" href="../node_modules/grunt-contrib-qunit/test/libs/qunit.css" media="screen">
+  <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
+  <!-- Load local lib. -->
+  <script src="../bower_components/requirejs/require.js"></script>
+  <script>
+    // 配置路径
+    require.config({
+      paths:{
+        bisheng: '../dist/bisheng',
+        jquery: '../bower_components/jquery/jquery',
+        handlebars: '../bower_components/handlebars/handlebars'
+      }
+    })
+  </script>
+  <!-- Load local tests. -->
+  <script>
+    require(['bisheng', 'jquery'], function(BiSheng, _){
+      test('placeholder', function() {
+        var tpl = '{{foo}}'
+        var data = {
+            foo: 123
+        }
+        var task = function() {
+            data.foo = 456
+        }
+        var expected = function(container) {
+            equal('456', container.text(), tpl)
+        }
+
+        stop()
+
+        // 容器节点
+        var container = $('div.container')
+
+        // 执行双向绑定
+        BiSheng.bind(data, tpl, function(content) {
+          container.append(content)
+        }, container)
+
+        // 检测视图是否更新
+        BiSheng.Loop.watch(data, function( /*changes*/ ) {
+          container.each(function(index, item) {
+              expected($(item))
+          })
+          container.empty()
+          BiSheng.unbind(data)
+          start()
+        })
+
+        // 更新数据
+        BiSheng.apply(function(){
+          task(container)  
+        })
+
+      }) // test
+    })
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
+  <div id="qunit-testrunner-toolbar">
+    Locator:
+    <a href="javascript: window.location = QUnit.url( { locator: 'script'  } );">Script</a>
+    <a href="javascript: window.location = QUnit.url( { locator: 'comment' } );">Comment</a>
+  </div>
+
+  <div id="qunit-testrunner-toolbar">
+    <a href="https://github.com/thx/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a>
+  </div>
+
+  <style type="text/css">
+    .container {
+      margin: 8px 0px 0px 0px;
+      float: left;
+      width: 50%;
+    }
+  </style>
+  <div class="container"></div>
+  <div class="container"></div>
+  <!-- <div class="container"></div>
+  <div class="container"></div> -->
+
+</body>
+</html>

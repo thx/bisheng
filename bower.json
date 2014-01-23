@@ -28,6 +28,9 @@
     "highlightjs": "~7.5.0",
     "todomvc-common": "~0.1.9",
     "js-beautify": "~1.4.2",
-    "js-md5": "~1.1.0"
+    "js-md5": "~1.1.0",
+    "requirejs": "~2.1.10",
+    "seajs": "*",
+    "kissy": "~1.4.1"
   }
 }

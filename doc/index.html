@@ -190,8 +190,10 @@
 <li><p>Install BiSheng.js</p>
 <pre><code> bower install bishengjs</code></pre>
 </li>
-<li><p>Reference BiSheng.js</p>
-<pre><code> &lt;script src=&quot;./bower_components/bishengjs/dist/bisheng.js&quot;&gt;&lt;/script&gt;</code></pre>
+<li><p>Reference BiSheng.js, jQuery and Handlebars.js</p>
+<pre><code> &lt;script src=&quot;../bower_components/jquery/jquery.js&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;../bower_components/handlebars/handlebars.js&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;./bower_components/bishengjs/dist/bisheng.js&quot;&gt;&lt;/script&gt;</code></pre>
 </li>
 <li><p>Use <code>BiSheng.bind()</code></p>
 <pre><code> // HTML 模板
@@ -209,6 +211,59 @@
  data.title = &#39;bar&#39;</code></pre>
 </li>
 </ol>
+<h2 id="modular">Modular</h2>
+<!-- Use Module Loader  -->
+
+<ul>
+<li><p><strong>AMD ( RequireJS )</strong> <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Specifications</a>, <a href="">Live Demo</a>, <a href="../test/expose_amd.html">Test Case</a></p>
+<pre><code>  // &lt;script src=&quot;../bower_components/requirejs/require.js&quot;&gt;&lt;/script&gt;
+
+  // Set the config for the BiSheng.js, jQuery, Handlebars.js
+  require.config({
+    paths:{
+      bisheng: &#39;../bower_components/bishengjs/dist/bisheng&#39;,
+      jquery: &#39;../bower_components/jquery/jquery&#39;,
+      handlebars: &#39;../bower_components/handlebars/handlebars&#39;
+    }
+  })
+  // Start the main app logic.
+  require([&#39;bisheng&#39;], function(BiSheng){
+      // code here
+  })</code></pre>
+</li>
+<li><p><strong>CMD ( SeaJS )</strong> <a href="https://github.com/seajs/seajs/issues/242">Specifications</a>, <a href="">Live Demo</a>, <a href="../test/expose_cmd.html">Test Case</a></p>
+<pre><code>  // &lt;script src=&quot;../bower_components/seajs/sea.js&quot;&gt;&lt;/script&gt;
+
+  // Set the config for the BiSheng.js, jQuery, Handlebars.js
+  seajs.config({
+    alias: {
+      bisheng: &#39;../bower_components/bishengjs/dist/bisheng&#39;,
+      jquery: &#39;../bower_components/jquery/jquery&#39;,
+      handlebars: &#39;../bower_components/handlebars/handlebars&#39;
+    }
+  })
+  // Start the main app logic.
+  seajs.use([&#39;bisheng&#39;], function(BiSheng){
+      // code here
+  })</code></pre>
+</li>
+<li><p><strong>KMD ( KISSY )</strong> <a href="http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html">Specifications</a>, <a href="">Live Demo</a>, <a href="../test/expose_kmd.html">Test Case</a></p>
+<pre><code>  // &lt;script src=&quot;../bower_components/kissy/build/seed.js&quot;&gt;&lt;/script&gt;
+
+  // Set the config for the BiSheng.js, jQuery, Handlebars.js
+  KISSY.config({
+      packages: {
+          bisheng: { base: &#39;../dist/&#39; },
+          jquery: { base: &#39;lib/&#39; },
+          handlebars: { base: &#39;lib/&#39; }
+      }
+  })
+  // Start the main app logic.
+  KISSY.use([&#39;bisheng&#39;], function (S, BiSheng) {
+      // code here
+  })</code></pre>
+</li>
+</ul>
 <h2 id="more-examples">More Examples</h2>
 <ul>
 <li><a href="../demo/todo/index.html">TodoMVC</a></li>

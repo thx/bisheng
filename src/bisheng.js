@@ -2,7 +2,7 @@
 
 /* global window: true */
 /* global location */
-/* global $: true */
+/* global jQuery: true */
 /* global Handlebars: true */
 /* global expose */
 /* global Loop */
@@ -81,7 +81,7 @@
             bind: function bind(data, tpl, callback, context) {
                 // 属性监听函数
                 function task(changes) {
-                    $.each(changes, function(_, change) {
+                    jQuery.each(changes, function(_, change) {
                         var event = {
                             target: []
                         }
@@ -111,7 +111,7 @@
                 html = HTML.table(html)
 
                 // 扫描占位符，定位 Expression 和 Block
-                var content = $(HTML.convert(html))
+                var content = jQuery(HTML.convert(html))
                 if (content.length) Scanner.scan(content[0], data)
                 content = content.contents().get()
 

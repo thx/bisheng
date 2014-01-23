@@ -119,8 +119,10 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
         bower install bishengjs
 
-2. Reference BiSheng.js
-
+2. Reference BiSheng.js, jQuery and Handlebars.js
+        
+        <script src="../bower_components/jquery/jquery.js"></script>
+        <script src="../bower_components/handlebars/handlebars.js"></script>
         <script src="./bower_components/bishengjs/dist/bisheng.js"></script>
 
 3. Use `BiSheng.bind()`
@@ -138,6 +140,61 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         });
         // 改变数据 data.title，对应的文档区域会更新
         data.title = 'bar'
+
+## Modular
+
+<!-- Use Module Loader  -->
+
+* **AMD ( RequireJS )** [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD), [Live Demo](), [Test Case](../test/expose_amd.html)
+        
+        // <script src="../bower_components/requirejs/require.js"></script>
+
+        // Set the config for the BiSheng.js, jQuery, Handlebars.js
+        require.config({
+          paths:{
+            bisheng: '../bower_components/bishengjs/dist/bisheng',
+            jquery: '../bower_components/jquery/jquery',
+            handlebars: '../bower_components/handlebars/handlebars'
+          }
+        })
+        // Start the main app logic.
+        require(['bisheng'], function(BiSheng){
+            // code here
+        })
+
+* **CMD ( SeaJS )** [Specifications](https://github.com/seajs/seajs/issues/242), [Live Demo](), [Test Case](../test/expose_cmd.html)
+
+        // <script src="../bower_components/seajs/sea.js"></script>
+
+        // Set the config for the BiSheng.js, jQuery, Handlebars.js
+        seajs.config({
+          alias: {
+            bisheng: '../bower_components/bishengjs/dist/bisheng',
+            jquery: '../bower_components/jquery/jquery',
+            handlebars: '../bower_components/handlebars/handlebars'
+          }
+        })
+        // Start the main app logic.
+        seajs.use(['bisheng'], function(BiSheng){
+            // code here
+        })
+
+* **KMD ( KISSY )** [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html), [Live Demo](), [Test Case](../test/expose_kmd.html)
+
+        // <script src="../bower_components/kissy/build/seed.js"></script>
+
+        // Set the config for the BiSheng.js, jQuery, Handlebars.js
+        KISSY.config({
+            packages: {
+                bisheng: { base: '../dist/' },
+                jquery: { base: 'lib/' },
+                handlebars: { base: 'lib/' }
+            }
+        })
+        // Start the main app logic.
+        KISSY.use(['bisheng'], function (S, BiSheng) {
+            // code here
+        })
 
 ## More Examples
 

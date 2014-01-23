@@ -17,30 +17,88 @@
 
 }(function() {
     // BEGIN(BROWSER)
-    
+
     /*
         # expose(factory, globals)
 
         模块化，适配主流加载器。
         Modular
+
+        * expose(id, dependencies, factory, globals)
+        * expose(id, factory, globals)
+        * expose(dependencies, factory, globals)
+        * expose(factory, globals)
+        * expose(factory)
     */
-    function expose(factory, globals) {
+    function expose(id, dependencies, factory, globals) {
+        var argsLen = arguments.length
+        var args = []
+
+        switch (argsLen) {
+            case 1:
+                // expose(factory)
+                factory = id
+                id = dependencies = globals = undefined
+                break
+            case 2:
+                // expose(factory, globals)
+                factory = id
+                globals = dependencies
+                id = dependencies = undefined
+                break
+            case 3:
+                globals = factory
+                factory = dependencies
+                if (id instanceof Array) {
+                    // expose(dependencies, factory, globals)
+                    dependencies = id
+                    id = undefined
+                } else {
+                    // expose(id, factory, globals)
+                    dependencies = undefined
+                }
+                break
+            default:
+                // expose(id, dependencies, factory, globals)
+        }
+
         if (typeof module === 'object' && module.exports) {
             // CommonJS
             module.exports = factory()
 
-
         } else if (typeof define === "function" && define.amd) {
             // AMD modules
-            define(factory)
+            // define(id?, dependencies?, factory);
+            // https://github.com/amdjs/amdjs-api/wiki/AMD
+            if (id !== undefined) args.push(id)
+            if (id !== dependencies) args.push(dependencies)
+            args.push(factory)
+            define.apply(window, args)
 
         } else if (typeof define === "function" && define.cmd) {
             // CMD modules
-            define(factory)
+            // define(id?, deps?, factory)
+            // https://github.com/seajs/seajs/issues/242
+            if (id !== undefined) args.push(id)
+            if (id !== dependencies) args.push(dependencies)
+            args.push(factory)
+            define.apply(window, args)
 
         } else if (typeof KISSY != 'undefined') {
             // For KISSY 1.4
-            KISSY.add(factory)
+            // http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html
+            window.define = function define(id, dependencies, factory) {
+                // KISSY.add(name?, factory?, deps)
+                KISSY.add(id, function( /*arguments*/ ) {
+                    var slice = [].slice
+                    var args = slice.call(arguments, 1, arguments.length - 1)
+                    return factory.apply(window, args)
+                }, {
+                    requires: dependencies
+                })
+            }
+            window.define.kmd = {}
+            define(id, dependencies, factory)
 
         } else {
             // Browser globals

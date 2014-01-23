@@ -3,7 +3,7 @@
 /* global expose */
 /* global window: true */
 /* global document: true */
-/* global $: true */
+/* global jQuery: true */
 
 (function(factory) {
 
@@ -42,7 +42,7 @@
             div = div.lastChild
         }
 
-        return $(div)
+        return jQuery(div)
     }
 
     HTML.table = function table(html) {
