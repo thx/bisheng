@@ -1,4 +1,8 @@
-# BiSheng.js
+<!-- # BiSheng.js -->
+<h1 style="color: #7fbb00; ">
+    <i class="iconlogo">&#x3438;</i> 
+    BiSheng.js
+</h1>
 ---
 
 <!-- TODO http://startbootstrap.com/templates/modern-business/index.html -->

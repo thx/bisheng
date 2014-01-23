@@ -12,7 +12,7 @@
     "demo",
     "Gruntfile.js",
     "index.html",
-    "package.json",
+    "package.json"
   ],
   "dependencies": {
     "jquery": "~1.9.0",
