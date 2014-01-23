@@ -1,7 +1,13 @@
 {
   "name": "bisheng",
   "version": "0.0.1",
+  "homepage": "https://github.com/thx/bisheng",
+  "authors": [
+    "nuysoft <nuysoft@gmail.com>"
+  ],
+  "description": "BI-Directional / Two-Way Data-Binding with JavaScript",
   "main": "dist/bisheng.js",
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -28,6 +34,7 @@
     "js-md5": "~1.1.0",
     "requirejs": "~2.1.10",
     "seajs": "*",
-    "kissy": "~1.4.1"
+    "kissy": "~1.4.1",
+    "bishengjs": "*"
   }
 }
