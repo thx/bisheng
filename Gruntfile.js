@@ -117,11 +117,11 @@ module.exports = function(grunt) {
             },
             markdown: {
                 files: ['doc/*.md', 'doc/template*.html', '!doc/what.md'],
-                tasks: ['markdown']
+                tasks: ['markdown', 'copy']
             },
             cleaver: {
                 files: ['doc/what.md'],
-                tasks: ['cleaver']
+                tasks: ['cleaver', 'copy']
             }
         },
         markdown: {

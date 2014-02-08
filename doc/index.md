@@ -1,9 +1,12 @@
-<!-- # BiSheng.js -->
-<h1 style="color: #7fbb00; ">
+<!-- 
+# BiSheng.js 
+---
+-->
+<h1 style="color: #428BCA; ">
     <i class="iconlogo">&#x3438;</i> 
     BiSheng.js
 </h1>
----
+<hr>
 
 <!-- TODO http://startbootstrap.com/templates/modern-business/index.html -->
 
@@ -102,9 +105,6 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
     </tr>
 </table>
 
-
-
-
 <!--
 * Internet Explorer：6+
 * Chrome, Safari, Firefox, Opera：前一个或当前版本
@@ -134,6 +134,64 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
     <iframe width="100%" height="250" src="http://jsfiddle.net/zj2WF/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
+## Modular
+
+<!-- Use Module Loader  -->
+
+* **AMD ( RequireJS )** [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD)
+
+    <iframe width="100%" height="370" src="http://jsfiddle.net/HbhJ3/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+* **CMD ( SeaJS )** [Specifications](https://github.com/seajs/seajs/issues/242)
+
+    <iframe width="100%" height="430" src="http://jsfiddle.net/ekfY8/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+* **KMD ( KISSY )** [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html)
+
+    <iframe width="100%" height="430" src="http://jsfiddle.net/4eAF9/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+## More Examples
+
+* [TodoMVC](../demo/todo/index.html)
+* [Watch Properties of Data Object](../demo/loop.html)
+* [Watch Expressions `{{}}`](../demo/expression.html)
+* [Watch Attributes of DOM](../demo/attribute.html)
+* [Watch Block](../demo/block.html)
+* [Wach Form Elements](../demo/form.html)
+
+<!-- 监听数据对象的属性 -->
+<!-- 监听表达式 -->
+<!-- 监听 DOM 节点的属性 -->
+<!-- 监听逻辑块 -->
+<!-- 监听表单元素 -->
+
+## Unit Testing
+
+* [QUnit](../test/bisheng.html?noglobals=true&notrycatch=true)
+* [AMD ( RequireJS )](../test/expose_amd.html?noglobals=true&notrycatch=true)
+* [CMD ( SeaJS )](../test/expose_cmd.html?noglobals=true&notrycatch=true)
+* [KMD ( KISSY )](../test/expose_kmd.html?noglobals=true&notrycatch=true)
+
+<!-- 
+## Thanks
+
+Thanks to the following articles and frameworks for giving BiSheng.js this inspiration:
+
+感谢以下框架和文章给 BiSheng.js 的启发：
+
+1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
+2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)
+3. [nytimes/backbone.stickit](https://github.com/nytimes/backbone.stickit)
+4. [Epoxy.js — Elegant Data Binding for Backbone](https://github.com/gmac/backbone.epoxy)
+5. [Ember.js — A framework for creating ambitious web applications](http://emberjs.com/)
+6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
+7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
+8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
+9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
+10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)
+ -->
+
+
 <!-- 
         // HTML 模板
         var tpl = '{{title}}'
@@ -151,14 +209,6 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
             data.title = 'bar'
         })
  -->
-
-## Modular
-
-<!-- Use Module Loader  -->
-
-* **AMD ( RequireJS )** 
-
-    <iframe width="100%" height="360" src="http://jsfiddle.net/P28Ch/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
 <!-- 
     [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD)
@@ -180,10 +230,6 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         })
 -->
 
-* **CMD ( SeaJS )**
-
-    <iframe width="100%" height="420" src="http://jsfiddle.net/79E8T/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
 <!-- 
     [Specifications](https://github.com/seajs/seajs/issues/242)
  -->
@@ -204,10 +250,6 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
         })
 -->
 
-* **KMD ( KISSY )** 
-
-    <iframe width="100%" height="420" src="http://jsfiddle.net/pLnBm/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
 <!-- 
     [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html)
  -->
@@ -227,41 +269,3 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
             // code here
         })
 -->
-
-## More Examples
-
-* [TodoMVC](../demo/todo/index.html)
-* [Watch Properties of Data Object](../demo/loop.html)
-* [Watch Expressions `{{}}`](../demo/expression.html)
-* [Watch Attributes of DOM](../demo/attribute.html)
-* [Watch Block](../demo/block.html)
-* [Wach Form Elements](../demo/form.html)
-
-<!-- 监听数据对象的属性 -->
-<!-- 监听表达式 -->
-<!-- 监听 DOM 节点的属性 -->
-<!-- 监听逻辑块 -->
-<!-- 监听表单元素 -->
-
-## Unit Testing
-
-* [QUnit](../test/bisheng.html?noglobals=true&notrycatch=true)
-
-<!-- 
-## Thanks
-
-Thanks to the following articles and frameworks for giving BiSheng.js this inspiration:
-
-感谢以下框架和文章给 BiSheng.js 的启发：
-
-1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
-2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)
-3. [nytimes/backbone.stickit](https://github.com/nytimes/backbone.stickit)
-4. [Epoxy.js — Elegant Data Binding for Backbone](https://github.com/gmac/backbone.epoxy)
-5. [Ember.js — A framework for creating ambitious web applications](http://emberjs.com/)
-6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
-7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
-8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
-9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
-10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)
- -->

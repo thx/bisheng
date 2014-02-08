@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-01-23 03:59:21 PM CST */
+/*! BiSheng.js 2014-01-24 10:48:46 AM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -1756,6 +1756,8 @@
                 
                 用于包裹对数据的操作。内部会检查数据的变化，并自动同步到视图。
 
+                **使用示例**如下所示：
+                
                     var data = { foo: 'foo' }
                     // ...
                     BiSheng.apply(function(){

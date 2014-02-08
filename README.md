@@ -5,6 +5,7 @@ BiSheng.js（毕昇）
 [![GitHub version](https://badge.fury.io/gh/thx%2Fbisheng.png)](http://badge.fury.io/gh/thx%2Fbisheng)
 [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs)
 [![Views in the last 24 hours](https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png)](https://github.com/thx/bisheng/)
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 <!-- BI-Directional / Two-Way Data-Binding with JavaScript. -->
 

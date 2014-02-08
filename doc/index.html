@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>BiSheng.js</title>
+  <meta name="author" content="nuysoft@gmail.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="keywords" content="双向数据绑定" />
   <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <style type="text/css">
@@ -75,7 +77,6 @@
     .iconlogo {
         font-family: "logo";
         font-size: 40px;
-        color: #7eb400;
         font-style: normal;
         font-weight: normal;
         font-variant: normal;
@@ -97,12 +98,15 @@
   <div class="container">
 
     <div class="row">
-      <div class="col-sm-10"><!-- # BiSheng.js -->
-<h1 style="color: #7fbb00; ">
+      <div class="col-sm-10"><!-- 
+# BiSheng.js 
+---
+-->
+<h1 style="color: #428BCA; ">
     <i class="iconlogo">&#x3438;</i> 
     BiSheng.js
 </h1>
----
+<hr>
 
 <!-- TODO http://startbootstrap.com/templates/modern-business/index.html -->
 
@@ -200,9 +204,6 @@
     </tr>
 </table>
 
-
-
-
 <!--
 * Internet Explorer：6+
 * Chrome, Safari, Firefox, Opera：前一个或当前版本
@@ -230,6 +231,63 @@
 
 </li>
 </ol>
+<h2 id="modular">Modular</h2>
+<!-- Use Module Loader  -->
+
+<ul>
+<li><p><strong>AMD ( RequireJS )</strong> <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Specifications</a></p>
+  <iframe width="100%" height="370" src="http://jsfiddle.net/HbhJ3/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+</li>
+<li><p><strong>CMD ( SeaJS )</strong> <a href="https://github.com/seajs/seajs/issues/242">Specifications</a></p>
+  <iframe width="100%" height="430" src="http://jsfiddle.net/ekfY8/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+</li>
+<li><p><strong>KMD ( KISSY )</strong> <a href="http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html">Specifications</a></p>
+  <iframe width="100%" height="430" src="http://jsfiddle.net/4eAF9/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+</li>
+</ul>
+<h2 id="more-examples">More Examples</h2>
+<ul>
+<li><a href="../demo/todo/index.html">TodoMVC</a></li>
+<li><a href="../demo/loop.html">Watch Properties of Data Object</a></li>
+<li><a href="../demo/expression.html">Watch Expressions <code>{{}}</code></a></li>
+<li><a href="../demo/attribute.html">Watch Attributes of DOM</a></li>
+<li><a href="../demo/block.html">Watch Block</a></li>
+<li><a href="../demo/form.html">Wach Form Elements</a></li>
+</ul>
+<!-- 监听数据对象的属性 -->
+<!-- 监听表达式 -->
+<!-- 监听 DOM 节点的属性 -->
+<!-- 监听逻辑块 -->
+<!-- 监听表单元素 -->
+
+<h2 id="unit-testing">Unit Testing</h2>
+<ul>
+<li><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit</a></li>
+<li><a href="../test/expose_amd.html?noglobals=true&amp;notrycatch=true">AMD ( RequireJS )</a></li>
+<li><a href="../test/expose_cmd.html?noglobals=true&amp;notrycatch=true">CMD ( SeaJS )</a></li>
+<li><a href="../test/expose_kmd.html?noglobals=true&amp;notrycatch=true">KMD ( KISSY )</a></li>
+</ul>
+<!-- 
+## Thanks
+
+Thanks to the following articles and frameworks for giving BiSheng.js this inspiration:
+
+感谢以下框架和文章给 BiSheng.js 的启发：
+
+1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
+2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)
+3. [nytimes/backbone.stickit](https://github.com/nytimes/backbone.stickit)
+4. [Epoxy.js — Elegant Data Binding for Backbone](https://github.com/gmac/backbone.epoxy)
+5. [Ember.js — A framework for creating ambitious web applications](http://emberjs.com/)
+6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
+7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
+8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
+9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
+10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)
+ -->
+
+
 <!-- 
         // HTML 模板
         var tpl = '{{title}}'
@@ -248,15 +306,6 @@
         })
  -->
 
-<h2 id="modular">Modular</h2>
-<!-- Use Module Loader  -->
-
-<ul>
-<li><p><strong>AMD ( RequireJS )</strong> </p>
-  <iframe width="100%" height="360" src="http://jsfiddle.net/P28Ch/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-</li>
-</ul>
 <!-- 
     [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD)
  -->
@@ -277,12 +326,6 @@
         })
 -->
 
-<ul>
-<li><p><strong>CMD ( SeaJS )</strong></p>
-  <iframe width="100%" height="420" src="http://jsfiddle.net/79E8T/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-</li>
-</ul>
 <!-- 
     [Specifications](https://github.com/seajs/seajs/issues/242)
  -->
@@ -303,12 +346,6 @@
         })
 -->
 
-<ul>
-<li><p><strong>KMD ( KISSY )</strong> </p>
-  <iframe width="100%" height="420" src="http://jsfiddle.net/pLnBm/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
-</li>
-</ul>
 <!-- 
     [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html)
  -->
@@ -327,45 +364,7 @@
         KISSY.use(['bisheng'], function (S, BiSheng) {
             // code here
         })
--->
-
-<h2 id="more-examples">More Examples</h2>
-<ul>
-<li><a href="../demo/todo/index.html">TodoMVC</a></li>
-<li><a href="../demo/loop.html">Watch Properties of Data Object</a></li>
-<li><a href="../demo/expression.html">Watch Expressions <code>{{}}</code></a></li>
-<li><a href="../demo/attribute.html">Watch Attributes of DOM</a></li>
-<li><a href="../demo/block.html">Watch Block</a></li>
-<li><a href="../demo/form.html">Wach Form Elements</a></li>
-</ul>
-<!-- 监听数据对象的属性 -->
-<!-- 监听表达式 -->
-<!-- 监听 DOM 节点的属性 -->
-<!-- 监听逻辑块 -->
-<!-- 监听表单元素 -->
-
-<h2 id="unit-testing">Unit Testing</h2>
-<ul>
-<li><a href="../test/bisheng.html?noglobals=true&amp;notrycatch=true">QUnit</a></li>
-</ul>
-<!-- 
-## Thanks
-
-Thanks to the following articles and frameworks for giving BiSheng.js this inspiration:
-
-感谢以下框架和文章给 BiSheng.js 的启发：
-
-1. [AngularJS — Superheroic JavaScript MVW Framework](http://angularjs.org/)
-2. [Rivets.js — Lightweight and powerful data binding + templating solution for building modern web applications](https://github.com/mikeric/rivets)
-3. [nytimes/backbone.stickit](https://github.com/nytimes/backbone.stickit)
-4. [Epoxy.js — Elegant Data Binding for Backbone](https://github.com/gmac/backbone.epoxy)
-5. [Ember.js — A framework for creating ambitious web applications](http://emberjs.com/)
-6. [Knockout — Simplify dynamic JavaScript UIs with the Model-View-View Model (MVVM) pattern](http://knockoutjs.com/)
-7. [backbone.modelbinding — Awesome model binding for Backbone.js](https://github.com/derickbailey/backbone.modelbinding/)
-8. [RubyLouvre/avalon — 迷你简单易用的MVVM框架](https://github.com/RubyLouvre/avalon)
-9. [shepherdwind/bidi - MVVM for KISSY](https://github.com/shepherdwind/bidi)
-10. [$watch How the $apply Runs a $digest](http://angular-tips.com/blog/2013/08/watch-how-the-apply-runs-a-digest/)，[翻译](http://blog.csdn.net/leekangtaqi/article/details/10376363)
- --></div>
+--></div>
       <div class="col-sm-2">
         <div class="panel panel-default" style="position: fixed; margin-top: 75px;">
           <div class="panel-heading"><a href="#">Contents</a></div>
