@@ -1,11 +1,9 @@
 module('Locator')
 
-var ScriptLocator = BiSheng.Locators[0]
-var JsonCommentLocator = BiSheng.Locators[1]
-
 // 创建
 
 test('create script locator', function() {
+    var ScriptLocator = BiSheng.Locators[0]
     var locator = ScriptLocator.create({
         guid: 1,
         slot: "start"
@@ -15,6 +13,7 @@ test('create script locator', function() {
 })
 
 test('create comment locator', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     var locator = JsonCommentLocator.create({
         guid: 1,
         slot: "start"
@@ -26,6 +25,7 @@ test('create comment locator', function() {
 // 匹配
 
 test('match script locator', function() {
+    var ScriptLocator = BiSheng.Locators[0]
     var locator = '<script guid="1" slot="start"></script>'
     var ma = ScriptLocator.getLocatorRegExp().exec(locator)
     ok(ma, ma[0])
@@ -33,6 +33,7 @@ test('match script locator', function() {
 })
 
 test('match comment locator', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     var locator = '<!-- {"guid":1,"slot":"start"} -->'
     var ma = JsonCommentLocator.getLocatorRegExp().exec(locator)
     ok(ma, ma[0])
@@ -42,22 +43,25 @@ test('match comment locator', function() {
 // 查找
 
 test('find script locator', function() {
+    var ScriptLocator = BiSheng.Locators[0]
     var container = $('<div>')
-        .append('<script guid="1" slot="start"></script>')
-        .append('<script guid="1" slot="end"></script>')
-        .append('<script guid="2" slot="start"></script>')
-        .append('<script guid="2" slot="end"></script>')
+        .append('<script guid="1" slot="start" type="todo"></script>')
+        .append('<script guid="1" slot="end"   type="todo"></script>')
+        .append('<script guid="2" slot="start" type="todo"></script>')
+        .append('<script guid="2" slot="end"   type="todo"></script>')
     var locators = ScriptLocator.find({
         slot: 'start'
     }, container)
     equal(locators.length, 2,
         locators.map(function() {
-            return this.outerHTML
+            // KISSY 的 this 是 NodeList，jQuery 的 this 是原生 Element
+            return window.KISSY ? this[0].outerHTML : this.outerHTML
         }).toArray().join(', ')
     )
 })
 
 test('find json comment locator', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     var container = $('<div>')
         .append('<!-- {guid:"1",slot:"start"} -->')
         .append('<!-- {guid:"1",slot:"end"} -->')
@@ -76,21 +80,23 @@ test('find json comment locator', function() {
 // 解析
 
 test('parse script locator', function() {
+    var ScriptLocator = BiSheng.Locators[0]
     expect(2)
     var container = $('<div>')
-        .append('<script guid="1" slot="start"></script>')
-        .append('<script guid="1" slot="end"></script>')
-        .append('<script guid="2" slot="start"></script>')
-        .append('<script guid="2" slot="end"></script>')
+        .append('<script guid="1" slot="start" type="todo"></script>')
+        .append('<script guid="1" slot="end"   type="todo"></script>')
+        .append('<script guid="2" slot="start" type="todo"></script>')
+        .append('<script guid="2" slot="end"   type="todo"></script>')
     var locators = ScriptLocator.find({
         slot: 'start'
     }, container)
-    locators.each(function(index, locator) {
+    locators._each(function(locator, index) {
         equal(ScriptLocator.parse(locator, 'slot'), 'start', locator.outerHTML)
     })
 })
 
 test('parse json comment locator', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     expect(4)
     var container = $('<div>')
         .append('<!-- {guid:"1",slot:"start"} -->')
@@ -100,14 +106,14 @@ test('parse json comment locator', function() {
     var locators = JsonCommentLocator.find({
         slot: 'start'
     }, container)
-    locators.each(function(index, locator) {
+    locators._each(function(locator, index) {
         equal(JsonCommentLocator.parse(locator, 'slot'), 'start', locator.nodeValue)
     })
 
     JsonCommentLocator.find({
         guid: '1'
     }, container)
-        .each(function(index, locator) {
+        ._each(function(locator, index) {
             equal(JsonCommentLocator.parse(locator, 'guid'), '1', locator.nodeValue)
         })
 })
@@ -115,6 +121,7 @@ test('parse json comment locator', function() {
 // 更新
 
 test('update json comment locator', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     expect(4)
     var container = $('<div>')
         .append('<!-- {guid:"1",slot:"start"} -->')
@@ -125,7 +132,7 @@ test('update json comment locator', function() {
     JsonCommentLocator.find({
         slot: 'start'
     }, container)
-        .each(function(index, locator) {
+        ._each(function(locator, index) {
             JsonCommentLocator.update(locator, {
                 type: 'text',
                 path: [1, 2, 3].join('.')
@@ -135,7 +142,7 @@ test('update json comment locator', function() {
     JsonCommentLocator.find({
         slot: 'start'
     }, container)
-        .each(function(index, locator) {
+        ._each(function(locator, index) {
             equal(JsonCommentLocator.parse(locator, 'type'), 'text', locator.nodeValue)
             equal(JsonCommentLocator.parse(locator, 'path'), '1.2.3', locator.nodeValue)
         })
@@ -144,6 +151,7 @@ test('update json comment locator', function() {
 // 目标元素
 
 test('parse target', function() {
+    var JsonCommentLocator = BiSheng.Locators[1]
     var container = $('<div>')
         .append('<!-- {guid:"1",slot:"start"} -->')
         .append('<span>target1-1</span>')
@@ -156,7 +164,7 @@ test('parse target', function() {
     JsonCommentLocator.find({
         slot: 'start'
     }, container)
-        .each(function(index, locator) {
+        ._each(function(locator, index) {
             var target = JsonCommentLocator.parseTarget(locator)
             equal(target.length, 2, target.html())
         })

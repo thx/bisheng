@@ -56,6 +56,12 @@
         font-size: 14px;
         line-height: 1.428571429;
         font-weight: normal;
+        color: #777;
+      }
+
+      em, strong {
+          margin-left: 3px;
+          margin-right: 3px;
       }
 
       footer {
@@ -119,6 +125,11 @@
 <blockquote>
 <p><code>Object.defineProperty/defineProperties</code> 的缺点在于无法检测未知属性，例如，对象中新增的属性和数组中新增的元素；定时器 <code>setTimeout</code> 的缺点在于（周期性运行必然会导致）不能及时反映数据的变化，此外，也会有性能和电量损耗的问题。</p>
 </blockquote>
+<p>BiSheng.js 采用的是：</p>
+<ul>
+<li>对于表单元素的变化，自动检测输入、更新数据和更新 DOM 元素。</li>
+<li>对于手动更新数据，则调用 <code>BiSheng.apply()</code> 来触发更新 DOM 元素。</li>
+</ul>
 <h2 id="-">模板引擎</h2>
 <p>模板引擎负责解析模板，并且用提供的真实数据替换替换占位符（变量、函数、循环等），因此模板引擎也是一种数据绑定实现，但尚是静态的、单向的，我们可以利用模板引擎的语法（即占位符的语法），将它扩展成动态的、双向的。</p>
 <div class="row">

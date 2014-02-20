@@ -25,7 +25,7 @@ function main(BiSheng) {
 
 		// 检测视图是否更新
 		BiSheng.Loop.watch(data, function( /*changes*/ ) {
-			container.each(function(index, item) {
+			container._each(function(item) {
 				expected($(item))
 			})
 			container.empty()

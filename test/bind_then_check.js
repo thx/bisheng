@@ -5,13 +5,13 @@ function bindThenCheck(data, tpl, task, expected, before, empty) {
     var container = $('div.container')
     BiSheng.bind(data, tpl, function(content) {
         container.append(content)
-        container.each(function(index, item) {
+        container._each(function(item) {
             before && before($(item))
         })
     }, container)
     var started = false
     BiSheng.Loop.watch(data, function( /*changes*/ ) {
-        if (!started) container.each(function(index, item) {
+        if (!started) container._each(function(item) {
             expected($(item))
         })
         if (empty !== false) {

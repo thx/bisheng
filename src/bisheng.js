@@ -2,7 +2,7 @@
 
 /* global window: true */
 /* global location */
-/* global jQuery: true */
+/* global jqLite: true */
 /* global Handlebars: true */
 /* global expose */
 /* global Loop */
@@ -53,13 +53,16 @@
                 在模板和数据之间执行双向绑定。
 
                 * BiSheng.bind(data, tpl, callback(content))
+                * BiSheng.bind(data, tpl, context)
+                * BiSheng.bind(data, tpl)
 
                 **参数的含义和默认值**如下所示：
 
-                * 参数 data：必选。待绑定的对象或数组。
-                * 参数 tpl：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
-                * 参数 callback(content)：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
-                * 参数 content：数组，其中包含了转换后的 DOM 元素。
+                * **参数 data**：必选。待绑定的对象或数组。
+                * **参数 tpl**：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。
+                * **参数 callback(content)**：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。
+                * **参数 content**：数组，其中包含了转换后的 DOM 元素。
+                * **参数 context**：可选。容器元素，可以是单个  DOM 元素，或 DOM 元素数组。转换后的 DOM 元素将被插入该参数中。
 
                 **使用示例**如下所示：
 
@@ -79,9 +82,17 @@
 
             */
             bind: function bind(data, tpl, callback, context) {
+                // BiSheng.bind(data, tpl, context)
+                if (arguments.length === 3 && typeof callback !== 'function') {
+                    context = callback
+                    callback = function(content) {
+                        jqLite(context).append(content)
+                    }
+                }
+
                 // 属性监听函数
                 function task(changes) {
-                    jQuery.each(changes, function(_, change) {
+                    jqLite._each(changes, function(change, index) {
                         var event = {
                             target: []
                         }
@@ -111,7 +122,7 @@
                 html = HTML.table(html)
 
                 // 扫描占位符，定位 Expression 和 Block
-                var content = jQuery(HTML.convert(html))
+                var content = jqLite(HTML.convert(html))
                 if (content.length) Scanner.scan(content[0], data)
                 content = content.contents().get()
 
@@ -430,7 +441,7 @@
                     })
             */
             apply: function(fn) {
-                fn()
+                if (fn) fn()
                 BiSheng.Loop.letMeSee()
                 return this
             }

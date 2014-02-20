@@ -66,6 +66,11 @@ BiSheng.js 的名称源自活字印刷术的发明者“[毕昇]”。因为单�
 
 > `Object.defineProperty/defineProperties` 的缺点在于无法检测未知属性，例如，对象中新增的属性和数组中新增的元素；定时器 `setTimeout` 的缺点在于（周期性运行必然会导致）不能及时反映数据的变化，此外，也会有性能和电量损耗的问题。
 
+BiSheng.js 采用的是：
+
+* 对于表单元素的变化，自动检测输入、更新数据和更新 DOM 元素。
+* 对于手动更新数据，则调用 `BiSheng.apply()` 来触发更新 DOM 元素。
+
 [setTimeout 或 setInterval]: http://stackoverflow.com/questions/729921/settimeout-or-setinterval
 
 [Object.defineProperty]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty

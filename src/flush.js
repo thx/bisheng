@@ -2,7 +2,7 @@
 
 /* global window: true */
 /* global document: true */
-/* global jQuery: true */
+/* global jqLite: true */
 /* global Handlebars: true */
 /* global expose */
 /* global Loop */
@@ -15,7 +15,7 @@ if (typeof module === 'object' && module.exports) {
     window = require('jsdom').jsdom().createWindow()
     document = window.document
 
-    // var $ = require('jquery')
+    // var $ = require('jqLite')
     // var Handlebars = require('handlebars')
 }
 
@@ -93,7 +93,7 @@ if (typeof module === 'object' && module.exports) {
                 handle(event, change, defined)
             }
 
-            paths.each(function(index, path) {
+            paths._each(function(path, index) {
                 type = Locator.parse(path, 'type')
                 if (handle[type]) handle[type](path, event, change, defined)
             })
@@ -126,10 +126,10 @@ if (typeof module === 'object' && module.exports) {
 
                 HTML.convert(content).contents()
                     .insertAfter(locator)
-                    .each(function(index, elem) {
+                    ._each(function(elem, index) {
                         event.target.push(elem)
                     })
-                jQuery(target).remove()
+                jqLite(target).remove()
             }
         }
 
@@ -137,7 +137,7 @@ if (typeof module === 'object' && module.exports) {
         handle.attribute = function attribute(path, event, change, defined) {
             var currentTarget, name, $target;
             event.target.push(currentTarget = Locator.parseTarget(path)[0])
-            $target = jQuery(currentTarget)
+            $target = jqLite(currentTarget)
 
             var ast = defined.$blocks[Locator.parse(path, 'guid')]
             var value = ast ? Handlebars.compile(ast)(change.context) : change.value
@@ -176,7 +176,7 @@ if (typeof module === 'object' && module.exports) {
                     break
                 default:
                     // 只更新变化的部分（其实不准确 TODO）
-                    $target.attr(name, function(index, attr) {
+                    $target._attr(name, function(index, attr) {
                         return oldValue === undefined ? value :
                             attr !== oldValue.valueOf() ? attr.replace(oldValue, value) :
                             value
@@ -206,7 +206,7 @@ if (typeof module === 'object' && module.exports) {
 
             // 如果新内容是空，则移除所有旧节点
             if (content.length === 0) {
-                jQuery(target).remove()
+                jqLite(target).remove()
                 return
             }
             // 移除旧节点中多余的
@@ -216,10 +216,10 @@ if (typeof module === 'object' && module.exports) {
                 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
             */
             if (content.length < target.length) {
-                jQuery(target.splice(content.length, target.length - content.length)).remove()
+                jqLite(target.splice(content.length, target.length - content.length)).remove()
             }
 
-            content.each(function(index, element) {
+            content._each(function(element, index) {
                 // 新正节点
                 if (!target[index]) {
                     endLocator.parentNode.insertBefore(element, endLocator)
@@ -247,7 +247,7 @@ if (typeof module === 'object' && module.exports) {
                 }
                 // 同是 DOM 元素，则检测属性 outerHTML 是否相等，不相等则替换之
                 if (element.nodeType === 1) {
-                    // jQuery(target[index]).removeClass('transition highlight')
+                    // jqLite(target[index]).removeClass('transition highlight')
                     if (element.outerHTML !== target[index].outerHTML) {
                         target[index].parentNode.insertBefore(element, target[index])
                         target[index].parentNode.removeChild(target[index])
@@ -285,15 +285,15 @@ if (typeof module === 'object' && module.exports) {
                         如果只高亮当前文本节点，需要将当前文本节点用 <span> 包裹
                     */
                     case 3:
-                        jQuery(item).wrap('<span>').parent().addClass('transition highlight')
+                        jqLite(item).wrap('<span>').parent().addClass('transition highlight')
                         setTimeout(function() {
-                            jQuery(item).unwrap('<span>').removeClass('transition highlight')
+                            jqLite(item).unwrap('<span>').removeClass('transition highlight')
                         }, 500)
                         break
                     case 1:
-                        jQuery(item).addClass('transition highlight')
+                        jqLite(item).addClass('transition highlight')
                         setTimeout(function() {
-                            jQuery(item).removeClass('transition highlight')
+                            jqLite(item).removeClass('transition highlight')
                         }, 500)
                         break
                 }

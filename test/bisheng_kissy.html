@@ -8,6 +8,9 @@
   <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
   <!-- Load local lib. -->
   <script src="../bower_components/kissy/build/seed.js"></script>
+  <script src="../bower_components/handlebars/handlebars.js"></script>
+  <script src="../bower_components/mockjs/dist/mock.js"></script>
+  <script src="../dist/bisheng.js"></script>
   <script>
     // 配置路径
     KISSY.config({
@@ -23,14 +26,42 @@
         }
     })
   </script>
-  <!-- Load local tests. -->
-  <script src="expose_main.js"></script>
   <script>
-    KISSY.use(['bisheng'], function (S, BiSheng) {
-      $ = KISSY.all
-      main(BiSheng)
-    })
+    /*
+      TODO 如果使普通的 QUnit 测试用例运行在 KISSY 中？
+      不可行：通过 QUnit 的异步测试功能，来等待 BiSheng 加载就绪，stop() 只对当前测试用例有效。
+      √ 重新封装全局函数 test(name, fn) 来初始化测试环境。
+    */
+    var _test = window.test
+    window.test = function(name, fn) {
+      KISSY.use(['node', 'bisheng'], function (S, Node, BiSheng) {
+        window.$ = KISSY.all
+        window.BiSheng = BiSheng
+        BiSheng.auto(true) // 自动检测
+        _test(name, fn)
+      })
+    }
   </script>
+  <!-- Load local tests. -->
+  <script type="text/javascript">
+    QUnit.begin(function(){})
+    QUnit.done(function(){})
+  </script>
+  <!-- 单个功能测试 -->
+  <script src="loop.js"></script>
+  <script src="ast.js"></script>
+  <script src="locator.js"></script>
+  <!-- 集成测试 -->
+  <script src="bind_then_check.js"></script>
+  <script src="expression.js"></script>
+  <script src="attribute.js"></script>
+  <script src="block.js"></script>
+  <script src="form.js"></script>
+  <script src="watch.js"></script>
+  <script src="run_mode.js"></script>
+  <!-- 钻石展位测试 -->
+  <script src="zuanshi.js"></script>
+  
 </head>
 <body>
   <div id="qunit"></div>
@@ -45,7 +76,7 @@
   <div id="qunit-testrunner-toolbar">
     <a href="https://github.com/thx/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a>
   </div>
-
+  
   <style type="text/css">
     .container {
       margin: 8px 0px 0px 0px;
@@ -57,6 +88,6 @@
   <div class="container"></div>
   <!-- <div class="container"></div>
   <div class="container"></div> -->
-
+  
 </body>
 </html>

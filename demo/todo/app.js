@@ -53,9 +53,13 @@ $(function() {
 
     sync()
 
-    BiSheng.bind(data, tpl, function(content) {
-        $(content).appendTo('body')
-    })
+    BiSheng.bind(data, tpl, 'body')
+    /*
+        或者：
+        BiSheng.bind(data, tpl, document.body)
+        BiSheng.bind(data, tpl, $('body'))
+    */
+
     BiSheng.Loop.watch(data, function(changes) {
         // 同步那些附加的数据
         sync()
@@ -63,9 +67,11 @@ $(function() {
 
     $('section#todoapp')
         .on('change', 'input#toggle-all', function(event) {
-            $('ul#todo-list > li input.toggle')
-                .prop('checked', $(event.target).prop('checked'))
-                .trigger('change')
+            var checked = $(event.target).prop('checked')
+            for (var i = 0; i < data.todos.length; i++) {
+                data.todos[i].completed = checked
+            }
+            BiSheng.apply()
         })
         .on('keyup', 'input#new-todo', function(event) {
             var $input = $(this);
@@ -80,7 +86,7 @@ $(function() {
                 title: val,
                 completed: false
             })
-            // BiSheng.Loop.letMeSee() // 50ms 的延迟是致命伤
+            BiSheng.apply()
 
             $input.val('')
         })
@@ -89,11 +95,10 @@ $(function() {
             $.each(data.todos, function(index, todo) {
                 if (todo.id === id) {
                     data.todos.splice(index, 1)
-                    sync()
-                    // BiSheng.Loop.letMeSee()
                     return false
                 }
-            });
+            })
+            BiSheng.apply()
         })
         .on('change', 'input.toggle', function() {
             var checkbox = $('ul#todo-list > li input.toggle')

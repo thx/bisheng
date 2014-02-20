@@ -174,8 +174,17 @@ test('each-helper, add', function() {
     }
     var expected = function(container) {
         equal(4, container.find('div.comment').length)
-        equal(data.comments[3].subject, container.find('div.comment:eq(3) h2').text())
-        equal(data.comments[3].body, container.find('div.comment:eq(3) span').text())
+        /*
+            KISSY 1.4 的选择器不支持 :eq()
+        */
+        equal(data.comments[3].subject,
+            // container.find('div.comment:eq(3) h2').text()
+            container.find('div.comment').eq(3).find('h2').text()
+        )
+        equal(data.comments[3].body,
+            // container.find('div.comment:eq(3) span').text()
+            container.find('div.comment').eq(3).find('span').text()
+        )
         equal(0, container.find('h3').length)
     }
     var before = function(container) {

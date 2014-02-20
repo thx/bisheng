@@ -87,17 +87,33 @@
         } else if (typeof KISSY != 'undefined') {
             // For KISSY 1.4
             // http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html
-            window.define = function define(id, dependencies, factory) {
-                // KISSY.add(name?, factory?, deps)
-                KISSY.add(id, function( /*arguments*/ ) {
-                    var slice = [].slice
-                    var args = slice.call(arguments, 1, arguments.length - 1)
-                    return factory.apply(window, args)
-                }, {
-                    requires: dependencies
-                })
+            if (!window.define) {
+                window.define = function define(id, dependencies, factory) {
+                    // KISSY.add(name?, factory?, deps)
+                    function proxy( /*arguments*/ ) {
+                        var slice = [].slice
+                        var args = slice.call(arguments, 1, arguments.length)
+                        return factory.apply(window, args)
+                    }
+                    switch (arguments.length) {
+                        case 2:
+                            // KISSY.add(factory, deps)
+                            factory = dependencies
+                            dependencies = id
+                            KISSY.add(proxy, {
+                                requires: dependencies.concat(['node'])
+                            })
+                            break;
+                        case 3:
+                            // KISSY.add(name?, factory, deps)
+                            KISSY.add(id, proxy, {
+                                requires: dependencies.concat(['node'])
+                            })
+                            break;
+                    }
+                }
+                window.define.kmd = {}
             }
-            window.define.kmd = {}
             define(id, dependencies, factory)
 
         } else {

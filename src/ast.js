@@ -119,7 +119,8 @@
 
                 placeholder = Locator.create({
                     guid: attrs.guid,
-                    slot: 'end'
+                    slot: 'end',
+                    type: 'todo' // 如果不设置 type，KISSY 在插入 script 节点时会过滤掉
                 })
                 statements = Handlebars.parse(placeholder).statements
                 context.splice.apply(context, [index + 4, 0].concat(statements))
@@ -167,7 +168,8 @@
 
                 placeholder = Locator.create({
                     guid: attrs.guid,
-                    slot: 'end'
+                    slot: 'end',
+                    type: 'todo'
                 })
                 statements = Handlebars.parse(placeholder).statements
                 context.splice.apply(context, [index + 4, 0].concat(statements))

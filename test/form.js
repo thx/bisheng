@@ -13,11 +13,19 @@ test('input, data => value', function() {
     }
     var expected = function(container) {
         equal(container.find('input').val(), '123')
-        equal(container.find('p:eq(1)').text(), '123')
+        equal(
+            // container.find('p:eq(1)').text(),
+            container.find('p').eq(1).text(),
+            '123'
+        )
     }
     var before = function(container) {
         equal(container.find('input').val(), 'first')
-        equal(container.find('p:eq(1)').text(), 'first')
+        equal(
+            // container.find('p:eq(1)').text(),
+            container.find('p').eq(1).text(),
+            'first'
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -38,7 +46,10 @@ test('input, value => data', function() {
     }
     var before = function(container) {
         equal('first', container.find('input').val())
-        equal('first', container.find('p:eq(1)').text())
+        equal('first',
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text()
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -61,11 +72,17 @@ test('select, data => value', function() {
     }
     var expected = function(container) {
         equal('User', container.find('select').val())
-        equal('User', container.find('p:eq(1)').text())
+        equal('User',
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text()
+        )
     }
     var before = function(container) {
         equal('Admin', container.find('select').val())
-        equal('role', container.find('p:eq(1)').text())
+        equal('role',
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text()
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -90,8 +107,12 @@ test('select, value => data', function() {
         equal('User', data.role)
     }
     var before = function(container) {
-        equal('Admin', container.find('select').val())
-        equal('role', container.find('p:eq(1)').text())
+        equal(container.find('select').val(), 'Admin')
+        equal(
+            // container.find('p:eq(1)').text(),
+            container.find('p').eq(1).text(),
+            'role'
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -108,12 +129,20 @@ test('textarea, data => dom', function() {
         data.description = 123
     }
     var expected = function(container) {
-        equal('123', container.find('textarea').val())
-        equal('123', container.find('p:eq(1)').text())
+        equal(container.find('textarea').val(), '123')
+        equal(
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text(),
+            '123'
+        )
     }
     var before = function(container) {
-        equal('description', container.find('textarea').val())
-        equal('description', container.find('p:eq(1)').text())
+        equal(container.find('textarea').val(), 'description')
+        equal(
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text(),
+            'description'
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -134,7 +163,10 @@ test('textarea, dom => data', function() {
     }
     var before = function(container) {
         equal('description', container.find('textarea').val())
-        equal('description', container.find('p:eq(1)').text())
+        equal('description',
+            // container.find('p:eq(1)').text()
+            container.find('p').eq(1).text()
+        )
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -304,12 +336,27 @@ test('radio, checked, data => dom', function() {
         data.radioChecked2 = true
     }
     var expected = function(container) {
-        equal(container.find('input:eq(0)').prop('checked'), false)
-        equal(container.find('input:eq(1)').prop('checked'), true)
+        equal(
+            // container.find('input:eq(0)').prop('checked'), 
+            container.find('input').eq(0).prop('checked'),
+            false
+        )
+        equal(
+            // container.find('input:eq(1)').prop('checked'),
+            container.find('input').eq(1).prop('checked'),
+            true
+        )
     }
     var before = function(container) {
-        equal(container.find('input:eq(0)').prop('checked'), true)
-        equal(container.find('input:eq(1)').prop('checked'), false)
+        equal(
+            // container.find('input:eq(0)').prop('checked'), 
+            container.find('input').eq(0).prop('checked'),
+            true
+        )
+        equal(
+            // container.find('input:eq(1)').prop('checked'), 
+            container.find('input').eq(1).prop('checked'),
+            false)
     }
     bindThenCheck(data, tpl, task, expected, before)
 })
@@ -341,18 +388,36 @@ test('radio, checked, dom => data', function() {
         radioChecked2: false
     })
     var task = function(container) {
-        container.find('input:eq(0)').prop('checked', false).trigger('change')
-        container.find('input:eq(1)').prop('checked', true).trigger('change')
+        // container.find('input:eq(0)').prop('checked', false).trigger('change')
+        container.find('input').eq(0).prop('checked', false).trigger('change')
+        // container.find('input:eq(1)').prop('checked', true).trigger('change')
+        container.find('input').eq(1).prop('checked', true).trigger('change')
     }
     var expected = function(container) {
-        equal(false, container.find('input:eq(0)').prop('checked'))
-        equal(true, container.find('input:eq(1)').prop('checked'))
+        equal(
+            // container.find('input:eq(0)').prop('checked')
+            container.find('input').eq(0).prop('checked'),
+            false
+        )
+        equal(
+            // container.find('input:eq(1)').prop('checked'), 
+            container.find('input').eq(1).prop('checked'),
+            true
+        )
         equal('radioValue2', $.trim(container.find('p').text()))
     }
     var before = function(container) {
-        equal(true, container.find('input:eq(0)').prop('checked'))
-        equal(false, container.find('input:eq(1)').prop('checked'))
-        equal('optionsRadios', $.trim(container.find('p').text()))
+        equal(
+            // container.find('input:eq(0)').prop('checked')
+            container.find('input').eq(0).prop('checked'),
+            true
+        )
+        equal(
+            // container.find('input:eq(1)').prop('checked'),
+            container.find('input').eq(1).prop('checked'),
+            false
+        )
+        equal($.trim(container.find('p').text()), 'optionsRadios')
     }
     bindThenCheck(data, tpl, task, expected, before)
 })

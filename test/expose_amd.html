@@ -21,7 +21,9 @@
   <!-- Load local tests. -->
   <script src="expose_main.js"></script>
   <script>
-    require(['bisheng'], main)
+    require(['jquery'], function(jQuery) {
+      require(['bisheng'], main)
+    })
   </script>
 </head>
 <body>

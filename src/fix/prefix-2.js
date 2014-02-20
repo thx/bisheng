@@ -1,5 +1,5 @@
     expose(
-        'bisheng', ['jquery', 'handlebars'],
+        'bisheng', ['handlebars'],
         factory,
         function() {
             // Browser globals

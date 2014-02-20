@@ -76,8 +76,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
 * [What is BiSheng.js](./what.html)
 * [How BiSheng.js works](./how.html)
-* Why BiSheng.js (TODO)
-<!-- * [Why BiSheng.js](./why.html) -->
+* [Why BiSheng.js](./why.html)
 
 <!-- 
 <a href="./what.html" type="button" class="btn btn-default">What is BiSheng.js</a>

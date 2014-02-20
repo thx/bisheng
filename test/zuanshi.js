@@ -267,10 +267,18 @@ test('sidebar.html, permission', function() {
             data.list[0].id = 123
         }
         var expected = function(container) {
-            equal(container.find('tr.item:eq(0) td:eq(0)').text(), data.list[0].id, data.list[0].id)
+            equal(
+                // container.find('tr.item:eq(0) td:eq(0)').text(),
+                container.find('tr.item').eq(0).find('td').eq(0).text(),
+                data.list[0].id, data.list[0].id
+            )
         }
         var before = function(container) {
-            equal(container.find('tr.item:eq(0) td:eq(0)').text(), data.list[0].id, data.list[0].id)
+            equal(
+                // container.find('tr.item:eq(0) td:eq(0)').text(),
+                container.find('tr.item').eq(0).find('td').eq(0).text(),
+                data.list[0].id, data.list[0].id
+            )
         }
         bindThenCheck(data, tpl, task, expected, before)
     })
@@ -353,7 +361,7 @@ test('plan_handle.html, ', function() {
     })
     var data = Mock.tpl(tpl)
     BiSheng.watch(data, function(changes) {
-        $.each(changes, function(index, change) {
+        $._each(changes, function(change, index) {
             var path = change.path.slice(1, change.path.length)
             if (path[0] === 'setting' && change.value === true) {
                 for (var key in data.setting) {
