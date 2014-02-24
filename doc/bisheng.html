@@ -104,7 +104,7 @@
 <li><strong>参数 tpl</strong>：必选。待绑定的 HTML 模板。在绑定过程中，先把 HTML 模板转换为 DOM 元素，然后将“绑定”数据到 DOM 元素。目前只支持 Handlebars.js 语法。</li>
 <li><strong>参数 callback(content)</strong>：必选。回调函数，当绑定完成后被执行。执行该函数时，会把转换后的 DOM 元素作为参数 content 传入。该函数的上下文（即关键字 this）是参数 data。</li>
 <li><strong>参数 content</strong>：数组，其中包含了转换后的 DOM 元素。</li>
-<li><strong>参数 context</strong>：可选。容器元素，可以是单个  DOM 元素，或 DOM 元素数组。转换后的 DOM 元素将被插入该参数中。</li>
+<li><strong>参数 context</strong>：可选。容器元素，可以是单个  DOM 元素，或 DOM 元素数组，或选择器表达式。。转换后的 DOM 元素将被插入该参数中。</li>
 </ul>
 <h2 id="bisheng-unbind-data-tpl-">BiSheng.unbind(data, tpl)</h2>
 <p>解除数据和模板之间的双向绑定。</p>
