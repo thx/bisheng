@@ -28,7 +28,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 <p>
     <a href="../dist/bisheng.js" class="btn btn-success w250">
         Development Version (0.1.0)
-    </a> - 
+    </a> -
     <i><span id="uncompressed">59</span>kB, Full source, tons of comments</i>
 </p>
 <p>
@@ -77,6 +77,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 * [What is BiSheng.js](./what.html)
 * [How BiSheng.js works](./how.html)
 * [Why BiSheng.js](./why.html)
+* [懒懒交流会分享](./lanlan.html)
 
 <!-- 
 <a href="./what.html" type="button" class="btn btn-default">What is BiSheng.js</a>

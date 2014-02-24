@@ -15,7 +15,7 @@
 
 > 数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。
 
-这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是形而下地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译](http://nuysoft.com/2013/08/13/large-scale-javascript/)）。
+这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是 [形而下](http://baike.baidu.com/view/1166106.htm) 地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译](http://nuysoft.com/2013/08/13/large-scale-javascript/)）。
 
 [AngularJS]: http://angularjs.org/
 [EmberJS]: http://emberjs.com/

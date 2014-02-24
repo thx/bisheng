@@ -55,7 +55,7 @@ controls: true
 
 现在只支持 [Handlebars.js]。
 
-下一步支持 [CROX](gitlab.alibaba-inc.com/thx/crox)、[KISSY XTemplate](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)。
+下一步支持 [CROX](http://gitlab.alibaba-inc.com/thx/crox)、[KISSY XTemplate](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)。
 
 [Handlebars.js]: http://handlebarsjs.com/
 
@@ -180,7 +180,7 @@ controls: true
 --
 ### 工作原理
 
-1. 修改语法树，插入定位符。
+1. 修改模板语法树，插入定位符。
 2. 渲染模板和定位符。
 3. 解析定位符。
 4. 建立数据到 DOM 元素的连接。

@@ -1,0 +1,944 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>BiSheng.js</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+#wrapper {
+  width: 850px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+}
+
+.slide {
+  width: auto;
+  height: 540px;
+  padding: 30px;
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.controls .arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.controls .prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.controls .next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.controls .prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.controls .next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+.slide h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+.slide h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+.slide h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+.slide ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.slide .author h1.name {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.slide .author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.1s ease-out;
+  -moz-transition: width 0.1s ease-out;
+  -o-transition: width 0.1s ease-out;
+  transition: width 0.1s ease-out;
+}
+
+@media (max-width: 850px) {
+  #wrapper {
+    width: auto;
+  }
+
+  body {
+    font-size: 70%;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .slide h1 {
+    margin-top: 120px;
+  }
+
+  .controls .prev, .controls .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .controls .next, .controls .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  #wrapper {
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  .slide {
+    padding: 10px;
+    height: 340px;
+  }
+
+  .slide h1 {
+    margin-top: 50px;
+  }
+
+  .slide ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: letter;
+  }
+
+  html {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 auto !important;
+    border: 0;
+    padding: 0;
+    float: none !important;
+    overflow: visible;
+    background: none !important;
+    font-size: 52%;
+  }
+
+  .progress, .controls {
+    display: none;
+  }
+
+  #wrapper {
+    overflow: visible;
+    height: 100%;
+    margin-top: 0;
+  }
+
+  .slide {
+    border: 1px solid #222;
+    margin-bottom: 40px;
+    height: 3.5in;
+  }
+
+  .slide:nth-child(odd) {
+    /* 2 slides per page */
+    page-break-before: always;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+code, pre {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  overflow: auto;
+  padding: 6px 10px;
+}
+
+code {
+  padding: 0 5px;
+}
+
+pre>code {
+  margin: 0; padding: 0;
+  border: none;
+  background: transparent;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+<div id="wrapper">
+    <section class="slide"><!-- 
+    TODO 借用结构
+    https://speakerdeck.com/zcbenz/node-webkit-app-runtime-based-on-chromium-and-node-dot-js 
+
+    * BiSheng.js 是什么？
+    * 应用场景
+    * 快速开始
+    * 实现细节
+    * 问答
+    * 一点私货
+-->
+
+<!-- 
+    随堂问题：
+
+    我在分享的过程中会做一些提问和调查，需要各位的配合，我会根据你们的回答调整分享的内容。
+
+    * 知道 AngularJS、Ember.js 的请举一下手
+    * 读过 Backbone.js 源码的有多少呢
+    * 在项目中应用过双向绑定的有多少呢，包括公司的业务和业余项目
+    * 了解 AngularJS、Ember.js 实现原理的有多少呢
+    * 使用过程中的感受如何
+    * 了解过 Handlebars.js 或 KISSY XTemplate 语法树的有多少呢
+
+    * 读过 jQuery 源码的请配合举一下手
+    * 看过哪些模块呢，看的较多的有些模块呢，有什么样的启发
+ -->
+
+<style type="text/css">
+    @font-face {
+        font-family: 'logo';
+        src: url('http://at.alicdn.com/t/font_1390195988_9420388.eot'); /* IE9*/
+        src: url('http://at.alicdn.com/t/font_1390195988_9420388.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+        url('http://at.alicdn.com/t/font_1390195989_0386753.woff') format('woff'), /* chrome、firefox */
+        url('http://at.alicdn.com/t/font_1390195988_7969282.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+        url('http://at.alicdn.com/t/font_1390195989_0668917.svg#svgFontName') format('svg'); /* iOS 4.1- */
+    }
+    .iconlogo {
+        font-family: "logo";
+        /*font-size: 40px;*/
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        display: inline-block;
+        speak: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    .dependencies img { 
+        max-height: 100px; 
+        padding: 18px;
+    }
+    .dependencies .text {
+        display: inline-block;
+        height: 100px;
+        padding: 18px;
+        text-align: center;
+        min-width: 100px;
+    }
+    .mt20 {
+        margin-top: 20px;
+    }
+    .ml20 {
+        margin-left: 20px;
+    }
+</style>
+
+<h1 style="color: #428BCA; ">
+    <i class="iconlogo">&#x3438;</i>
+    BiSheng.js
+</h1>
+
+<!-- # BiSheng.js -->
+<!-- ## 　 -->
+
+<h2 id="-">小巧轻便的数据双向绑定库</h2>
+<div style="text-align: center; font-size: 18px; margin-top: 36px;">
+    <div style="margin-bottom: 4px;">墨智 / 高云</div>
+    <div style="margin-bottom: 4px;"><a href="mailto:mozhi.gyy@alibaba-inc.com">mozhi.gyy@alibaba-inc.com</a></div>
+    <div style="margin-bottom: 4px;"><a href="https://github.com/thx/bisheng">https://github.com/thx/bisheng</a></div>
+    <div style="margin-bottom: 4px;"><a href="http://bishengjs.com/">http://bishengjs.com/</a></div>
+    <div>
+        <!-- <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
+        <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=fork&count=true&size=large"allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe> -->
+    </div>
+</div></section>
+    <section class="slide"><h3 id="-">毕昇</h3>
+<table>
+    <tr>
+        <td style="padding: 32px 0;">
+            <img src="image/bisheng.jpg" height="300">
+        </td>
+        <td style="padding: 32px 0 32px 32px;">
+            <p>单向绑定犹如“刻版印刷”，</p>
+            <p>双向绑定犹如“活字印刷”，</p>
+            <p>故名 <code>BiSheng.js</code>。</p>
+        </td>
+    </tr>
+</table></section>
+    <section class="slide"><h3 id="-">开始之前</h3>
+<p><a href="http://bishengjs.com/">bishengjs.com</a></p>
+<p><a href="http://bishengjs.com/doc/index.html#API"><img src="image/guides.png" alt=""></a></p>
+</section>
+    <section class="slide"><h3 id="-">内容</h3>
+<ul>
+<li>BiSheng.js 是什么</li>
+<li>快速开始</li>
+<li>应用场景和示例</li>
+<li>实现细节</li>
+<li>未来规划</li>
+<li>问答</li>
+<li>一点私货</li>
+</ul>
+<!-- 
+    * 事件驱动编程
+    * 数据驱动编程
+    * 浏览器支持
+    * 依赖关系
+    * API
+ --></section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<p>小巧轻便的数据双向绑定库。</p>
+<table width="100%">
+    <tr>
+        <td><img src="image/One_Way_Data_Binding.png"></td>
+        <td><img src="image/Two_Way_Data_Binding.png"></td>
+    </tr>
+</table>
+
+<p><em>图片来自 <a href="http://docs.angularjs.org/guide/databinding">http://docs.angularjs.org/guide/databinding</a></em></p>
+</section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<ul>
+<li>帮助快速开发 Web 组件和应用</li>
+<li>可以单独使用</li>
+<li>可以方便地集成到第三方框架</li>
+</ul>
+<p><p style="text-align: center;">
+    <img src="image/超级赛亚人合体.jpg" width="400">
+</p>
+<em>图片来自 <a href="http://www.nerdssomosnozes.com/2009/08/nasce-o-bingoo-ou-yahing.html">http://www.nerdssomosnozes.com/2009/08/nasce-o-bingoo-ou-yahing.html</a></em></p>
+</section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<p>支持所有主流浏览器，包括 IE6。</p>
+<table width="100%">
+    <tr>
+        <td style="padding: 32px 32px 32px 0;">
+            <img width="96" src="./image/Browsers_MIN/Png/IE.png">
+        </td>
+        <td style="padding: 32px 32px 32px 0;">
+            <img width="96" src="./image/Browsers_MIN/Png/Chrome.png">
+            <img width="96" src="./image/Browsers_MIN/Png/Safari.png">
+            <img width="96" src="./image/Browsers_MIN/Png/Firefox.png">
+            <img width="96" src="./image/Browsers_MIN/Png/Opera.png">
+        </td>
+    </tr>
+    <tr>
+        <td>6+</td>
+        <td>(Current - 1) or Current</td>
+    </tr>
+</table></section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<ul>
+<li>基于模板引擎 Handlebars.js 实现</li>
+<li>可扩展支持其他基于语法树的模板引擎</li>
+<li>兼容 jQuery 和 KISSY</li>
+</ul>
+<p class="dependencies">
+    <img style="background-color: #F7931E;" src="image/logo_handlebars.png">
+    <img style="background-color: #0769AD;" src="image/logo-jquery.png">
+    <img style="background-color: #EDEDED;" src="image/logo_kissy.png">
+</p></section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<p>支持包管理器 Bower 和主流的模块加载器。</p>
+<div class="dependencies">
+    <img style="background-color: #FFCC2F; float: left;" src="image/logo_bower.png">
+    <div class="text ml20"><strong>AMD</strong><br><em>RequireJS</em></div>
+    <div class="text"><strong>CMD</strong><br><em>SeaJS</em></div>
+    <div class="text"><strong>KMD</strong><br><em>KISSY</em></div><br></div></section>
+    <section class="slide"><h3 id="bisheng-js-">BiSheng.js 是什么</h3>
+<ul>
+<li>数据驱动编程<ul>
+<li>Data-Driven Programming，DDP</li>
+<li>自动在 DOM 结构与数据模型之间建立映射关系</li>
+<li>事件也作为数据的一部分</li>
+</ul>
+</li>
+</ul>
+<p>前端应用程序应该以数据为中心，而不应该以处理和展现为中心。因为数据结构是稳定、唯一的，而业务和展现则是多变、多场景的。</p>
+<!-- 
+* 事件驱动编程
+    * Event-Driven Programming，EDP
+    * 耦合了 DOM 结构、事件模型、数据模型
+ --></section>
+    <section class="slide"><h3 id="-">快速开始</h3>
+<ol>
+<li><p>安装 BiSheng.js 和依赖库。</p>
+<pre><code> bower install bishengjs</code></pre>
+</li>
+<li><p>引入 BiSheng.js, jQuery 和 Handlebars.js。</p>
+<pre><code> &lt;script src=&quot;../bower_components/jquery/jquery.js&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;../bower_components/handlebars/handlebars.js&quot;&gt;&lt;/script&gt;
+ &lt;script src=&quot;../bower_components/bishengjs/dist/bisheng.js&quot;&gt;&lt;/script&gt;</code></pre>
+</li>
+</ol>
+</section>
+    <section class="slide"><h3 id="-">快速开始</h3>
+<ol>
+<li>安装。。。</li>
+<li>引入。。。</li>
+<li><p>调用 <code>BiSheng.bind()</code>。</p>
+<pre><code> var tpl = $(&#39;#hello&#39;).html()
+ var data = {
+     first: &#39;Zhi&#39;,
+     last: &#39;Mo&#39;
+ }
+ BiSheng.bind(data, tpl, function(content){
+     $(&#39;.container&#39;).append(content)
+ })</code></pre>
+</li>
+</ol>
+</section>
+    <section class="slide"><h3 id="-">快速开始</h3>
+<iframe width="100%" height="250" class="mt20" src="http://jsfiddle.net/zj2WF/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe></section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p>前端应用程序的场景可以归纳为四类：</p>
+<ul>
+<li>表达式</li>
+<li>逻辑块</li>
+<li>HTML 属性</li>
+<li>表单</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p>以表达式 <code>{{foo}}</code> 为例。</p>
+<p><strong>首先</strong>，我们定义容器节点 <code>div.container</code>、模板 <code>tpl</code> 和数据 <code>data</code>：</p>
+<pre><code>&lt;div class=&quot;container&quot;&gt;&lt;/div&gt;
+
+var tpl = &#39;{{foo}}&#39;
+var data = {
+    foo: &#39;foo&#39;
+}</code></pre>
+<p>所有的准备工作已经就绪（这些步骤和普通的开发过程没什么区别），可以开始绑定模板 <code>tpl</code> 和数据 <code>data</code> 了。</p>
+</section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p><strong>然后</strong>，调用方法 <code>BiSheng.bind(data, tpl, context)</code> 执行双向绑定：</p>
+<pre><code>BiSheng.bind(data, tpl, $(&#39;div.container&#39;))</code></pre>
+<p><strong>最后</strong>，用一个定时器 <code>setInterval</code> 来模拟数据的变化，改变数据时需要用 <code>BiSheng.apply(fn)</code> 包裹起来：</p>
+<pre><code>setInterval(function(){
+    BiSheng.apply(function(){
+        data.foo = new Date()
+    })
+}, 1000)</code></pre>
+</section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<iframe width="100%" height="250" class="mt20" src="http://jsfiddle.net/8gAjL/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<p>实施 BiSheng.js 的步骤都是如此，所以，在后面的示例中，我不再罗列每个步骤，只展示运行结果。</p>
+</section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p>以逻辑块 <code>{{#with story}}{{{intro}}}{{/with}}</code> 为例。</p>
+<iframe width="100%" height="280" src="http://jsfiddle.net/nNsrQ/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe></section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p>以 HTML 属性 <code>&lt;span title=&quot;{{title}}&quot;&gt;{{title}}&lt;/span&gt;</code> 为例。</p>
+<iframe width="100%" height="250" src="http://jsfiddle.net/nv7er/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe></section>
+    <section class="slide"><h3 id="-">应用场景和示例</h3>
+<p>以表单元素 <code>&lt;input value=&quot;{{first}}&quot;&gt;</code> 为例。</p>
+<iframe width="100%" height="160" src="http://jsfiddle.net/MjV6S/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe></section>
+    <section class="slide"><h3 id="-">实现细节</h3>
+<p>BiSheng.js 的 API 非常简洁和符合直觉，总共只有 5 个公开方法：</p>
+<ul>
+<li>BiSheng.bind(data, tpl, callback)</li>
+<li>BiSheng.unbind(data, tpl)</li>
+<li>BiSheng.watch(data, properties, fn(change))</li>
+<li>BiSheng.unwatch(data, fn)</li>
+<li>BiSheng.apply(fn)</li>
+</ul>
+<p><code>BiSheng</code> 是唯一的入口对象。</p>
+</section>
+    <section class="slide"><h3 id="-">实现细节</h3>
+<p>详细的 API 文档，请访问 <a href="/doc/bisheng.html">HTML</a> 或 <a href="/doc/bisheng.md">Markdown</a>。</p>
+<p><img src="image/bishengjs_api.png" alt=""></p>
+</section>
+    <section class="slide"><h3 id="-">实现细节</h3>
+<p>BiSheng.js 会修改模板语法树，插入定位符，通过定位符来建立数据和 DOM 元素之间的连接。</p>
+<ol>
+<li>修改模板语法树，插入定位符。</li>
+<li>渲染模板和定位符。</li>
+<li>解析定位符。</li>
+<li>建立数据到 DOM 元素的连接。</li>
+<li>建立 DOM 元素到数据的连接。</li>
+</ol>
+</section>
+    <section class="slide"><h3 id="-">实现细节</h3>
+<p>关于 BiSheng.js 的实现原理，您可以在 <a href="http://bishengjs.com/doc/how.html">How BiSheng.js works</a> 看到详细的设计过程和原理分析。</p>
+</section>
+    <section class="slide"><h3 id="-">未来规划</h3>
+<p>支持 <a href="http://gitlab.alibaba-inc.com/thx/crox">CROX</a>、<a href="http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html">KISSY XTemplate</a>。</p>
+</section>
+    <section class="slide"><h3 id="-">写作工具</h3>
+<ul>
+<li><a href="https://github.com/jdan/cleaver/">https://github.com/jdan/cleaver/</a></li>
+<li><a href="https://github.com/Bartvds/grunt-cleaver">https://github.com/Bartvds/grunt-cleaver</a></li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-">回顾一下</h3>
+<ul>
+<li>BiSheng.js 是什么</li>
+<li>应用场景和示例</li>
+<li>实现细节</li>
+</ul>
+<blockquote>
+<p>只做一件事，并做好。——《Unix 编程艺术》</p>
+</blockquote>
+</section>
+    <section class="slide"><h3 id="-">问答</h3>
+<ol>
+<li><p>已经有了 AngularJS、Ember.js 等等优秀的双向绑定框架，为什么开发 BiSheng.js 呢？</p>
+<p> 兴趣 &amp; 学习 &amp; KPI。</p>
+</li>
+<li><p>已经有了 AngularJS、Ember.js 等等优秀的双向绑定框架，为什么选择 BiSheng.js 呢？</p>
+<ul>
+<li>太多的概念和编码约定</li>
+<li>对既有架构的冲击大</li>
+<li>DOM 模板天生不支持 IE6、IE7</li>
+</ul>
+</li>
+</ol>
+</section>
+    <section class="slide"><h3 id="-">问答</h3>
+<p style="text-align: center; font-size: 128px; ">？</p></section>
+    <section class="slide"><h3 id="-">一点私货</h3>
+<p style="text-align: center;">
+    <img src="http://nuysoft.com/assets/jquery_internals/shupi.jpg" width="256">
+</p></section>
+    <section class="slide"><h3 id="-jquery-">《jQuery 技术内幕》</h3>
+<ul>
+<li>采用由浅入深的方式，先概述功能、用法、结构和实现原理，然后介绍关键步骤和和分析源码实现。</li>
+<li>每个模块辅以大量插图，总结了公开方法和底层方法的调用关系、执行过程。</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-jquery-">《jQuery 技术内幕》</h3>
+<ul>
+<li>前端工程师通过阅读本书可以巩固基础知识、洞悉 jQuery 背后的实现原理、学习进行源码分析的方法和技巧，从而快速成长。</li>
+<li>资深前端通过阅读本书可以借鉴和印证 jQuery 的架构设计和实现方式。</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="-">没有了</h3>
+<p style="text-align: center; font-size: 64px;">谢谢各位的聆听</p>
+
+<p>无论您对双向绑定有什么见解，或者对 BiSheng.js 有什么建议，或者遇到什么不爽的地方，欢迎来 <a href="https://github.com/thx/bisheng/issues/">砸砖</a> 和 <a href="mailto:nuysoft@gmail.com">交流</a>。</p>
+<!-- 
+    BiSheng.js 才刚刚起步，尚不完善。
+    如果从我今天的分享中学到了东西或有所启发，请打赏一个赞。
+ -->
+
+<p><style type="text/css">
+    pre {
+        padding: 0px;
+    }
+</style></p>
+<p><link rel="stylesheet" href="../bower_components/highlightjs/styles/rainbow.css"></p>
+<script src="../bower_components/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script></section>
+    <section class="slide"><div class="author">
+  <h1 class="name">墨智 &#x2F; 高云</h1>
+    <h3 class="url">
+      <a href="http://nuysoft.com">http://nuysoft.com</a>
+    </h3>
+    <h3 class="email">
+      <a href="mailto:mozhi.gyy@alibaba-inc.com">mozhi.gyy@alibaba-inc.com</a>
+    </h3>
+</div>
+</section>
+</div>
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
+
+
+  <script type="text/javascript">
+    /**
+ * Takes the last slide and places it at the front.
+ */
+function goBack() {
+  var wrapper = document.querySelector('#wrapper');
+  var lastSlide = wrapper.lastChild;
+  while (lastSlide !== null && lastSlide.nodeType !== 1) {
+    lastSlide = lastSlide.previousSibling;
+  }
+
+  wrapper.removeChild(lastSlide);
+  wrapper.insertBefore(lastSlide, wrapper.firstChild);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Takes the first slide and places it at the end.
+ */
+function goForward() {
+  var wrapper = document.querySelector('#wrapper');
+  var firstSlide = wrapper.firstChild;
+  while (firstSlide !== null && firstSlide.nodeType !== 1) {
+    firstSlide = firstSlide.nextSibling;
+  }
+
+  wrapper.removeChild(firstSlide);
+  wrapper.appendChild(firstSlide);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPage());
+}
+
+/**
+ * Returns the current page number of the presentation.
+ */
+function currentPage() {
+  return document.querySelector('#wrapper .slide').dataset.page;
+}
+
+/**
+ * Returns a NodeList of each .slide element.
+ */
+function allSlides() {
+  return document.querySelectorAll('#wrapper .slide');
+}
+
+/**
+ * Give each slide a "page" data attribute.
+ */
+function setPageNumbers() {
+  var wrapper = document.querySelector('#wrapper');
+  var pages   = wrapper.querySelectorAll('section');
+  var page;
+
+  for (var i = 0; i < pages.length; ++i) {
+    page = pages[i];
+    page.dataset.page = i;
+  }
+}
+
+/**
+ * Set the current progress indicator.
+ */
+function setCurrentProgress() {
+  var wrapper = document.querySelector('#wrapper');
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var pagesNumber    = wrapper.querySelectorAll('section').length;
+    var currentNumber  = parseInt(currentPage(), 10);
+    var currentPercent = pagesNumber === 1 ? 100 : 100 * currentNumber / (pagesNumber - 1);
+    progressBar.style.width = currentPercent.toString() + '%';
+  }
+}
+
+/**
+ * Go to the specified page of content.
+ */
+function goToPage(page) {
+  // Try to find the target slide.
+  var targetSlide = document.querySelector('#wrapper .slide[data-page="' + page + '"]');
+
+  // If it actually exists, go forward until we find it.
+  if (targetSlide) {
+    var numSlides = allSlides().length;
+
+    for (var i = 0; currentPage() !== page && i < numSlides; i++) {
+      goForward();
+    }
+  }
+}
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var currentPageLinks = document.querySelector('.slide').querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    allLinks[i].removeAttribute('tabindex');
+  }
+}
+
+window.onload = function () {
+
+  // Give each slide a "page" data attribute.
+  setPageNumbers();
+
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) {
+    goToPage(page);
+  }
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, enter, PgDn - FORWARD
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      goBack();
+    } else if (kc === 38 || kc === 39 || kc === 13 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      goForward();
+    }
+  };
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      goForward();
+    };
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      goBack();
+    };
+  }
+
+};
+
+
+  </script>
+</body>
+</html>

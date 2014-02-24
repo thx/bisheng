@@ -117,11 +117,15 @@ module.exports = function(grunt) {
                 tasks: ['jshint', 'concat', 'uglify', 'qunit', 'markdown', 'cleaver'] // 'nodeunit'
             },
             markdown: {
-                files: ['doc/*.md', 'doc/template*.html', '!doc/what.md'],
+                files: ['doc/*.md', 'doc/template*.html', '!doc/what.md', '!doc/lanlan.md'],
                 tasks: ['markdown', 'copy']
             },
-            cleaver: {
+            what: {
                 files: ['doc/what.md'],
+                tasks: ['cleaver', 'copy']
+            },
+            lanlan: {
+                files: ['doc/lanlan.md'],
                 tasks: ['cleaver', 'copy']
             }
         },
@@ -142,19 +146,36 @@ module.exports = function(grunt) {
                 },
                 expand: true,
                 cwd: 'doc/',
-                src: ['*.md', '!index.md', '!what.md'],
+                src: ['*.md', '!index.md', '!what.md', '!lanlan.md'],
                 dest: 'doc/',
                 ext: '.html'
             }
         },
         cleaver: {
-            doc: {
+            what: {
                 expand: true,
                 cwd: 'doc/',
                 src: ['what.md'],
                 dest: 'doc/',
                 ext: '.html'
+            },
+            lanlan: {
+                expand: true,
+                cwd: 'doc/',
+                src: ['lanlan.md'],
+                dest: 'doc/',
+                ext: '.html'
             }
+            /*
+            ,
+            doc: {
+                expand: true,
+                cwd: 'doc/',
+                src: ['what.md', 'lanlan.md'],
+                dest: 'doc/',
+                ext: '.html'
+            }
+            */
         },
         copy: {
             doc: {

@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-02-20 01:34:02 PM CST */
+/*! BiSheng.js 2014-02-25 03:46:33 AM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -119,7 +119,7 @@
             2. 如果只是行为不同，则定义一个以下划线开头的同名方法。
             3. 最小扩展集。
 
-            TODO 尚有些混乱，部分是为让测试用例通过扩展
+            TODO 尚有些混乱，部分是为让测试用例通过而扩展的。
         */
         if (!prototype.splice) {
             prototype.splice = [].splice;
