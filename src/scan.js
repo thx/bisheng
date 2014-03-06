@@ -247,69 +247,71 @@
 
         /*
             更新属性 value 对应的数据
+            TODO:
+                input 
+                    radio checkbox
+                select
+                    multi?
+                textarea
          */
+
+        var updateValueHooks = {
+            text: function($target) {
+                $target.data('user is editing', true)
+                return $target.val()
+            },
+            radio: function($target) {
+                return false
+            },
+            checkbox: function($target) {
+                return false
+            },
+            _default: function($target) {
+                return $target.val()
+            }
+        };
+
         function updateValue(data, path, target) {
             for (var index = 1; index < path.length - 1; index++) {
                 data = data[path[index]]
             }
 
-            var $target = jqLite(target),
-                value
-            switch (target.nodeName.toLowerCase()) {
-                case 'input':
-                    switch (target.type) {
-                        case 'text':
-                            $target.data('user is editing', true)
-                            value = $target.val()
-                            break;
-                        case 'radio': // TODO
-                        case 'checkbox': // TODO
-                            return
-                        default:
-                            value = $target.val()
-                    }
-                    break
-                case 'select':
-                    value = $target.val()
-                    break
-                case 'textarea':
-                    value = $target.val()
-                    break
-                default:
-                    value = $target.val()
-            }
+            var hook = updateValueHooks[target.type] ||
+                updateValueHooks[target.nodeName.toLowerCase()] ||
+                updateValueHooks._default
+            var value = hook(jqLite(target))
 
-            data[path[path.length - 1]] = value
+            if (value !== false) data[path[path.length - 1]] = value
         }
 
         /*
             更新属性 checked 对应的数据
+            TODO:
+                input
+                    radio
+                    checkbox
         */
+
+        var updateCheckedHooks = {
+            radio: function($target, data) {
+                var name = $target.attr('name')
+                var value = $target.prop('checked')
+                if (name && value && name in data) data[name] = $target.val()
+                return value
+            },
+            checkbox: function($target, data) {
+                return $target.prop('checked')
+            },
+            _default: function($target, data) {}
+        };
+
         function updateChecked(data, path, target) {
             for (var index = 1; index < path.length - 1; index++) {
                 data = data[path[index]]
             }
-
-            var $target = jqLite(target),
-                value, name
-            switch (target.nodeName.toLowerCase()) {
-                case 'input':
-                    switch (target.type) {
-                        case 'radio': // TODO
-                            value = $target.prop('checked')
-                            name = $target.attr('name')
-                            if (name && value && name in data) data[name] = $target.val()
-                            break
-                        case 'checkbox': // TODO
-                            value = $target.prop('checked')
-                            break
-                    }
-                    break
-                default:
-                    // TODO
-            }
-
-            data[path[path.length - 1]] = value
+            var hook = updateCheckedHooks[target.type] || updateCheckedHooks[target.nodeName.toLowerCase()] || updateCheckedHooks._default
+            var value = hook(jqLite(target), data)
+            if (value !== undefined) data[path[path.length - 1]] = value
         }
 
         return {

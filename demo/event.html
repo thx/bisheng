@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BiSheng.js Test Suite</title>
+  <link  href="../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+  <script src="../bower_components/jquery/jquery.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Events</h1>
+    <div class="panel panel-default">
+        <div class="panel-heading" bs-click="console.log(this, 1)">Source:</div>
+        <div class="panel-body" bs-click="console.log(this, 2)">
+          <a href="" class="btn btn-default" bs-click=    "console.log(this, 3)">bs-click    3</a>
+          <a href="" class="btn btn-default" bs-keydown=  "console.log(this, 4)">bs-keydown  4</a>
+          <a href="" class="btn btn-default" bs-keypress= "console.log(this, 5)">bs-keypress 5</a>
+          <a href="" class="btn btn-default" bs-keyup=    "console.log(this, 6)">bs-keyup    6</a>
+        </div>
+    </div>
+  </div>
+  <script src="./event.js"></script>
+</body>
+</html>

@@ -71,7 +71,7 @@
             // define(id?, dependencies?, factory);
             // https://github.com/amdjs/amdjs-api/wiki/AMD
             if (id !== undefined) args.push(id)
-            if (id !== dependencies) args.push(dependencies)
+            if (dependencies !== undefined) args.push(dependencies)
             args.push(factory)
             define.apply(window, args)
 
@@ -80,7 +80,7 @@
             // define(id?, deps?, factory)
             // https://github.com/seajs/seajs/issues/242
             if (id !== undefined) args.push(id)
-            if (id !== dependencies) args.push(dependencies)
+            if (dependencies !== undefined) args.push(dependencies)
             args.push(factory)
             define.apply(window, args)
 
@@ -91,8 +91,7 @@
                 window.define = function define(id, dependencies, factory) {
                     // KISSY.add(name?, factory?, deps)
                     function proxy( /*arguments*/ ) {
-                        var slice = [].slice
-                        var args = slice.call(arguments, 1, arguments.length)
+                        var args = [].slice.call(arguments, 1, arguments.length)
                         return factory.apply(window, args)
                     }
                     switch (arguments.length) {

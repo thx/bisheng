@@ -15,7 +15,7 @@
 
 > 数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。
 
-这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是 [形而下](http://baike.baidu.com/view/1166106.htm) 地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译](http://nuysoft.com/2013/08/13/large-scale-javascript/)）。
+这篇文章不会再谈论 [实施数据双向绑定带来的好处](./why.html) 是如何诱人，而是 [形而下](http://baike.baidu.com/view/1166106.htm) 地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 [AngularJS] 和 [EmberJS]，结构借鉴了 [Patterns For Large-Scale JavaScript Application Architecture]（[中文翻译](http://nuysoft.com/2013/08/13/large-scale-javascript/)）。
 
 [AngularJS]: http://angularjs.org/
 [EmberJS]: http://emberjs.com/
@@ -24,7 +24,7 @@
 
 ## 我是谁，以及我为什么写这个主题？
 
-我目前是 [阿里妈妈](http://www.alimama.com/) 的一名 JavaScript 开发人员，负责 [钻石展位广告管理系统] 和 [DMP 数据营销系统]的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。
+我目前是 [阿里妈妈](http://www.alimama.com/) 的一名 JavaScript 开发人员，负责 [钻石展位广告管理系统] 和 [DMP 数据营销系统] 的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。
 
 已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 [BiSheng.js]，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。
 
@@ -245,7 +245,7 @@ API 文档：已覆盖目前的公开 API。
 正在做的：用 HTML 注释节点来替换 script 节点，作为定位符。 
 -->
 
-1. 支持 [KISSY XTempalte](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)
+1. 支持 [CROX](http://gitlab.alibaba-inc.com/thx/crox)、[KISSY XTempalte](http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html)
 2. √ 定位符由 script 改为注释节点。
 3. 从修改语法树、扫描语法树、更新数据、更新视图等环节，优化性能。
 4. √ 解决兼容性问题（IE）

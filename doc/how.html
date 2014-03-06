@@ -96,9 +96,9 @@
 <blockquote>
 <p>数据双向绑定对开发体验的提升很是显著，而且会变革前端的开发模式和设计思路，犹如从雕版印刷到活字印刷的进步，我在开发 BiSheng.js 的过程中对此深有体会，非常值得各位试一试。</p>
 </blockquote>
-<p>这篇文章不会再谈论实施数据双向绑定带来的好处是如何诱人，而是 <a href="http://baike.baidu.com/view/1166106.htm">形而下</a> 地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 <a href="http://angularjs.org/">AngularJS</a> 和 <a href="http://emberjs.com/">EmberJS</a>，结构借鉴了 <a href="http://addyosmani.com/largescalejavascript/">Patterns For Large-Scale JavaScript Application Architecture</a>（<a href="http://nuysoft.com/2013/08/13/large-scale-javascript/">中文翻译</a>）。</p>
+<p>这篇文章不会再谈论 <a href="./why.html">实施数据双向绑定带来的好处</a> 是如何诱人，而是 <a href="http://baike.baidu.com/view/1166106.htm">形而下</a> 地专注于对数据双向绑定的分析和实现。文章的内容基于编写 BiSheng.js 时的思考和尝试，灵感则来自于 <a href="http://angularjs.org/">AngularJS</a> 和 <a href="http://emberjs.com/">EmberJS</a>，结构借鉴了 <a href="http://addyosmani.com/largescalejavascript/">Patterns For Large-Scale JavaScript Application Architecture</a>（<a href="http://nuysoft.com/2013/08/13/large-scale-javascript/">中文翻译</a>）。</p>
 <h2 id="-">我是谁，以及我为什么写这个主题？</h2>
-<p>我目前是 <a href="http://www.alimama.com/">阿里妈妈</a> 的一名 JavaScript 开发人员，负责 <a href="http://zuanshi.taobao.com">钻石展位广告管理系统</a> 和 <a href="http://dmp.taobao.com/">DMP 数据营销系统</a>的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。</p>
+<p>我目前是 <a href="http://www.alimama.com/">阿里妈妈</a> 的一名 JavaScript 开发人员，负责 <a href="http://zuanshi.taobao.com">钻石展位广告管理系统</a> 和 <a href="http://dmp.taobao.com/">DMP 数据营销系统</a> 的前端开发。由于这些应用程序不仅复杂，而且需要快速迭代和高度可复用的架构，因此我的职责之一就是确保开发模式尽可能是可维护和可持续的。</p>
 <p>已有的数据双向绑定实现大都是大而全的框架，对于既有应用程序的架构体系冲击太大，实施成本可比推倒重建，而且起步价大多是 IE8 或 IE9，所以借鉴意义更大些。为了学习这些实现，解决开发过程中没完没了没完没了的 DOM 操作，我开发了一个纯粹的数据双向绑定工具 <a href="https://github.com/thx/bisheng">BiSheng.js</a>，现在我把思路和过程记录下来，让它们更条理一些，顺便作为 BiSheng.js 的设计文档。</p>
 <p>BiSheng.js 的名称源自活字印刷术的发明者“<a href="http://baike.baidu.com/subview/33366/11034585.htm?fromtitle=%E6%AF%95%E5%8D%87&amp;fromid=64860&amp;type=syn">毕昇</a>”。因为单向绑定犹如“刻版印刷”，双向绑定犹如“活字印刷”，故名 BiSheng.js。</p>
 <h2 id="-140-">可以用 140 个字概述这篇文章吗？</h2>
@@ -264,7 +264,7 @@ API 文档：已覆盖目前的公开 API。
 -->
 
 <ol>
-<li>支持 <a href="http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html">KISSY XTempalte</a></li>
+<li>支持 <a href="http://gitlab.alibaba-inc.com/thx/crox">CROX</a>、<a href="http://docs.kissyui.com/1.4/docs/html/api/xtemplate/index.html">KISSY XTempalte</a></li>
 <li>√ 定位符由 script 改为注释节点。</li>
 <li>从修改语法树、扫描语法树、更新数据、更新视图等环节，优化性能。</li>
 <li>√ 解决兼容性问题（IE）</li>

@@ -91,8 +91,8 @@ controls: true
     <div style="margin-bottom: 4px;"><https://github.com/thx/bisheng></div>
     <div style="margin-bottom: 4px;"><http://bishengjs.com/></div>
     <div>
-        <!-- <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
-        <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=fork&count=true&size=large"allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe> -->
+        <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="131" height="30"></iframe>
+        <iframe src="http://ghbtns.com/github-btn.html?user=thx&repo=bisheng&type=fork&count=true&size=large"allowtransparency="true" frameborder="0" scrolling="0" width="140" height="30"></iframe>
     </div>
 </div>
 
@@ -365,6 +365,13 @@ BiSheng.js 的 API 非常简洁和符合直觉，总共只有 5 个公开方法�
 --
 ### 实现细节
 
+1. 需要能够监听到数据的变化。
+2. 需要能够将数据的属性关联到 DOM 元素上。
+3. 需要能够监听到表单元素的变化。
+
+--
+### 实现细节
+
 BiSheng.js 会修改模板语法树，插入定位符，通过定位符来建立数据和 DOM 元素之间的连接。
 
 1. 修改模板语法树，插入定位符。
@@ -444,7 +451,7 @@ BiSheng.js 会修改模板语法树，插入定位符，通过定位符来建立
 
 <!-- 
     BiSheng.js 才刚刚起步，尚不完善。
-    如果从我今天的分享中学到了东西或有所启发，请打赏一个赞。
+    如果从我今天的分享中学到了东西或有所启发，请在 GitHub 上打赏一个赞。
  -->
 
 <style type="text/css">
