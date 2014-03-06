@@ -12,6 +12,7 @@ controls: true
 
 <http://bishengjs.com/>
 <https://github.com/thx/BiSheng>
+<https://github.com/thx/bisheng/blob/master/src/expose.js>
 
 --
 ### UMD
