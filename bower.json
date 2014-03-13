@@ -35,6 +35,7 @@
     "requirejs": "~2.1.10",
     "seajs": "*",
     "kissy": "~1.4.1",
-    "bishengjs": "*"
+    "bishengjs": "*",
+    "zepto": "~1.1.3"
   }
 }
