@@ -1,4 +1,4 @@
-/*! BiSheng.js 2014-03-06 03:49:00 PM CST */
+/*! BiSheng.js 2014-03-13 07:07:08 PM CST */
 /*! src/fix/prefix-1.js */
 (function(factory) {
     /*! src/expose.js */
@@ -250,6 +250,113 @@
         };
         jQuery.fn._attr = jQuery.fn.attr;
         jqLite = jQuery;
+    } else if (window.Zepto) {
+        Zepto._each = function _each(obj, callback) {
+            return Zepto.each(obj, function(key, value) {
+                if (!value.nodeType && value.length && value[0].nodeType) {
+                    Zepto._each(value, callback);
+                } else {
+                    callback.call(this, value, key);
+                }
+            });
+        };
+        Zepto.fn._each = function _each(callback) {
+            return Zepto._each(this, callback);
+        };
+        Zepto.fn._filter = function _filter(callback) {
+            return this.filter(function(index, element, array) {
+                // Zepto.each 方法不支持第二个参数 element
+                element = element || this;
+                // 交换 index、element 的位置，使之符合标准
+                return callback.call(element, element, index, array);
+            });
+        };
+        Zepto.fn._attr = Zepto.fn.attr;
+        Zepto.fn.splice = [].splice;
+        Zepto.fn.replaceAll = function replaceAll(target) {
+            /*jshint -W064 */
+            return Zepto(target).replaceWith(this);
+        };
+        // 在 Zepto 中 data 方法使用 DOM 元素的属性来存储
+        // 所以对于 name 需要替换空格
+        Zepto.fn._data = Zepto.fn.data;
+        Zepto.fn.data = function(name, value) {
+            name = name.replace(/\s/g, "-");
+            return Zepto.fn._data.call(this, name, value);
+        };
+        // 扩展 Zepto 支持克隆节点时克隆事件到新克隆的元素上
+        Zepto.cache = {};
+        Zepto.fn._on = Zepto.fn.on;
+        Zepto.fn.on = function(event, selector, data, callback, one) {
+            Zepto.fn._on.apply(this, arguments);
+            this.each(function(idx, elem) {
+                var cache = Zepto.cache[elem._zid] = Zepto.cache[elem._zid] || {};
+                var events = event.split(/\s/);
+                Zepto.each(events, function(idx, type) {
+                    cache[type] = cache[type] || [];
+                    cache[type].push({
+                        event: type,
+                        selector: selector,
+                        data: data,
+                        callback: callback,
+                        one: one
+                    });
+                });
+            });
+            return this;
+        };
+        Zepto.fn._off = Zepto.fn.off;
+        Zepto.fn.off = function(event, selector, callback) {
+            Zepto.fn._off.apply(this, arguments);
+            this.each(function(idx, elem) {
+                var cache = Zepto.cache[elem._zid];
+                var events = event.split(/\s/);
+                if (!cache) {
+                    return;
+                }
+                Zepto.each(events, function(idx, type) {
+                    // 删除所有处理函数
+                    delete cache[type];
+                });
+            });
+            return this;
+        };
+        // 在 HTMLElement.cloneNode 方法上注入克隆事件功能
+        HTMLElement.prototype._cloneNode = HTMLElement.prototype.cloneNode;
+        HTMLElement.prototype.cloneNode = function() {
+            var cloneElement = HTMLElement.prototype._cloneNode.call(this, arguments);
+            // clone event
+            cloneEvent(this, cloneElement);
+            /**
+             * @param origin
+             * @param target
+             */
+            function cloneEvent(origin, target) {
+                /*jshint -W064 */
+                Zepto(origin).children().each(function(idx, element) {
+                    // clone event
+                    if (typeof this._zid === "number") {
+                        /*jshint -W064 */
+                        var cloneChildren = Zepto(target).children().eq(idx);
+                        var events = Zepto.cache[this._zid];
+                        Zepto.each(events, function(type, handlers) {
+                            Zepto.each(handlers, function(idx, handler) {
+                                /*jshint -W064 */
+                                Zepto(cloneChildren).on(handler.event, handler.selector, handler.data, handler.callback, handler.one);
+                            });
+                        });
+                    }
+                    // clone children event
+                    /*jshint -W064 */
+                    if (Zepto(element).children().length) {
+                        /*jshint -W064 */
+                        cloneEvent(element, Zepto(target).children().eq(idx)[0]);
+                    }
+                });
+            }
+            return cloneElement;
+        };
+        jqLite = Zepto;
     }
     /*! src/loop.js */
     // 运行模式

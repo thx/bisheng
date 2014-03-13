@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BiSheng.js Test Suite</title>
+  <!-- Load local QUnit. -->
+  <link rel="stylesheet" href="../node_modules/grunt-contrib-qunit/test/libs/qunit.css" media="screen">
+  <script src="../node_modules/grunt-contrib-qunit/test/libs/qunit.js"></script>
+  <!-- Load local lib. -->
+  <script src="../bower_components/zepto/zepto.js"></script>
+  <script src="../bower_components/handlebars/handlebars.js"></script>
+  <script src="../bower_components/mockjs/dist/mock.js"></script>
+  <script src="../dist/bisheng.js"></script>
+  <script>
+    BiSheng.auto(true) // 自动检测
+  </script>
+  <!-- Load local tests. -->
+  <script type="text/javascript">
+    QUnit.begin(function(){})
+    QUnit.done(function(){})
+  </script>
+  <!-- 单个功能测试 -->
+  <script src="loop.js"></script>
+  <script src="ast.js"></script>
+  <script src="locator.js"></script>
+  <!-- 集成测试 -->
+  <script src="bind_then_check.js"></script>
+  <script src="expression.js"></script>
+  <script src="attribute.js"></script>
+  <script src="block.js"></script>
+  <script src="form.js"></script>
+  <script src="watch.js"></script>
+  <script src="run_mode.js"></script>
+  <!-- 钻石展位测试 -->
+  <script src="zuanshi.js"></script>
+
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+
+  <div id="qunit-testrunner-toolbar">
+    Locator:
+    <a href="javascript: window.location = QUnit.url( { locator: 'script'  } );">Script</a>
+    <a href="javascript: window.location = QUnit.url( { locator: 'comment' } );">Comment</a>
+  </div>
+
+  <div id="qunit-testrunner-toolbar">
+    <a href="https://github.com/thx/bisheng/"><img src="https://sourcegraph.com/api/repos/github.com/thx/bisheng/counters/views-24h.png" alt="Views in the last 24 hours"></a>
+  </div>
+
+  <style type="text/css">
+    .container {
+      margin: 8px 0px 0px 0px;
+      float: left;
+      width: 50%;
+    }
+  </style>
+  <div class="container"></div>
+  <div class="container"></div>
+  <!-- <div class="container"></div>
+  <div class="container"></div> -->
+
+</body>
+</html>
