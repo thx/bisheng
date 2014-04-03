@@ -169,6 +169,7 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
 * [QUnit](../test/bisheng.html?noglobals=true&notrycatch=true)
 * [QUnit for KISSY](../test/bisheng_kissy.html?noglobals=true&notrycatch=true)
+* [QUnit for Zepto](../test/bisheng_zepto.html?noglobals=true&notrycatch=true)
 * [AMD ( RequireJS )](../test/expose_amd.html?noglobals=true&notrycatch=true)
 * [CMD ( SeaJS )](../test/expose_cmd.html?noglobals=true&notrycatch=true)
 * [KMD ( KISSY )](../test/expose_kmd.html?noglobals=true&notrycatch=true)
