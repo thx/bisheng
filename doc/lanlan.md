@@ -199,12 +199,13 @@ controls: true
 
 * 基于模板引擎 Handlebars.js 实现
 * 可扩展支持其他基于语法树的模板引擎
-* 兼容 jQuery 和 KISSY
+* 兼容 jQuery、Zepto.js 和 KISSY
 
 <p class="dependencies">
     <img style="background-color: #F7931E;" src="image/logo_handlebars.png">
-    <img style="background-color: #0769AD;" src="image/logo-jquery.png">
+    <img style="background-color: #0769AD;" src="image/logo_jquery.png">
     <img style="background-color: #EDEDED;" src="image/logo_kissy.png">
+    <img style="background-color: #F3EAFF;" src="image/logo_zepto.png">
 </p>
 
 --
