@@ -140,15 +140,15 @@ BI-Directional / Two-Way Data-Binding Library with JavaScript.
 
 * **AMD ( RequireJS )** [Specifications](https://github.com/amdjs/amdjs-api/wiki/AMD)
 
-    <iframe width="100%" height="370" src="http://jsfiddle.net/HbhJ3/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+    <iframe width="100%" height="370" src="http://jsfiddle.net/HbhJ3/1/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
 * **CMD ( SeaJS )** [Specifications](https://github.com/seajs/seajs/issues/242)
 
-    <iframe width="100%" height="430" src="http://jsfiddle.net/ekfY8/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+    <iframe width="100%" height="430" src="http://jsfiddle.net/ekfY8/1/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
 * **KMD ( KISSY )** [Specifications](http://docs.kissyui.com/1.4/docs/html/guideline/kmd.html)
 
-    <iframe width="100%" height="430" src="http://jsfiddle.net/4eAF9/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+    <iframe width="100%" height="430" src="http://jsfiddle.net/4eAF9/1/embedded/js,html,result" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
 ## More Examples
 
