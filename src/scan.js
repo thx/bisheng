@@ -205,10 +205,10 @@
                     value = value[path[index]]
                 }
                 // 如果 checked 的初始值是 false 或 "false"，则初始化为未选中。
-                if (value === undefined || value.valueOf() === false || value.valueOf() === 'false') {
+                if (value === undefined || value === null || value.valueOf() === false || value.valueOf() === 'false') {
                     jqLite(target).prop('checked', false)
                 }
-                if (value !== undefined &&
+                if (value !== undefined && value !== null &&
                     (value.valueOf() === true || value.valueOf() === 'true' || value.valueOf() === 'checked')) {
                     jqLite(target).prop('checked', true)
                 }
