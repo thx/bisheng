@@ -58,7 +58,7 @@ BiSheng.js 的名称源自活字印刷术的发明者“[毕昇]”。因为单�
 监听数据变化的可选方案并不少，一一逐条罗列和分析：
 
 1. 建立数据的副本，用定时器（[setTimeout 或 setInterval]）周期性地与副本进行比较，并将变化封装成事件，用观察者（Pub/Sub）模式来实现事件广播。
-2. 采用 ES5 规范中的 [Object.defineProperty] 和 [Object.defineProperties] 为属性定义 `get()` 和 `set()` 方法，依此来监听属性的读取和设置操作，功能上非常完善，但是 [IE9- 不支持](http://kangax.github.io/es5-compat-table/)，一些 Polyfill（例如，TODO）也不完善。
+2. 采用 ES5 规范中的 [Object.defineProperty] 和 [Object.defineProperties] 为属性定义 `get()` 和 `set()` 方法，以此来监听属性的读取和设置操作，功能上非常完善，但是 [IE9- 不支持](http://kangax.github.io/es5-compat-table/)，一些 Polyfill（例如，TODO）也不完善。
 3. [Object.observe()] 也可以用来监听属性的变化，可是距离可应用也太远了。
 4. 甚至你可能会想到 [Object.prototype.\_\_defineGetter\_\_] 和 [Object.prototype.\_\_defineSetter\_\_]，但是未被纳入规范，不过这不重点，关键是 [IE11 才会支持](TODO)。
 
