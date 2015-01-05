@@ -1,6 +1,8 @@
 BiSheng.js（毕昇）
 ====
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/thx/bisheng?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://api.travis-ci.org/thx/bisheng.png?branch=master)](http://travis-ci.org/thx/bisheng)
 [![GitHub version](https://badge.fury.io/gh/thx%2Fbisheng.png)](http://badge.fury.io/gh/thx%2Fbisheng)
 [![Bower version](https://badge.fury.io/bo/bishengjs.png)](http://badge.fury.io/bo/bishengjs)
