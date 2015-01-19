@@ -1,3 +1,5 @@
+> #不推荐继续使用，请移步 [brix-bisheng](https://github.com/nuysoft/brix-bisheng)。
+
 BiSheng.js（毕昇）
 ====
 
