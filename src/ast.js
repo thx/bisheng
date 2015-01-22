@@ -35,7 +35,7 @@
 
         var ifHelper = Handlebars.helpers['if']
         Handlebars.registerHelper('if', function(conditional, options) {
-            return ifHelper.call(this, conditional !== undefined ? conditional.valueOf() : conditional, options)
+            return ifHelper.call(this, conditional !== undefined && conditional !== null ? conditional.valueOf() : conditional, options)
         })
 
         var blockHelperMissing = Handlebars.helpers.blockHelperMissing
